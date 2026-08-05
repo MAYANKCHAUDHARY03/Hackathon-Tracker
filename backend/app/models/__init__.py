@@ -11,6 +11,9 @@ from app.models.activity import ActivityEvent
 from app.models.round import HackathonRound, Deadline, RoundProgress
 from app.models.submission import SubmissionRequirement, RoundSubmission, SubmissionItem
 from app.models.notification import Notification, NotificationPreference
+from app.models.people import Person, MentorAssignment, JudgeAssignment
+from app.models.evaluation import EvaluationTemplate, EvaluationCriterion, Evaluation, EvaluationScore
+from app.models.outcome import HackathonResult, Reward, Achievement
 
 __all__ = [
     "Base", 
@@ -38,5 +41,15 @@ __all__ = [
     "RoundSubmission",
     "SubmissionItem",
     "Notification",
-    "NotificationPreference"
+    "NotificationPreference",
+    "Person",
+    "MentorAssignment",
+    "JudgeAssignment",
+    "EvaluationTemplate",
+    "EvaluationCriterion",
+    "Evaluation",
+    "EvaluationScore",
+    "HackathonResult",
+    "Reward",
+    "Achievement"
 ]

@@ -1,23 +1,24 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { submissionApi, SubmissionRequirement, RoundSubmission } from '@/api/submissionApi';
+import type { SubmissionRequirement, RoundSubmission } from '@/api/submissionApi';
 import { useWorkspaceStore } from '@/store/workspaceStore';
 import { GlassPanel } from '@/components/ui/glass-panel';
 import { Button } from '@/components/ui/button';
+import { submissionApi } from '@/api/submissionApi';
 
 export default function SubmissionWorkspace() {
   const { id, roundId, teamId } = useParams<{ id: string; roundId: string; teamId: string }>();
-  const activeWorkspace = useWorkspaceStore((s) => s.activeWorkspace);
+  const currentWorkspaceId = useWorkspaceStore((s) => s.activeWorkspaceId);
 
   const [requirements, setRequirements] = useState<SubmissionRequirement[]>([]);
   const [submission, setSubmission] = useState<RoundSubmission | null>(null);
 
   useEffect(() => {
-    if (activeWorkspace && id && roundId && teamId) {
+    if (currentWorkspaceId && id && roundId && teamId) {
       submissionApi.getRequirements(id, roundId).then(setRequirements).catch(console.error);
       submissionApi.getSubmission(id, roundId, teamId).then(setSubmission).catch(console.error);
     }
-  }, [activeWorkspace, id, roundId, teamId]);
+  }, [currentWorkspaceId, id, roundId, teamId]);
 
   const handleUpdateItem = async (reqId: string, content: string) => {
     if (!id || !roundId || !teamId) return;
@@ -83,7 +84,7 @@ export default function SubmissionWorkspace() {
             {requirements.length === 0 ? (
               <p className="text-sm text-muted-foreground">No requirements configured for this round.</p>
             ) : (
-              requirements.map(req => {
+              requirements.map((req) => {
                 const item = submission?.items?.find(i => i.requirement_id === req.id);
                 return (
                   <div key={req.id} className="p-4 border rounded-md bg-card/50 space-y-2">

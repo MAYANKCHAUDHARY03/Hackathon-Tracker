@@ -3,8 +3,9 @@ import { GlassPanel } from '@/components/ui/glass-panel';
 import { Button } from '@/components/ui/button';
 import { useWorkspaceStore } from '@/store/workspaceStore';
 import { apiClient } from '@/lib/api-client';
-import { Mail, Send, Trash2, Users } from 'lucide-react';
+import { Mail, Send, Trash2, Users, Bell } from 'lucide-react';
 import { format } from 'date-fns';
+import { NotificationSettings } from '@/components/notifications/NotificationSettings';
 
 interface Invitation {
   id: string;
@@ -152,6 +153,16 @@ export default function Settings() {
             </div>
           )}
         </div>
+      </GlassPanel>
+
+      <GlassPanel className="p-6 space-y-6 mt-8">
+        <div className="flex items-center gap-2 mb-4">
+          <div className="p-2 bg-primary/20 rounded-lg">
+            <Bell className="h-5 w-5 text-primary" />
+          </div>
+          <h2 className="text-xl font-semibold tracking-tight">Notification Preferences</h2>
+        </div>
+        <NotificationSettings />
       </GlassPanel>
     </div>
   );

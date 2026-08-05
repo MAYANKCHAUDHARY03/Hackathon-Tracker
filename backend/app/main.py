@@ -47,11 +47,11 @@ async def health_check(db: AsyncSession = Depends(get_db)):
         "database": db_status
     }
 
-from app.routers import auth, users, workspaces, hackathons, dashboard, invitations, teams, projects, kanban, activity, rounds, submissions
+from app.routers import auth, users, workspaces, hackathons, dashboard, invitations, teams, projects, kanban, activity, rounds, submissions, notifications, mentors, judges, evaluations, outcomes
 
 app.include_router(auth.router, prefix=f"{settings.API_V1_STR}/auth", tags=["auth"])
 app.include_router(users.router, prefix=f"{settings.API_V1_STR}/users", tags=["users"])
-app.include_router(workspaces.router, prefix=f"{settings.API_V1_STR}/workspaces", tags=["workspaces"])
+app.include_router(workspaces.router, prefix=f"{settings.API_V1_STR}", tags=["workspaces"])
 app.include_router(invitations.router, prefix=f"{settings.API_V1_STR}", tags=["invitations"])
 app.include_router(hackathons.router, prefix=f"{settings.API_V1_STR}", tags=["hackathons"])
 app.include_router(dashboard.router, prefix=f"{settings.API_V1_STR}", tags=["dashboard"])
@@ -61,3 +61,8 @@ app.include_router(kanban.router, prefix=f"{settings.API_V1_STR}", tags=["kanban
 app.include_router(activity.router, prefix=f"{settings.API_V1_STR}", tags=["activity"])
 app.include_router(rounds.router, prefix=f"{settings.API_V1_STR}", tags=["rounds"])
 app.include_router(submissions.router, prefix=f"{settings.API_V1_STR}", tags=["submissions"])
+app.include_router(notifications.router, prefix=f"{settings.API_V1_STR}", tags=["notifications"])
+app.include_router(mentors.router, prefix=f"{settings.API_V1_STR}", tags=["mentors"])
+app.include_router(judges.router, prefix=f"{settings.API_V1_STR}", tags=["judges"])
+app.include_router(evaluations.router, prefix=f"{settings.API_V1_STR}", tags=["evaluations"])
+app.include_router(outcomes.router, prefix=f"{settings.API_V1_STR}", tags=["outcomes"])

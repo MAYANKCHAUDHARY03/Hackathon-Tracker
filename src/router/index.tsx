@@ -13,6 +13,7 @@ const Kanban = lazy(() => import('@/pages/Kanban'))
 const HackathonDetails = lazy(() => import('@/pages/HackathonDetails'))
 const SubmissionWorkspace = lazy(() => import('@/pages/SubmissionWorkspace'))
 const Calendar = lazy(() => import('@/pages/Calendar'))
+const Notifications = lazy(() => import('@/pages/Notifications'))
 
 // Loading fallback
 const PageLoader = () => (
@@ -124,6 +125,14 @@ const router = createBrowserRouter([
         element: (
           <Suspense fallback={<PageLoader />}>
             <Placeholder title="API Vault" />
+          </Suspense>
+        ),
+      },
+      {
+        path: 'notifications',
+        element: (
+          <Suspense fallback={<PageLoader />}>
+            <Notifications />
           </Suspense>
         ),
       },
