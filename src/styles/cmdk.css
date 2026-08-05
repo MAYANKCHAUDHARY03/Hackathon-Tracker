@@ -1,0 +1,77 @@
+/* src/styles/cmdk.css */
+[cmdk-dialog] {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding-top: 20vh;
+  background: hsl(var(--background) / 0.8);
+  backdrop-filter: blur(8px);
+}
+
+[cmdk-root] {
+  width: 100%;
+  max-width: 640px;
+  background: hsl(var(--card));
+  border-radius: var(--radius);
+  border: 1px solid hsl(var(--border));
+  box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+  overflow: hidden;
+}
+
+[cmdk-input] {
+  width: 100%;
+  padding: 16px;
+  font-size: 16px;
+  border: none;
+  background: transparent;
+  color: hsl(var(--foreground));
+  outline: none;
+}
+
+[cmdk-input]::placeholder {
+  color: hsl(var(--muted-foreground));
+}
+
+[cmdk-list] {
+  max-height: 300px;
+  overflow: auto;
+  padding: 8px;
+}
+
+[cmdk-empty] {
+  padding: 24px;
+  text-align: center;
+  color: hsl(var(--muted-foreground));
+}
+
+[cmdk-group-heading] {
+  padding: 8px 16px;
+  color: hsl(var(--muted-foreground));
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: capitalize;
+}
+
+[cmdk-item] {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  border-radius: calc(var(--radius) - 2px);
+  cursor: pointer;
+  color: hsl(var(--foreground));
+  font-size: 14px;
+}
+
+[cmdk-item][aria-selected="true"] {
+  background: hsl(var(--accent));
+  color: hsl(var(--accent-foreground));
+}
+
+[cmdk-item][data-disabled="true"] {
+  opacity: 0.5;
+  pointer-events: none;
+}
