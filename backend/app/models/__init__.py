@@ -56,3 +56,13 @@ __all__ = [
     "Organization",
     "OrganizationMembership"
 ]
+
+from app.models.identity_provider import IdentityProvider
+from app.models.external_identity import ExternalIdentity
+
+
+from app.models.scim_token import ScimToken
+
+
+from app.models.calendar_integration import CalendarIntegration
+

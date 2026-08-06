@@ -44,3 +44,7 @@ async def prepare_database():
 async def async_client():
     async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
         yield client
+
+from app.limiter import limiter
+limiter.enabled = False
+

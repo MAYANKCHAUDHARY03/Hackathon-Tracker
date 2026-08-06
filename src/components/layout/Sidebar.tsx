@@ -11,7 +11,8 @@ import {
   KeyRound, 
   Settings,
   Menu,
-  Trophy
+  Trophy,
+  Building
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
@@ -24,6 +25,7 @@ const navItems = [
   { path: '/teams', label: 'Team Database', icon: Users },
   { path: '/projects', label: 'Project Database', icon: FolderGit2 },
   { path: '/vault', label: 'API Vault', icon: KeyRound },
+  { path: '/enterprise', label: 'Enterprise', icon: Building },
   { path: '/settings', label: 'Settings', icon: Settings },
 ]
 

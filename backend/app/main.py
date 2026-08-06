@@ -1,4 +1,5 @@
 import logging
+import json
 from fastapi import FastAPI, Depends, Request
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
@@ -7,13 +8,28 @@ from slowapi.errors import RateLimitExceeded
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
+class JSONFormatter(logging.Formatter):
+    def format(self, record):
+        log_record = {
+            "time": self.formatTime(record, self.datefmt),
+            "level": record.levelname,
+            "name": record.name,
+            "message": record.getMessage()
+        }
+        if record.exc_info:
+            log_record["exc_info"] = self.formatException(record.exc_info)
+        return json.dumps(log_record)
+
+handler = logging.StreamHandler()
+handler.setFormatter(JSONFormatter())
+logging.basicConfig(level=logging.INFO, handlers=[handler])
+
 from app.config import settings
 from app.database import get_db
 from app.exceptions import CustomException, custom_exception_handler
 from app.middleware import SecurityHeadersMiddleware
 
 # Configure logging
-logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 app = FastAPI(
@@ -26,6 +42,8 @@ app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
 app.add_middleware(SecurityHeadersMiddleware)
+from starlette.middleware.sessions import SessionMiddleware
+app.add_middleware(SessionMiddleware, secret_key=settings.SECRET_KEY)
 
 # Set all CORS enabled origins
 if settings.BACKEND_CORS_ORIGINS:
@@ -79,3 +97,18 @@ app.include_router(search.router, prefix=f"{settings.API_V1_STR}", tags=["search
 app.include_router(analytics.router, prefix=f"{settings.API_V1_STR}", tags=["analytics"])
 app.include_router(export_import.router, prefix=f"{settings.API_V1_STR}", tags=["export_import"])
 app.include_router(portfolio.router, prefix=f"{settings.API_V1_STR}", tags=["portfolio"])
+
+from app.routers import sso
+app.include_router(sso.router, prefix=f"{settings.API_V1_STR}/sso", tags=["sso"])
+
+
+from app.routers import scim
+app.include_router(scim.router, prefix=f"{settings.API_V1_STR}/scim/v2", tags=["scim"])
+
+
+from app.routers import hackathon_sync
+app.include_router(hackathon_sync.router, prefix=f"{settings.API_V1_STR}/hackathon-sync", tags=["hackathon-sync"])
+
+from app.routers import health
+app.include_router(health.router, prefix="/api/ops", tags=["ops"])
+
