@@ -33,7 +33,7 @@ export function Sidebar() {
   return (
     <aside 
       className={cn(
-        "glass-panel fixed left-0 top-0 z-40 h-screen transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]",
+        "glass-panel fixed left-0 top-0 z-40 h-screen transition-all duration-300 ease-custom-bezier",
         isSidebarOpen ? "w-64" : "w-20"
       )}
     >

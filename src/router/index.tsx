@@ -14,6 +14,8 @@ const HackathonDetails = lazy(() => import('@/pages/HackathonDetails'))
 const SubmissionWorkspace = lazy(() => import('@/pages/SubmissionWorkspace'))
 const Calendar = lazy(() => import('@/pages/Calendar'))
 const Notifications = lazy(() => import('@/pages/Notifications'))
+const Analytics = lazy(() => import('@/pages/Workspace/Analytics'))
+const Portfolio = lazy(() => import('@/pages/Portfolio'))
 
 // Loading fallback
 const PageLoader = () => (
@@ -100,7 +102,7 @@ const router = createBrowserRouter([
         path: 'analytics',
         element: (
           <Suspense fallback={<PageLoader />}>
-            <Placeholder title="Analytics" />
+            <Analytics />
           </Suspense>
         ),
       },
@@ -141,6 +143,14 @@ const router = createBrowserRouter([
         element: (
           <Suspense fallback={<PageLoader />}>
             <Settings />
+          </Suspense>
+        ),
+      },
+      {
+        path: 'users/:userId/portfolio',
+        element: (
+          <Suspense fallback={<PageLoader />}>
+            <Portfolio />
           </Suspense>
         ),
       },

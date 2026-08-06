@@ -11,7 +11,8 @@ import { Mail, Smartphone, AtSign, CheckSquare, Clock } from "lucide-react";
 import { toast } from "sonner";
 
 export function NotificationSettings() {
-  const currentWorkspace = useWorkspaceStore(s => s.activeWorkspaceId) ? { id: useWorkspaceStore(s => s.activeWorkspaceId) as string } : null;
+  const activeWorkspaceId = useWorkspaceStore(s => s.activeWorkspaceId);
+  const currentWorkspace = activeWorkspaceId ? { id: activeWorkspaceId as string } : null;
   const [preferences, setPreferences] = useState<NotificationPreference | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);

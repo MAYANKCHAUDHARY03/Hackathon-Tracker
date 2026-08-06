@@ -10,7 +10,7 @@ from app.dependencies import get_current_user
 
 router = APIRouter()
 
-@router.get("", response_model=list[WorkspaceResponse])
+@router.get("/workspaces", response_model=list[WorkspaceResponse])
 async def get_workspaces(
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user)

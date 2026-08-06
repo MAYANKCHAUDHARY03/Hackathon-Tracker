@@ -62,6 +62,9 @@ const config: Config = {
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
       },
+      transitionTimingFunction: {
+        'custom-bezier': 'cubic-bezier(0.22, 1, 0.36, 1)',
+      },
       boxShadow: {
         glass: "0 8px 32px 0 rgba(31, 38, 135, 0.07)",
       },

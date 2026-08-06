@@ -29,7 +29,14 @@ export const Register: React.FC = () => {
       
       navigate('/');
     } catch (err: any) {
-      setError(err.data?.detail || 'Failed to register');
+      const detail = err.data?.detail;
+      if (typeof detail === 'string') {
+        setError(detail);
+      } else if (Array.isArray(detail)) {
+        setError(detail[0]?.msg || 'Validation error');
+      } else {
+        setError(err.message || 'Failed to register');
+      }
     }
   };
 

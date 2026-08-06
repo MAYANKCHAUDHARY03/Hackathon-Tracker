@@ -7,11 +7,13 @@ import typing
 if typing.TYPE_CHECKING:
     from app.models.workspace import Workspace
 
+import uuid
+
 class WorkspaceMembership(BaseEntity):
     __tablename__ = "workspace_memberships"
 
-    user_id: Mapped[str] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), index=True)
-    workspace_id: Mapped[str] = mapped_column(ForeignKey("workspaces.id", ondelete="CASCADE"), index=True)
+    user_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), index=True)
+    workspace_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("workspaces.id", ondelete="CASCADE"), index=True)
     role: Mapped[str] = mapped_column(String, default="member")
 
     user: Mapped["User"] = relationship("User", back_populates="memberships")
