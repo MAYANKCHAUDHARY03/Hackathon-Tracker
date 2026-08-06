@@ -1,5 +1,6 @@
 from app.models.base import Base
 from app.models.workspace import Workspace
+from app.models.organization import Organization, OrganizationMembership
 from app.models.user import User, WorkspaceMembership
 from app.models.hackathon import Hackathon
 from app.models.workspace_invitation import WorkspaceInvitation
@@ -51,5 +52,7 @@ __all__ = [
     "EvaluationScore",
     "HackathonResult",
     "Reward",
-    "Achievement"
+    "Achievement",
+    "Organization",
+    "OrganizationMembership"
 ]

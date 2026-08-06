@@ -6,6 +6,7 @@ import typing
 
 if typing.TYPE_CHECKING:
     from app.models.workspace import Workspace
+    from app.models.organization import OrganizationMembership
 
 import uuid
 
@@ -31,3 +32,4 @@ class User(BaseEntity):
     linkedin_url: Mapped[str | None]
     
     memberships: Mapped[list["WorkspaceMembership"]] = relationship("WorkspaceMembership", back_populates="user", cascade="all, delete-orphan")
+    organization_memberships: Mapped[list["OrganizationMembership"]] = relationship("OrganizationMembership", back_populates="user", cascade="all, delete-orphan")

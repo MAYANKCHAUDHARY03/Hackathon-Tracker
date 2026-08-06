@@ -18,9 +18,9 @@ def generate_slug(name: str) -> str:
 
 @router.post("/register", response_model=TokenResponse, status_code=status.HTTP_201_CREATED)
 @limiter.limit("5/minute")
-async def register(http_request: Request, request: RegisterRequest, db: AsyncSession = Depends(get_db)):
+async def register(request: Request, payload: RegisterRequest, db: AsyncSession = Depends(get_db)):
     # Check if user exists
-    stmt = select(User).where(User.email == request.email)
+    stmt = select(User).where(User.email == payload.email)
     result = await db.execute(stmt)
     if result.scalar_one_or_none():
         raise HTTPException(status_code=400, detail="Email already registered")
@@ -28,19 +28,19 @@ async def register(http_request: Request, request: RegisterRequest, db: AsyncSes
     try:
         # Create user
         new_user = User(
-            full_name=request.full_name,
-            email=request.email,
-            password_hash=get_password_hash(request.password)
+            full_name=payload.full_name,
+            email=payload.email,
+            password_hash=get_password_hash(payload.password)
         )
         db.add(new_user)
         await db.flush() # flush to get user ID
 
         # Create personal workspace
-        base_slug = generate_slug(f"{request.full_name} workspace")
+        base_slug = generate_slug(f"{payload.full_name} workspace")
         slug = f"{base_slug}-{str(new_user.id)[:8]}"
         
         new_workspace = Workspace(
-            name=f"{request.full_name}'s Workspace",
+            name=f"{payload.full_name}'s Workspace",
             slug=slug
         )
         db.add(new_workspace)
@@ -67,12 +67,12 @@ async def register(http_request: Request, request: RegisterRequest, db: AsyncSes
 
 @router.post("/login", response_model=TokenResponse)
 @limiter.limit("10/minute")
-async def login(http_request: Request, request: LoginRequest, db: AsyncSession = Depends(get_db)):
-    stmt = select(User).where(User.email == request.email)
+async def login(request: Request, payload: LoginRequest, db: AsyncSession = Depends(get_db)):
+    stmt = select(User).where(User.email == payload.email)
     result = await db.execute(stmt)
     user = result.scalar_one_or_none()
     
-    if not user or not verify_password(request.password, user.password_hash):
+    if not user or not verify_password(payload.password, user.password_hash):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Incorrect email or password",

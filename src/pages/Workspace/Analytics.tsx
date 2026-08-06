@@ -1,34 +1,11 @@
-import { useEffect, useState } from 'react';
 import { 
   BarChart, Activity, Users, FolderKanban, 
   Trophy, CheckCircle2, CircleDashed 
 } from 'lucide-react';
-import { analyticsApi } from '@/api/analyticsApi';
-import type { WorkspaceAnalyticsSummary } from '@/api/analyticsApi';
-import { useWorkspaceStore } from '@/store/workspaceStore';
-
+import { useAnalytics } from '@/hooks/useAnalytics';
 
 export default function Analytics() {
-  const { activeWorkspaceId } = useWorkspaceStore();
-  const [data, setData] = useState<WorkspaceAnalyticsSummary | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    if (!activeWorkspaceId) return;
-
-    const fetchAnalytics = async () => {
-      try {
-        const response = await analyticsApi.getWorkspaceAnalytics(activeWorkspaceId);
-        setData(response);
-      } catch (error) {
-        console.error('Failed to load analytics', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchAnalytics();
-  }, [activeWorkspaceId]);
+  const { data, isLoading: loading } = useAnalytics();
 
   if (loading || !data) {
     return (
