@@ -19,7 +19,7 @@ async def list_rounds(
     return await get_rounds_for_hackathon(db, x_workspace_id, hackathon_id)
 
 @router.post("", response_model=HackathonRoundResponse)
-async def create_round(
+async def add_round(
     hackathon_id: uuid.UUID,
     round_in: HackathonRoundCreate,
     x_workspace_id: uuid.UUID = Header(...),

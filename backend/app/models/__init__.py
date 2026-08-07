@@ -70,3 +70,4 @@ __all__ = [
     "ExternalSubmissionConnection",
     "ExternalSubmissionMapping"
 ]
+from app.models.feedback import Feedback

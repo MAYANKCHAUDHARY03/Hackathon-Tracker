@@ -93,13 +93,32 @@ class AutomationService:
         try:
             # Perform action based on rule.action_type
             if rule.action_type == "send_notification":
-                # Logic to send notification
-                pass
-            elif rule.action_type == "update_status":
-                # Logic to update project status
-                pass
-            elif rule.action_type == "add_label":
-                # Logic to add a label to a task
+                from app.models.notification import Notification
+                notif = Notification(
+                    workspace_id=rule.workspace_id,
+                    user_id=rule.created_by,
+                    title=f"Automation: {rule.name}",
+                    content=f"Triggered by {rule.trigger_type}",
+                    type="automation"
+                )
+                db.add(notif)
+            elif rule.action_type == "ai_evaluate_submission":
+                from app.models.activity import Activity
+                from app.services.ai.providers import AIProviderFactory
+                from app.config import settings
+                
+                provider = AIProviderFactory.get_provider("gemini", settings.GEMINI_API_KEY) if settings.GEMINI_API_KEY else AIProviderFactory.get_provider("mock", "dummy")
+                summary = await provider.generate_project_summary({"event": event_data, "rule": rule.name})
+                
+                act = Activity(
+                    workspace_id=rule.workspace_id,
+                    action="ai_evaluation",
+                    entity_type="submission",
+                    entity_id=event_data.get("submission_id") or rule.id,
+                    details={"ai_summary": summary}
+                )
+                db.add(act)
+            elif rule.action_type == "assign_evaluator":
                 pass
             else:
                 raise ValueError(f"Unknown action type: {rule.action_type}")

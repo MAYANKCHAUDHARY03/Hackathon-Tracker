@@ -10,10 +10,9 @@ interface AutomationRule {
   name: string;
   description: string;
   trigger_type: string;
-  trigger_config: Record<string, any>;
   action_type: string;
-  action_config: Record<string, any>;
-  is_active: boolean;
+  conditions: Record<string, any>;
+  enabled: boolean;
   created_at: string;
 }
 
@@ -52,10 +51,9 @@ export function AutomationSettings() {
         name,
         description,
         trigger_type: triggerType,
-        trigger_config: {},
         action_type: actionType,
-        action_config: {},
-        is_active: true
+        conditions: {},
+        enabled: true
       });
       setShowForm(false);
       setName('');
@@ -134,6 +132,7 @@ export function AutomationSettings() {
                 className="w-full h-10 px-3 rounded-md bg-secondary/30 border border-border/50 focus:outline-none focus:ring-2 focus:ring-primary"
               >
                 <option value="send_notification">Send Notification</option>
+                <option value="ai_evaluate_submission">Run AI Evaluation</option>
                 <option value="assign_evaluator">Assign Evaluator</option>
                 <option value="move_task">Move Task to Next Column</option>
               </select>
@@ -157,7 +156,7 @@ export function AutomationSettings() {
                 <p className="font-medium flex items-center gap-2">
                   <Zap className="h-4 w-4 text-yellow-500" />
                   {rule.name}
-                  {rule.is_active && <span className="text-[10px] uppercase bg-green-500/20 text-green-500 px-2 py-0.5 rounded-full font-bold tracking-wider">Active</span>}
+                  {rule.enabled && <span className="text-[10px] uppercase bg-green-500/20 text-green-500 px-2 py-0.5 rounded-full font-bold tracking-wider">Active</span>}
                 </p>
                 <p className="text-sm text-muted-foreground mt-1">
                   When <strong>{rule.trigger_type.replace('_', ' ')}</strong>, then <strong>{rule.action_type.replace('_', ' ')}</strong>

@@ -1,6 +1,6 @@
 import uuid
 from typing import List
-from fastapi import APIRouter, Depends, Header
+from fastapi import APIRouter, Depends, Header, BackgroundTasks
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.dependencies import get_db, get_current_user
 from app.models.user import User
@@ -74,11 +74,18 @@ async def update_item(
         
     return await update_submission_item(db, x_workspace_id, submission.id, item_in, current_user)
 
+async def run_automation_in_background(workspace_id: uuid.UUID, trigger_type: str, event_data: dict):
+    from app.database import AsyncSessionLocal
+    from app.services.automation_service import AutomationService
+    async with AsyncSessionLocal() as session:
+        await AutomationService.process_event(session, workspace_id, trigger_type, event_data)
+
 @router.post("/teams/{team_id}/submission/lock", response_model=RoundSubmissionResponse)
 async def lock_team_submission(
     hackathon_id: uuid.UUID,
     round_id: uuid.UUID,
     team_id: uuid.UUID,
+    background_tasks: BackgroundTasks,
     x_workspace_id: uuid.UUID = Header(...),
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user)
@@ -87,4 +94,16 @@ async def lock_team_submission(
     if not submission:
         submission = await initialize_team_submission(db, x_workspace_id, hackathon_id, round_id, team_id)
         
-    return await lock_submission(db, x_workspace_id, submission.id, current_user)
+    result = await lock_submission(db, x_workspace_id, submission.id, current_user)
+    
+    # Trigger automation
+    event_data = {
+        "type": "submission_locked",
+        "submission_id": str(submission.id),
+        "team_id": str(team_id),
+        "round_id": str(round_id),
+        "hackathon_id": str(hackathon_id)
+    }
+    background_tasks.add_task(run_automation_in_background, x_workspace_id, "submission_created", event_data)
+    
+    return result

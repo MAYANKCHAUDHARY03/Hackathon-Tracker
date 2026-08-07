@@ -44,6 +44,15 @@ async def create_automation_rule(
     """Create a new automation rule (requires workspace admin)."""
     # Force the workspace_id from path
     rule_in.workspace_id = workspace_id
+    
+    from app.models.organization import Workspace
+    ws_query = select(Workspace).where(Workspace.id == workspace_id)
+    ws_result = await db.execute(ws_query)
+    workspace = ws_result.scalar_one_or_none()
+    if not workspace:
+        raise HTTPException(status_code=404, detail="Workspace not found")
+        
+    rule_in.organization_id = workspace.organization_id
     db_rule = AutomationRule(**rule_in.model_dump(), created_by=membership.user_id)
     db.add(db_rule)
     await db.commit()

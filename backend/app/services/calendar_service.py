@@ -8,10 +8,13 @@ from app.models.calendar_integration import CalendarIntegration
 
 async def push_event_to_google(integration: CalendarIntegration, event_data: Dict[str, Any]) -> str:
     # Requires valid access token. For production, token refresh logic goes here.
+    from app.security_vault import decrypt_string
+    
     calendar_id = integration.remote_calendar_id or "primary"
+    token = decrypt_string(integration.access_token) if integration.access_token else ""
     
     headers = {
-        "Authorization": f"Bearer {integration.access_token}",
+        "Authorization": f"Bearer {token}",
         "Content-Type": "application/json"
     }
     
@@ -42,8 +45,11 @@ async def push_event_to_google(integration: CalendarIntegration, event_data: Dic
         return data.get("id")
 
 async def push_event_to_outlook(integration: CalendarIntegration, event_data: Dict[str, Any]) -> str:
+    from app.security_vault import decrypt_string
+    token = decrypt_string(integration.access_token) if integration.access_token else ""
+    
     headers = {
-        "Authorization": f"Bearer {integration.access_token}",
+        "Authorization": f"Bearer {token}",
         "Content-Type": "application/json"
     }
     

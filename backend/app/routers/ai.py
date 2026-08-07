@@ -36,8 +36,10 @@ async def get_project_summary(
     if not project:
         raise HTTPException(status_code=404, detail="Project not found")
         
-    provider = AIProviderFactory.get_provider("mock", "dummy_key")
-    
+    if settings.GEMINI_API_KEY:
+        provider = AIProviderFactory.get_provider("gemini", settings.GEMINI_API_KEY)
+    else:
+        provider = AIProviderFactory.get_provider("mock", "dummy_key")    
     project_data = {
         "title": project.name,
         "description": project.description,
@@ -76,8 +78,10 @@ async def analyze_project_health(
         for t in tasks
     ]
     
-    provider = AIProviderFactory.get_provider("mock", "dummy_key")
-    
+    if settings.GEMINI_API_KEY:
+        provider = AIProviderFactory.get_provider("gemini", settings.GEMINI_API_KEY)
+    else:
+        provider = AIProviderFactory.get_provider("mock", "dummy_key")    
     project_data = {
         "title": project.name,
         "description": project.description

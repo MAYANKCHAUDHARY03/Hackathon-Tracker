@@ -3,6 +3,7 @@ import { Outlet } from 'react-router-dom'
 import { Sidebar } from './Sidebar'
 import { Topbar } from './Topbar'
 import { CommandPalette } from './CommandPalette'
+import { FeedbackWidget } from '@/components/feedback/FeedbackWidget'
 import { useUIStore } from '@/store/uiStore'
 import { cn } from '@/lib/utils'
 
@@ -38,6 +39,7 @@ export function AppLayout() {
         </main>
       </div>
       <CommandPalette />
+      <FeedbackWidget />
     </div>
   )
 }

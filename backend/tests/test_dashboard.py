@@ -42,7 +42,7 @@ async def test_get_dashboard_summary_populated(async_client: AsyncClient):
     
     # 1. Active Hackathon
     await async_client.post(
-        f"/api/v1/workspaces/{workspace_id}/hackathons/",
+        f"/api/v1/workspaces/{workspace_id}/hackathons",
         json={
             "name": "Active Hackathon",
             "mode": "online",
@@ -55,7 +55,7 @@ async def test_get_dashboard_summary_populated(async_client: AsyncClient):
 
     # 2. Upcoming Hackathon
     await async_client.post(
-        f"/api/v1/workspaces/{workspace_id}/hackathons/",
+        f"/api/v1/workspaces/{workspace_id}/hackathons",
         json={
             "name": "Upcoming Hackathon",
             "mode": "online",
@@ -68,7 +68,7 @@ async def test_get_dashboard_summary_populated(async_client: AsyncClient):
 
     # 3. Completed Hackathon
     await async_client.post(
-        f"/api/v1/workspaces/{workspace_id}/hackathons/",
+        f"/api/v1/workspaces/{workspace_id}/hackathons",
         json={
             "name": "Completed Hackathon",
             "mode": "online",

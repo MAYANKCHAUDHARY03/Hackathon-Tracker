@@ -19,7 +19,7 @@ async def test_create_round(async_client: AsyncClient):
         "max_team_size": 4
     }
     headers["X-Workspace-Id"] = workspace_id
-    r = await async_client.post(f"/api/v1/workspaces/{workspace_id}/hackathons/", json=hackathon_data, headers=headers)
+    r = await async_client.post(f"/api/v1/workspaces/{workspace_id}/hackathons", json=hackathon_data, headers=headers)
     assert r.status_code == 201
     hackathon = r.json()
     hackathon_id = hackathon["id"]
@@ -29,7 +29,7 @@ async def test_create_round(async_client: AsyncClient):
         "name": "Round 1",
         "sequence": 1
     }
-    r = await async_client.post(f"/api/v1/hackathons/{hackathon_id}/rounds/", json=round_data, headers=headers)
+    r = await async_client.post(f"/api/v1/hackathons/{hackathon_id}/rounds", json=round_data, headers=headers)
     assert r.status_code == 200
     new_round = r.json()
     assert new_round["name"] == "Round 1"
@@ -37,7 +37,7 @@ async def test_create_round(async_client: AsyncClient):
     round_id = new_round["id"]
 
     # Get rounds
-    r = await async_client.get(f"/api/v1/hackathons/{hackathon_id}/rounds/", headers=headers)
+    r = await async_client.get(f"/api/v1/hackathons/{hackathon_id}/rounds", headers=headers)
     assert r.status_code == 200
     rounds = r.json()
     assert len(rounds) == 1

@@ -39,7 +39,7 @@ async def test_create_hackathon(async_client: AsyncClient, valid_hackathon_data)
     headers, workspace_id = await get_token_and_workspace(async_client, "owner@example.com")
     
     response = await async_client.post(
-        f"/api/v1/workspaces/{workspace_id}/hackathons/",
+        f"/api/v1/workspaces/{workspace_id}/hackathons",
         json=valid_hackathon_data,
         headers=headers
     )
@@ -55,7 +55,7 @@ async def test_unauthenticated_create(async_client: AsyncClient, valid_hackathon
     _, workspace_id = await get_token_and_workspace(async_client, "anon@example.com")
     
     response = await async_client.post(
-        f"/api/v1/workspaces/{workspace_id}/hackathons/",
+        f"/api/v1/workspaces/{workspace_id}/hackathons",
         json=valid_hackathon_data
     )
     assert response.status_code == 401
@@ -68,7 +68,7 @@ async def test_invalid_date_order(async_client: AsyncClient, valid_hackathon_dat
     invalid_data["end_date"] = (datetime.now(timezone.utc) - timedelta(days=1)).isoformat()
     
     response = await async_client.post(
-        f"/api/v1/workspaces/{workspace_id}/hackathons/",
+        f"/api/v1/workspaces/{workspace_id}/hackathons",
         json=invalid_data,
         headers=headers
     )
@@ -83,7 +83,7 @@ async def test_invalid_url(async_client: AsyncClient, valid_hackathon_data):
     invalid_data["official_url"] = "not-a-url"
     
     response = await async_client.post(
-        f"/api/v1/workspaces/{workspace_id}/hackathons/",
+        f"/api/v1/workspaces/{workspace_id}/hackathons",
         json=invalid_data,
         headers=headers
     )
@@ -94,7 +94,7 @@ async def test_list_and_retrieve(async_client: AsyncClient, valid_hackathon_data
     headers, workspace_id = await get_token_and_workspace(async_client, "list@example.com")
     
     # Create
-    resp1 = await async_client.post(f"/api/v1/workspaces/{workspace_id}/hackathons/", json=valid_hackathon_data, headers=headers)
+    resp1 = await async_client.post(f"/api/v1/workspaces/{workspace_id}/hackathons", json=valid_hackathon_data, headers=headers)
     h_id = resp1.json()["id"]
     
     # Retrieve
@@ -103,7 +103,7 @@ async def test_list_and_retrieve(async_client: AsyncClient, valid_hackathon_data
     assert get_resp.json()["id"] == h_id
     
     # List
-    list_resp = await async_client.get(f"/api/v1/workspaces/{workspace_id}/hackathons/", headers=headers)
+    list_resp = await async_client.get(f"/api/v1/workspaces/{workspace_id}/hackathons", headers=headers)
     assert list_resp.status_code == 200
     data = list_resp.json()
     assert data["total"] == 1
@@ -113,7 +113,7 @@ async def test_list_and_retrieve(async_client: AsyncClient, valid_hackathon_data
 async def test_workspace_isolation(async_client: AsyncClient, valid_hackathon_data):
     # User A
     headers_a, workspace_id_a = await get_token_and_workspace(async_client, "usera@example.com")
-    resp_a = await async_client.post(f"/api/v1/workspaces/{workspace_id_a}/hackathons/", json=valid_hackathon_data, headers=headers_a)
+    resp_a = await async_client.post(f"/api/v1/workspaces/{workspace_id_a}/hackathons", json=valid_hackathon_data, headers=headers_a)
     hackathon_id_a = resp_a.json()["id"]
     
     # User B
@@ -130,7 +130,7 @@ async def test_workspace_isolation(async_client: AsyncClient, valid_hackathon_da
 @pytest.mark.asyncio
 async def test_update_hackathon(async_client: AsyncClient, valid_hackathon_data):
     headers, workspace_id = await get_token_and_workspace(async_client, "update@example.com")
-    resp = await async_client.post(f"/api/v1/workspaces/{workspace_id}/hackathons/", json=valid_hackathon_data, headers=headers)
+    resp = await async_client.post(f"/api/v1/workspaces/{workspace_id}/hackathons", json=valid_hackathon_data, headers=headers)
     h_id = resp.json()["id"]
     
     update_resp = await async_client.put(
@@ -144,7 +144,7 @@ async def test_update_hackathon(async_client: AsyncClient, valid_hackathon_data)
 @pytest.mark.asyncio
 async def test_archive_restore_delete(async_client: AsyncClient, valid_hackathon_data):
     headers, workspace_id = await get_token_and_workspace(async_client, "ard@example.com")
-    resp = await async_client.post(f"/api/v1/workspaces/{workspace_id}/hackathons/", json=valid_hackathon_data, headers=headers)
+    resp = await async_client.post(f"/api/v1/workspaces/{workspace_id}/hackathons", json=valid_hackathon_data, headers=headers)
     h_id = resp.json()["id"]
     
     # Archive
@@ -153,11 +153,11 @@ async def test_archive_restore_delete(async_client: AsyncClient, valid_hackathon
     assert archive_resp.json()["status"] == "archived"
     
     # Excluded from list by default
-    list_resp1 = await async_client.get(f"/api/v1/workspaces/{workspace_id}/hackathons/", headers=headers)
+    list_resp1 = await async_client.get(f"/api/v1/workspaces/{workspace_id}/hackathons", headers=headers)
     assert list_resp1.json()["total"] == 0
     
     # Included if requested
-    list_resp2 = await async_client.get(f"/api/v1/workspaces/{workspace_id}/hackathons/?include_archived=true", headers=headers)
+    list_resp2 = await async_client.get(f"/api/v1/workspaces/{workspace_id}/hackathons?include_archived=true", headers=headers)
     assert list_resp2.json()["total"] == 1
     
     # Restore

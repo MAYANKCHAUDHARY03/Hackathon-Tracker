@@ -100,6 +100,8 @@ app.include_router(portfolio.router, prefix=f"{settings.API_V1_STR}", tags=["por
 app.include_router(automation.router, prefix=f"{settings.API_V1_STR}", tags=["automation"])
 app.include_router(integration.router, prefix=f"{settings.API_V1_STR}", tags=["integration"])
 app.include_router(ai.router, prefix=f"{settings.API_V1_STR}", tags=["ai_intelligence"])
+from app.routers import feedback
+app.include_router(feedback.router, prefix=f"{settings.API_V1_STR}", tags=["feedback"])
 
 
 from app.routers import sso

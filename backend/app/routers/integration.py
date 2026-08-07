@@ -52,10 +52,14 @@ async def create_connection(
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
         
+    from app.security_vault import encrypt_dict
+    
+    encrypted_credentials = {"encrypted_data": encrypt_dict(conn_in.credentials)}
+    
     db_conn = ExternalSubmissionConnection(
         workspace_id=workspace_id,
         provider_name=conn_in.provider_name,
-        credentials=conn_in.credentials,
+        credentials=encrypted_credentials,
         is_active=conn_in.is_active
     )
     
@@ -106,7 +110,13 @@ async def sync_submissions(
         raise HTTPException(status_code=404, detail="Connection not found")
         
     try:
-        provider = ProviderFactory.get_provider(db_conn.provider_name, db_conn.credentials)
+        from app.security_vault import decrypt_dict
+        
+        creds = db_conn.credentials
+        if "encrypted_data" in creds:
+            creds = decrypt_dict(creds["encrypted_data"])
+            
+        provider = ProviderFactory.get_provider(db_conn.provider_name, creds)
         
         # We assume the user has a specific hackathon reference id for that provider
         # that correlates to an internal hackathon.

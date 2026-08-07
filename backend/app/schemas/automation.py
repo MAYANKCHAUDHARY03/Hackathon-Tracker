@@ -13,7 +13,7 @@ class AutomationRuleBase(BaseModel):
     enabled: bool = True
 
 class AutomationRuleCreate(AutomationRuleBase):
-    organization_id: UUID
+    organization_id: Optional[UUID] = None
     workspace_id: Optional[UUID] = None
 
 class AutomationRuleUpdate(BaseModel):
