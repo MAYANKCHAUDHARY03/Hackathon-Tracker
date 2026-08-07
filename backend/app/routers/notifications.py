@@ -26,7 +26,7 @@ router = APIRouter(
     tags=["notifications"]
 )
 
-@router.get("/", response_model=NotificationListResponse)
+@router.get("", response_model=NotificationListResponse)
 async def list_notifications(
     workspace_id: uuid.UUID,
     category: Optional[str] = None,

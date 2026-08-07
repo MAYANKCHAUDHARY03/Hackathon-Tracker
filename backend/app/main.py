@@ -74,7 +74,7 @@ async def health_check(db: AsyncSession = Depends(get_db)):
         "database": db_status
     }
 
-from app.routers import auth, users, workspaces, hackathons, dashboard, invitations, teams, projects, kanban, activity, rounds, submissions, notifications, mentors, judges, evaluations, outcomes, search, analytics, export_import, portfolio
+from app.routers import auth, users, workspaces, hackathons, dashboard, invitations, teams, projects, kanban, activity, rounds, submissions, notifications, mentors, judges, evaluations, outcomes, search, analytics, export_import, portfolio, automation, integration, ai
 
 app.include_router(auth.router, prefix=f"{settings.API_V1_STR}/auth", tags=["auth"])
 app.include_router(users.router, prefix=f"{settings.API_V1_STR}/users", tags=["users"])
@@ -97,6 +97,10 @@ app.include_router(search.router, prefix=f"{settings.API_V1_STR}", tags=["search
 app.include_router(analytics.router, prefix=f"{settings.API_V1_STR}", tags=["analytics"])
 app.include_router(export_import.router, prefix=f"{settings.API_V1_STR}", tags=["export_import"])
 app.include_router(portfolio.router, prefix=f"{settings.API_V1_STR}", tags=["portfolio"])
+app.include_router(automation.router, prefix=f"{settings.API_V1_STR}", tags=["automation"])
+app.include_router(integration.router, prefix=f"{settings.API_V1_STR}", tags=["integration"])
+app.include_router(ai.router, prefix=f"{settings.API_V1_STR}", tags=["ai_intelligence"])
+
 
 from app.routers import sso
 app.include_router(sso.router, prefix=f"{settings.API_V1_STR}/sso", tags=["sso"])

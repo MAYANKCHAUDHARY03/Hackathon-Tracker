@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useSearchParams } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
 import { apiClient } from '../lib/api-client';
 
@@ -9,8 +9,11 @@ export const Register: React.FC = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const setToken = useAuthStore((state) => state.setToken);
   const setUser = useAuthStore((state) => state.setUser);
+  
+  const redirect = searchParams.get('redirect') || '/';
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -27,7 +30,7 @@ export const Register: React.FC = () => {
       const user = await apiClient.get<any>('/users/me');
       setUser(user);
       
-      navigate('/');
+      navigate(redirect);
     } catch (err: any) {
       const detail = err.data?.detail;
       if (typeof detail === 'string') {
@@ -98,7 +101,7 @@ export const Register: React.FC = () => {
             </button>
           </div>
           <div className="text-sm text-center">
-            <Link to="/login" className="font-medium text-indigo-600 hover:text-indigo-500">
+            <Link to={`/login?redirect=${encodeURIComponent(redirect)}`} className="font-medium text-indigo-600 hover:text-indigo-500">
               Already have an account? Sign in
             </Link>
           </div>

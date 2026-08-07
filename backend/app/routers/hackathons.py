@@ -19,7 +19,7 @@ router = APIRouter(
     tags=["hackathons"]
 )
 
-@router.post("/", response_model=HackathonResponse, status_code=status.HTTP_201_CREATED)
+@router.post("", response_model=HackathonResponse, status_code=status.HTTP_201_CREATED)
 async def create_hackathon(
     workspace_id: UUID,
     hackathon_in: HackathonCreate,
@@ -37,7 +37,7 @@ async def create_hackathon(
         hackathon_data=hackathon_in
     )
 
-@router.get("/", response_model=HackathonListResponse)
+@router.get("", response_model=HackathonListResponse)
 async def list_hackathons(
     workspace_id: UUID,
     skip: int = Query(0, ge=0),

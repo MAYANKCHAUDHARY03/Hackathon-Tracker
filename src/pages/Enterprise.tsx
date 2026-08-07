@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { GlassPanel } from '@/components/ui/glass-panel';
 import { Button } from '@/components/ui/button';
 import { Shield, Key, Activity, ShieldCheck, Server, RefreshCw } from 'lucide-react';
-import { enterpriseApi, HealthResponse, MetricsResponse } from '@/api/enterprise';
+import { enterpriseApi, type HealthResponse, type MetricsResponse } from '@/api/enterprise';
 import { useWorkspaceStore } from '@/store/workspaceStore';
 
 export default function Enterprise() {

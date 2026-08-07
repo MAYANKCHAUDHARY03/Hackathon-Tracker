@@ -7,6 +7,9 @@ import { exportImportApi } from '@/api/exportImportApi';
 import { Mail, Send, Trash2, Users, Bell, Download, Upload } from 'lucide-react';
 import { format } from 'date-fns';
 import { NotificationSettings } from '@/components/notifications/NotificationSettings';
+import { IntegrationSettings } from '@/components/settings/IntegrationSettings';
+import { AutomationSettings } from '@/components/settings/AutomationSettings';
+import { LinkIcon, Zap } from 'lucide-react';
 
 interface Invitation {
   id: string;
@@ -252,6 +255,26 @@ export default function Settings() {
             </Button>
           </div>
         </div>
+      </GlassPanel>
+
+      <GlassPanel className="p-6 space-y-6 mt-8">
+        <div className="flex items-center gap-2 mb-4">
+          <div className="p-2 bg-primary/20 rounded-lg">
+            <Zap className="h-5 w-5 text-primary" />
+          </div>
+          <h2 className="text-xl font-semibold tracking-tight">Automation Rules</h2>
+        </div>
+        <AutomationSettings />
+      </GlassPanel>
+
+      <GlassPanel className="p-6 space-y-6 mt-8">
+        <div className="flex items-center gap-2 mb-4">
+          <div className="p-2 bg-primary/20 rounded-lg">
+            <LinkIcon className="h-5 w-5 text-primary" />
+          </div>
+          <h2 className="text-xl font-semibold tracking-tight">External Integrations</h2>
+        </div>
+        <IntegrationSettings />
       </GlassPanel>
     </div>
   );

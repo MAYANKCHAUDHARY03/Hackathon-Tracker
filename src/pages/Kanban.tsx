@@ -3,6 +3,9 @@ import { KanbanBoard } from '@/components/kanban/KanbanBoard';
 import { ActivityFeed } from '@/components/activity/ActivityFeed';
 import { useWorkspaceStore } from '@/store/workspaceStore';
 import { apiClient } from '@/lib/api-client';
+import { Button } from '@/components/ui/button';
+import { Brain } from 'lucide-react';
+import { AIInsightsModal } from '@/components/kanban/AIInsightsModal';
 
 interface Project {
   id: string;
@@ -14,6 +17,7 @@ export default function KanbanPage() {
   const [projects, setProjects] = useState<Project[]>([]);
   const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isAIModalOpen, setIsAIModalOpen] = useState(false);
 
   useEffect(() => {
     async function loadProjects() {
@@ -63,6 +67,17 @@ export default function KanbanPage() {
             ))}
           </select>
         </div>
+        
+        {selectedProjectId && (
+          <Button 
+            variant="outline" 
+            className="mb-4 gap-2 border-primary/20 bg-primary/5 hover:bg-primary/10 text-primary"
+            onClick={() => setIsAIModalOpen(true)}
+          >
+            <Brain className="h-4 w-4" />
+            AI Insights
+          </Button>
+        )}
       </div>
       <div className="flex-1 overflow-hidden flex">
         <div className="flex-1 overflow-hidden">
@@ -70,6 +85,14 @@ export default function KanbanPage() {
         </div>
         {selectedProjectId && <ActivityFeed projectId={selectedProjectId} />}
       </div>
+      
+      {selectedProjectId && (
+        <AIInsightsModal
+          projectId={selectedProjectId}
+          isOpen={isAIModalOpen}
+          onClose={() => setIsAIModalOpen(false)}
+        />
+      )}
     </div>
   );
 }

@@ -15,6 +15,12 @@ from app.models.notification import Notification, NotificationPreference
 from app.models.people import Person, MentorAssignment, JudgeAssignment
 from app.models.evaluation import EvaluationTemplate, EvaluationCriterion, Evaluation, EvaluationScore
 from app.models.outcome import HackathonResult, Reward, Achievement
+from app.models.integration import ExternalSubmissionConnection, ExternalSubmissionMapping
+from app.models.identity_provider import IdentityProvider
+from app.models.external_identity import ExternalIdentity
+from app.models.scim_token import ScimToken
+from app.models.calendar_integration import CalendarIntegration
+from app.models.automation import AutomationRule, AutomationExecution
 
 __all__ = [
     "Base", 
@@ -54,15 +60,13 @@ __all__ = [
     "Reward",
     "Achievement",
     "Organization",
-    "OrganizationMembership"
+    "OrganizationMembership",
+    "IdentityProvider",
+    "ExternalIdentity",
+    "ScimToken",
+    "CalendarIntegration",
+    "AutomationRule",
+    "AutomationExecution",
+    "ExternalSubmissionConnection",
+    "ExternalSubmissionMapping"
 ]
-
-from app.models.identity_provider import IdentityProvider
-from app.models.external_identity import ExternalIdentity
-
-
-from app.models.scim_token import ScimToken
-
-
-from app.models.calendar_integration import CalendarIntegration
-

@@ -9,8 +9,8 @@ from app.services.round_service import get_rounds_for_hackathon, create_round, g
 
 router = APIRouter(prefix="/hackathons/{hackathon_id}/rounds", tags=["Rounds"])
 
-@router.get("/", response_model=List[HackathonRoundResponse])
-async def read_rounds(
+@router.get("", response_model=List[HackathonRoundResponse])
+async def list_rounds(
     hackathon_id: uuid.UUID,
     x_workspace_id: uuid.UUID = Header(...),
     db: AsyncSession = Depends(get_db),
@@ -18,8 +18,8 @@ async def read_rounds(
 ):
     return await get_rounds_for_hackathon(db, x_workspace_id, hackathon_id)
 
-@router.post("/", response_model=HackathonRoundResponse)
-async def add_round(
+@router.post("", response_model=HackathonRoundResponse)
+async def create_round(
     hackathon_id: uuid.UUID,
     round_in: HackathonRoundCreate,
     x_workspace_id: uuid.UUID = Header(...),

@@ -12,7 +12,7 @@ router = APIRouter(
     tags=["judges"]
 )
 
-@router.get("/", response_model=List[JudgeAssignmentResponse])
+@router.get("", response_model=List[JudgeAssignmentResponse])
 async def list_judges(
     workspace_id: uuid.UUID,
     hackathon_id: uuid.UUID,
@@ -21,7 +21,7 @@ async def list_judges(
 ):
     return await people_service.get_judge_assignments(db, workspace_id, hackathon_id)
 
-@router.post("/", response_model=JudgeAssignmentResponse)
+@router.post("", response_model=JudgeAssignmentResponse)
 async def create_judge(
     workspace_id: uuid.UUID,
     hackathon_id: uuid.UUID,
