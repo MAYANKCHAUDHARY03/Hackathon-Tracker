@@ -1,6 +1,6 @@
 import uuid
 from datetime import datetime, timezone
-from sqlalchemy import ForeignKey, String, Text, DateTime, UniqueConstraint
+from sqlalchemy import ForeignKey, String, Text, DateTime, UniqueConstraint, Column, JSON
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.models.base import BaseEntity
 
@@ -13,6 +13,7 @@ class Team(BaseEntity):
     name: Mapped[str] = mapped_column(String, index=True)
     slug: Mapped[str] = mapped_column(String, index=True)
     description: Mapped[str | None] = mapped_column(Text, nullable=True)
+    skills_needed = Column(JSON, nullable=True)
     status: Mapped[str] = mapped_column(String, default="active", index=True)
     
     created_by: Mapped[uuid.UUID] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"), nullable=True)

@@ -8,7 +8,8 @@ import { EvaluationsTab } from '@/components/evaluations/EvaluationsTab';
 import { OutcomesTab } from '@/components/evaluations/OutcomesTab';
 import { FormsTab } from '@/components/forms/FormsTab';
 import { AnalyticsDashboard } from '@/components/analytics/AnalyticsDashboard';
-import { Users, ClipboardList, Trophy, Calendar, BarChart } from 'lucide-react';
+import { TalentMarketplaceTab } from '@/components/teams/TalentMarketplaceTab';
+import { Users, ClipboardList, Trophy, Calendar, BarChart, UserPlus } from 'lucide-react';
 import { useWorkspaceStore } from '@/store/workspaceStore';
 import { roundApi } from '@/api/roundApi';
 import type { HackathonRound, Deadline } from '@/api/roundApi';
@@ -20,7 +21,7 @@ export default function HackathonDetails() {
   
   const [rounds, setRounds] = useState<HackathonRound[]>([]);
   const [deadlines, setDeadlines] = useState<Deadline[]>([]);
-  const [activeTab, setActiveTab] = useState<'overview' | 'personnel' | 'evaluations' | 'outcomes' | 'forms' | 'analytics'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'personnel' | 'evaluations' | 'outcomes' | 'forms' | 'analytics' | 'talent'>('overview');
   
   const hackathon = hackathons.byId[id || ''];
 
@@ -68,6 +69,13 @@ export default function HackathonDetails() {
         >
           <Users className="h-4 w-4" />
           Mentors & Judges
+        </button>
+        <button 
+          onClick={() => setActiveTab('talent')}
+          className={`pb-3 text-sm font-medium transition-colors border-b-2 flex items-center gap-2 ${activeTab === 'talent' ? 'border-primary text-primary' : 'border-transparent text-muted-foreground hover:text-foreground'}`}
+        >
+          <UserPlus className="h-4 w-4" />
+          Talent & Teams
         </button>
         <button 
           onClick={() => setActiveTab('evaluations')}
@@ -143,6 +151,7 @@ export default function HackathonDetails() {
         )}
 
         {activeTab === 'personnel' && id && <MentorsJudgesTab hackathonId={id} />}
+        {activeTab === 'talent' && id && <TalentMarketplaceTab hackathonId={id} />}
         {activeTab === 'evaluations' && id && <EvaluationsTab hackathonId={id} />}
         {activeTab === 'outcomes' && id && <OutcomesTab hackathonId={id} />}
         {activeTab === 'forms' && id && <FormsTab hackathonId={id} />}
