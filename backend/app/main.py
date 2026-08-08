@@ -28,6 +28,19 @@ from app.config import settings
 from app.database import get_db
 from app.exceptions import CustomException, custom_exception_handler
 from app.middleware import SecurityHeadersMiddleware
+from app.core.event_bus import event_bus
+from app.plugins.plugin_manager import plugin_manager
+from contextlib import asynccontextmanager
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Initialize components
+    logger.info("Initializing plugins and event bus...")
+    plugin_manager.discover_plugins("app.plugins.installed")
+    plugin_manager.initialize_plugins(event_bus)
+    yield
+    # Cleanup on shutdown
+    pass
 
 # Configure logging
 logger = logging.getLogger(__name__)
@@ -35,6 +48,7 @@ logger = logging.getLogger(__name__)
 app = FastAPI(
     title=settings.PROJECT_NAME,
     openapi_url=f"{settings.API_V1_STR}/openapi.json",
+    lifespan=lifespan
 )
 
 from app.limiter import limiter
@@ -74,7 +88,7 @@ async def health_check(db: AsyncSession = Depends(get_db)):
         "database": db_status
     }
 
-from app.routers import auth, users, workspaces, hackathons, dashboard, invitations, teams, projects, kanban, activity, rounds, submissions, notifications, mentors, judges, evaluations, outcomes, search, analytics, export_import, portfolio, automation, integration, ai
+from app.routers import auth, users, workspaces, hackathons, dashboard, invitations, teams, projects, kanban, activity, rounds, submissions, notifications, mentors, judges, evaluations, outcomes, search, analytics, export_import, portfolio, automation, integration, ai, hub_integrations, audit, webhook
 
 app.include_router(auth.router, prefix=f"{settings.API_V1_STR}/auth", tags=["auth"])
 app.include_router(users.router, prefix=f"{settings.API_V1_STR}/users", tags=["users"])
@@ -89,6 +103,7 @@ app.include_router(activity.router, prefix=f"{settings.API_V1_STR}", tags=["acti
 app.include_router(rounds.router, prefix=f"{settings.API_V1_STR}", tags=["rounds"])
 app.include_router(submissions.router, prefix=f"{settings.API_V1_STR}", tags=["submissions"])
 app.include_router(notifications.router, prefix=f"{settings.API_V1_STR}", tags=["notifications"])
+app.include_router(hub_integrations.router, prefix=f"{settings.API_V1_STR}", tags=["hub_integrations"])
 app.include_router(mentors.router, prefix=f"{settings.API_V1_STR}", tags=["mentors"])
 app.include_router(judges.router, prefix=f"{settings.API_V1_STR}", tags=["judges"])
 app.include_router(evaluations.router, prefix=f"{settings.API_V1_STR}", tags=["evaluations"])
@@ -100,8 +115,11 @@ app.include_router(portfolio.router, prefix=f"{settings.API_V1_STR}", tags=["por
 app.include_router(automation.router, prefix=f"{settings.API_V1_STR}", tags=["automation"])
 app.include_router(integration.router, prefix=f"{settings.API_V1_STR}", tags=["integration"])
 app.include_router(ai.router, prefix=f"{settings.API_V1_STR}", tags=["ai_intelligence"])
-from app.routers import feedback
+app.include_router(audit.router, prefix=f"{settings.API_V1_STR}", tags=["audit"])
+app.include_router(webhook.router, prefix=f"{settings.API_V1_STR}", tags=["webhook"])
+from app.routers import feedback, application
 app.include_router(feedback.router, prefix=f"{settings.API_V1_STR}", tags=["feedback"])
+app.include_router(application.router, prefix=f"{settings.API_V1_STR}", tags=["application"])
 
 
 from app.routers import sso

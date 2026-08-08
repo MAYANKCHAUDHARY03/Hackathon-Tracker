@@ -8,6 +8,9 @@ from app.models.team import Team, TeamMember
 from app.models.project import Project, Technology, ProjectTechnology
 
 from app.models.kanban import KanbanBoard, KanbanColumn, Task, TaskAssignee, TaskLabel, TaskLabelAssignment
+from app.models.integration import WorkspaceIntegration
+from app.models.audit import AuditLog
+from app.models.webhook import WebhookSubscription, WebhookDelivery
 from app.models.activity import ActivityEvent
 from app.models.round import HackathonRound, Deadline, RoundProgress
 from app.models.submission import SubmissionRequirement, RoundSubmission, SubmissionItem
@@ -21,6 +24,8 @@ from app.models.external_identity import ExternalIdentity
 from app.models.scim_token import ScimToken
 from app.models.calendar_integration import CalendarIntegration
 from app.models.automation import AutomationRule, AutomationExecution
+from app.models.feedback import Feedback
+from app.models.application import ApplicationForm, ApplicationSubmission
 
 __all__ = [
     "Base", 
@@ -68,6 +73,8 @@ __all__ = [
     "AutomationRule",
     "AutomationExecution",
     "ExternalSubmissionConnection",
-    "ExternalSubmissionMapping"
+    "ExternalSubmissionMapping",
+    "Feedback",
+    "ApplicationForm",
+    "ApplicationSubmission"
 ]
-from app.models.feedback import Feedback

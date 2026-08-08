@@ -18,7 +18,7 @@ import { Button } from '@/components/ui/button'
 
 const navItems = [
   { path: '/', label: 'Dashboard', icon: LayoutDashboard },
-  { path: '/hackathons', label: 'Hackathons', icon: Trophy },
+  { path: '/hackathons', label: 'Programs', icon: Trophy },
   { path: '/calendar', label: 'Calendar', icon: CalendarDays },
   { path: '/kanban', label: 'Kanban', icon: KanbanSquare },
   { path: '/analytics', label: 'Analytics', icon: LineChart },

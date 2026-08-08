@@ -36,6 +36,8 @@ export interface Hackathon extends BaseEntity, SoftDeletable {
   status_id: ID; // FK to Status
   location?: string;
   is_online: boolean;
+  program_type?: string;
+  is_template?: boolean;
 }
 
 export interface Team extends BaseEntity {

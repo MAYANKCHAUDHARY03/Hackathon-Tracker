@@ -103,3 +103,9 @@ class JudgeAssignmentResponse(JudgeAssignmentBase):
     judge: PersonResponse | None = None
 
     model_config = ConfigDict(from_attributes=True)
+
+class CsvImportResult(BaseModel):
+    total_processed: int
+    successful: int
+    failed: int
+    errors: list[str]

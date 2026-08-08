@@ -17,6 +17,7 @@ const Notifications = lazy(() => import('@/pages/Notifications'))
 const Analytics = lazy(() => import('@/pages/Workspace/Analytics'))
 const Portfolio = lazy(() => import('@/pages/Portfolio'))
 const Enterprise = lazy(() => import('@/pages/Enterprise'))
+const ApplyPage = lazy(() => import('@/pages/ApplyPage'))
 
 // Loading fallback
 const PageLoader = () => (
@@ -33,6 +34,14 @@ const router = createBrowserRouter([
   {
     path: '/register',
     element: <Register />,
+  },
+  {
+    path: '/apply/:formId',
+    element: (
+      <Suspense fallback={<PageLoader />}>
+        <ApplyPage />
+      </Suspense>
+    ),
   },
   {
     path: '/',

@@ -8,12 +8,14 @@ import { apiClient } from '@/lib/api-client';
 import type { Workspace } from '@/types';
 import { Calendar, Clock, CheckCircle2, PlayCircle, Plus, AlertCircle, RefreshCw, ChevronRight } from 'lucide-react';
 import { format, isPast, isToday } from 'date-fns';
+import { ProgramCreationWizard } from '@/components/hackathons/ProgramCreationWizard';
 
 export default function Dashboard() {
   const { activeWorkspaceId, setActiveWorkspace } = useWorkspaceStore();
   const { data, isLoading, error, refetch } = useDashboard();
   const [isInitializing, setIsInitializing] = useState(!activeWorkspaceId);
   const [initError, setInitError] = useState<Error | null>(null);
+  const [isWizardOpen, setIsWizardOpen] = useState(false);
 
   useEffect(() => {
     async function initWorkspace() {
@@ -74,13 +76,14 @@ export default function Dashboard() {
         <div>
           <h2 className="text-2xl font-bold tracking-tight mb-2">Welcome to HackTracker</h2>
           <p className="text-muted-foreground">
-            You don't have any hackathons yet. Create your first hackathon to get started tracking projects, deadlines, and teams.
+            You don't have any programs yet. Create your first program to get started tracking projects, deadlines, and teams.
           </p>
         </div>
-        <Button size="lg" className="gap-2">
+        <Button size="lg" className="gap-2" onClick={() => setIsWizardOpen(true)}>
           <Plus className="h-5 w-5" />
-          Create Hackathon
+          Create Program
         </Button>
+        <ProgramCreationWizard open={isWizardOpen} onOpenChange={setIsWizardOpen} onSuccess={refetch} />
       </div>
     );
   }
@@ -101,7 +104,7 @@ export default function Dashboard() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
-          <p className="text-muted-foreground mt-1">Overview of your hackathons and upcoming deadlines.</p>
+          <p className="text-muted-foreground mt-1">Overview of your programs and upcoming deadlines.</p>
         </div>
         <Button onClick={refetch} variant="ghost" size="icon" title="Refresh">
           <RefreshCw className="h-5 w-5 text-muted-foreground" />
@@ -232,6 +235,8 @@ export default function Dashboard() {
           </div>
         </GlassPanel>
       </div>
+
+      <ProgramCreationWizard open={isWizardOpen} onOpenChange={setIsWizardOpen} onSuccess={refetch} />
     </div>
   );
 }

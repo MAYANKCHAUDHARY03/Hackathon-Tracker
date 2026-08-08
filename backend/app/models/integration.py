@@ -41,3 +41,19 @@ class ExternalSubmissionMapping(BaseEntity):
     
     submission = relationship("RoundSubmission", backref="external_mappings")
     connection = relationship("ExternalSubmissionConnection")
+
+class WorkspaceIntegration(BaseEntity):
+    """
+    Represents an active integration from the Enterprise Integration Hub.
+    """
+    __tablename__ = "workspace_integrations"
+
+    workspace_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("workspaces.id", ondelete="CASCADE"), nullable=False)
+    connector_id: Mapped[str] = mapped_column(String(50), nullable=False) # e.g. slack, gdrive, jira
+    name: Mapped[str] = mapped_column(String(100), nullable=False)
+    is_active: Mapped[bool] = mapped_column(Boolean, default=True)
+    config: Mapped[Dict[str, Any]] = mapped_column(JSON, default=dict)
+    last_sync_status: Mapped[Optional[str]] = mapped_column(String(50), nullable=True)
+    last_sync_error: Mapped[Optional[str]] = mapped_column(String, nullable=True)
+
+    workspace = relationship("Workspace", backref="hub_integrations")

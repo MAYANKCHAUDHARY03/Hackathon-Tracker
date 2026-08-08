@@ -1,6 +1,6 @@
 import uuid
 from datetime import datetime
-from sqlalchemy import ForeignKey, Text, DateTime, Integer, String
+from sqlalchemy import ForeignKey, Text, DateTime, Integer, String, Boolean
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.models.base import BaseEntity
 from app.models.workspace import Workspace
@@ -21,6 +21,10 @@ class Hackathon(BaseEntity):
     timezone: Mapped[str] = mapped_column(String, nullable=False, default="UTC")
     max_team_size: Mapped[int] = mapped_column(Integer, default=1)
     status: Mapped[str] = mapped_column(String, default="draft", index=True)
+    program_type: Mapped[str] = mapped_column(String, default="hackathon", index=True)
+    teams = relationship("Team", back_populates="hackathon", cascade="all, delete-orphan")
+    application_forms = relationship("ApplicationForm", back_populates="hackathon", cascade="all, delete-orphan")
+    is_template: Mapped[bool] = mapped_column(Boolean, default=False, index=True)
     created_by: Mapped[uuid.UUID] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
     archived_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     

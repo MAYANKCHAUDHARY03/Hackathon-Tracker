@@ -15,6 +15,15 @@ class HackathonBase(BaseModel):
     end_date: datetime
     max_team_size: int = Field(default=1, gt=0)
     status: str = Field(default="draft", description="Must be draft, upcoming, active, completed, or archived")
+    program_type: str = Field(default="hackathon", description="Must be hackathon, challenge, campaign, or incubation")
+    is_template: bool = Field(default=False)
+
+    @validator("program_type")
+    def validate_program_type(cls, v):
+        allowed = {"hackathon", "challenge", "campaign", "incubation"}
+        if v not in allowed:
+            raise ValueError(f"Program type must be one of {allowed}")
+        return v
 
     @validator("mode")
     def validate_mode(cls, v):
@@ -59,6 +68,16 @@ class HackathonUpdate(BaseModel):
     end_date: Optional[datetime] = None
     max_team_size: Optional[int] = Field(None, gt=0)
     status: Optional[str] = None
+    program_type: Optional[str] = None
+    is_template: Optional[bool] = None
+
+    @validator("program_type")
+    def validate_program_type(cls, v):
+        if v is None: return v
+        allowed = {"hackathon", "challenge", "campaign", "incubation"}
+        if v not in allowed:
+            raise ValueError(f"Program type must be one of {allowed}")
+        return v
 
     @validator("mode")
     def validate_mode(cls, v):

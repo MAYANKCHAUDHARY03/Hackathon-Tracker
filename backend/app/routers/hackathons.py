@@ -46,6 +46,7 @@ async def list_hackathons(
     mode: Optional[str] = None,
     status_filter: Optional[str] = Query(None, alias="status"),
     include_archived: bool = Query(False),
+    is_template: Optional[bool] = Query(None),
     db: AsyncSession = Depends(get_db),
     membership: WorkspaceMembership = Depends(verify_workspace_access)
 ):
@@ -60,7 +61,28 @@ async def list_hackathons(
         search=search,
         mode=mode,
         status_filter=status_filter,
-        include_archived=include_archived
+        include_archived=include_archived,
+        is_template=is_template
+    )
+    return HackathonListResponse(items=items, total=total)
+
+@router.get("/templates", response_model=HackathonListResponse)
+async def list_templates(
+    workspace_id: UUID,
+    skip: int = Query(0, ge=0),
+    limit: int = Query(20, ge=1, le=100),
+    db: AsyncSession = Depends(get_db),
+    membership: WorkspaceMembership = Depends(verify_workspace_access)
+):
+    """
+    List all available program templates.
+    """
+    items, total = await HackathonService.get_hackathons(
+        db=db,
+        workspace_id=workspace_id,
+        skip=skip,
+        limit=limit,
+        is_template=True
     )
     return HackathonListResponse(items=items, total=total)
 
@@ -75,6 +97,26 @@ async def get_hackathon(
     Get a specific hackathon by ID.
     """
     return await HackathonService.get_hackathon_by_id(db, workspace_id, hackathon_id)
+
+@router.post("/from-template/{template_id}", response_model=HackathonResponse, status_code=status.HTTP_201_CREATED)
+async def create_from_template(
+    workspace_id: UUID,
+    template_id: UUID,
+    hackathon_in: HackathonCreate,
+    db: AsyncSession = Depends(get_db),
+    membership: WorkspaceMembership = Depends(require_workspace_admin),
+    current_user: User = Depends(get_current_user)
+):
+    """
+    Create a new program from a template. Requires owner or admin role.
+    """
+    return await HackathonService.create_from_template(
+        db=db,
+        workspace_id=workspace_id,
+        user_id=current_user.id,
+        template_id=template_id,
+        hackathon_data=hackathon_in
+    )
 
 @router.put("/{hackathon_id}", response_model=HackathonResponse)
 async def update_hackathon(

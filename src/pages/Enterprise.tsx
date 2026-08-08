@@ -4,6 +4,9 @@ import { Button } from '@/components/ui/button';
 import { Shield, Key, Activity, ShieldCheck, Server, RefreshCw } from 'lucide-react';
 import { enterpriseApi, type HealthResponse, type MetricsResponse } from '@/api/enterprise';
 import { useWorkspaceStore } from '@/store/workspaceStore';
+import { IntegrationHub } from '@/components/integrations/IntegrationHub';
+import { AuditLogs } from '@/components/enterprise/AuditLogs';
+import { WebhookSettings } from '@/components/enterprise/WebhookSettings';
 
 export default function Enterprise() {
   const { activeWorkspaceId } = useWorkspaceStore();
@@ -195,6 +198,20 @@ export default function Enterprise() {
           </div>
         </GlassPanel>
 
+        {/* Integration Hub */}
+        <div className="md:col-span-2">
+          <IntegrationHub />
+        </div>
+
+        {/* Audit Logs */}
+        <div className="md:col-span-2">
+          <AuditLogs />
+        </div>
+
+        {/* Webhooks */}
+        <div className="md:col-span-2">
+          <WebhookSettings />
+        </div>
       </div>
     </div>
   );

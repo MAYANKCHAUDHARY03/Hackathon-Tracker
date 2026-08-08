@@ -29,6 +29,13 @@ export interface JudgeAssignment {
   status: string;
 }
 
+export interface CsvImportResult {
+  total_processed: int;
+  successful: int;
+  failed: int;
+  errors: string[];
+}
+
 export const peopleApi = {
   getPeople: (workspaceId: string) =>
     api.get<Person[]>(`/workspaces/${workspaceId}/people`),
@@ -47,4 +54,10 @@ export const peopleApi = {
 
   assignJudge: (workspaceId: string, hackathonId: string, data: Partial<JudgeAssignment>) =>
     api.post<JudgeAssignment>(`/workspaces/${workspaceId}/hackathons/${hackathonId}/judges`, data),
+
+  importPeopleCsv: (workspaceId: string, hackathonId: string, file: File) => {
+    const formData = new FormData();
+    formData.append("file", file);
+    return api.post<CsvImportResult>(`/workspaces/${workspaceId}/hackathons/${hackathonId}/people/import`, formData);
+  }
 };

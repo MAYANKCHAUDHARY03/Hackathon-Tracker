@@ -108,3 +108,99 @@ async def get_judge_assignment(db: AsyncSession, workspace_id: uuid.UUID, assign
     if not assignment:
         raise HTTPException(status_code=404, detail="Judge assignment not found")
     return assignment
+
+async def get_person_by_email(db: AsyncSession, workspace_id: uuid.UUID, email: str) -> Person | None:
+    query = select(Person).where(
+        Person.workspace_id == workspace_id,
+        Person.email == email,
+        Person.archived_at.is_(None)
+    )
+    result = await db.execute(query)
+    return result.scalars().first()
+
+async def import_people_csv(
+    db: AsyncSession, 
+    workspace_id: uuid.UUID, 
+    hackathon_id: uuid.UUID, 
+    user_id: uuid.UUID, 
+    rows: list[dict]
+) -> dict:
+    total = len(rows)
+    successful = 0
+    errors = []
+
+    for idx, row in enumerate(rows, start=1):
+        try:
+            email = row.get("email", "").strip()
+            full_name = row.get("full_name", "").strip()
+            role = row.get("role", "").strip().lower()
+
+            if not email or not full_name:
+                errors.append(f"Row {idx}: missing email or full_name")
+                continue
+
+            if role not in ["mentor", "judge"]:
+                errors.append(f"Row {idx}: role must be 'mentor' or 'judge', got '{role}'")
+                continue
+
+            # Find existing person
+            person = await get_person_by_email(db, workspace_id, email)
+            if not person:
+                person = Person(
+                    workspace_id=workspace_id,
+                    created_by=user_id,
+                    updated_by=user_id,
+                    full_name=full_name,
+                    email=email,
+                    organisation=row.get("organisation", "").strip(),
+                    designation=row.get("designation", "").strip(),
+                    expertise_areas=[x.strip() for x in row.get("expertise_areas", "").split(",") if x.strip()] if row.get("expertise_areas") else []
+                )
+                db.add(person)
+                await db.flush()  # to get person.id
+
+            if role == "mentor":
+                # Check if assignment already exists
+                q_mentor = select(MentorAssignment).where(
+                    MentorAssignment.workspace_id == workspace_id,
+                    MentorAssignment.hackathon_id == hackathon_id,
+                    MentorAssignment.mentor_id == person.id
+                )
+                existing = await db.execute(q_mentor)
+                if not existing.scalars().first():
+                    assignment = MentorAssignment(
+                        workspace_id=workspace_id,
+                        hackathon_id=hackathon_id,
+                        mentor_id=person.id,
+                        created_by=user_id,
+                        updated_by=user_id
+                    )
+                    db.add(assignment)
+            elif role == "judge":
+                q_judge = select(JudgeAssignment).where(
+                    JudgeAssignment.workspace_id == workspace_id,
+                    JudgeAssignment.hackathon_id == hackathon_id,
+                    JudgeAssignment.judge_id == person.id
+                )
+                existing = await db.execute(q_judge)
+                if not existing.scalars().first():
+                    assignment = JudgeAssignment(
+                        workspace_id=workspace_id,
+                        hackathon_id=hackathon_id,
+                        judge_id=person.id,
+                        created_by=user_id,
+                        updated_by=user_id
+                    )
+                    db.add(assignment)
+
+            successful += 1
+        except Exception as e:
+            errors.append(f"Row {idx}: {str(e)}")
+
+    await db.commit()
+    return {
+        "total_processed": total,
+        "successful": successful,
+        "failed": len(errors),
+        "errors": errors
+    }

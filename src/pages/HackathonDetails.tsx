@@ -6,7 +6,9 @@ import { Button } from '@/components/ui/button';
 import { MentorsJudgesTab } from '@/components/evaluations/MentorsJudgesTab';
 import { EvaluationsTab } from '@/components/evaluations/EvaluationsTab';
 import { OutcomesTab } from '@/components/evaluations/OutcomesTab';
-import { Users, ClipboardList, Trophy, Calendar } from 'lucide-react';
+import { FormsTab } from '@/components/forms/FormsTab';
+import { AnalyticsDashboard } from '@/components/analytics/AnalyticsDashboard';
+import { Users, ClipboardList, Trophy, Calendar, BarChart } from 'lucide-react';
 import { useWorkspaceStore } from '@/store/workspaceStore';
 import { roundApi } from '@/api/roundApi';
 import type { HackathonRound, Deadline } from '@/api/roundApi';
@@ -18,7 +20,7 @@ export default function HackathonDetails() {
   
   const [rounds, setRounds] = useState<HackathonRound[]>([]);
   const [deadlines, setDeadlines] = useState<Deadline[]>([]);
-  const [activeTab, setActiveTab] = useState<'overview' | 'personnel' | 'evaluations' | 'outcomes'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'personnel' | 'evaluations' | 'outcomes' | 'forms' | 'analytics'>('overview');
   
   const hackathon = hackathons.byId[id || ''];
 
@@ -36,8 +38,20 @@ export default function HackathonDetails() {
   return (
     <div className="p-8 space-y-6">
       <div>
-        <h1 className="text-3xl font-bold">{hackathon.name}</h1>
-        <p className="text-muted-foreground">{hackathon.description}</p>
+        <div className="flex items-center gap-3">
+          <h1 className="text-3xl font-bold">{hackathon.name}</h1>
+          {hackathon.program_type && (
+            <span className="text-xs font-semibold px-2 py-1 rounded bg-secondary text-secondary-foreground uppercase tracking-wider">
+              {hackathon.program_type}
+            </span>
+          )}
+          {hackathon.is_template && (
+            <span className="text-xs font-semibold px-2 py-1 rounded bg-primary/20 text-primary uppercase tracking-wider">
+              Template
+            </span>
+          )}
+        </div>
+        <p className="text-muted-foreground mt-2">{hackathon.description}</p>
       </div>
 
       <div className="flex border-b border-border/50 gap-6">
@@ -68,6 +82,20 @@ export default function HackathonDetails() {
         >
           <Trophy className="h-4 w-4" />
           Results & Rewards
+        </button>
+        <button 
+          onClick={() => setActiveTab('forms')}
+          className={`pb-3 text-sm font-medium transition-colors border-b-2 flex items-center gap-2 ${activeTab === 'forms' ? 'border-primary text-primary' : 'border-transparent text-muted-foreground hover:text-foreground'}`}
+        >
+          <ClipboardList className="h-4 w-4" />
+          Application Forms
+        </button>
+        <button 
+          onClick={() => setActiveTab('analytics')}
+          className={`pb-3 text-sm font-medium transition-colors border-b-2 flex items-center gap-2 ${activeTab === 'analytics' ? 'border-primary text-primary' : 'border-transparent text-muted-foreground hover:text-foreground'}`}
+        >
+          <BarChart className="h-4 w-4" />
+          Analytics
         </button>
       </div>
 
@@ -117,6 +145,8 @@ export default function HackathonDetails() {
         {activeTab === 'personnel' && id && <MentorsJudgesTab hackathonId={id} />}
         {activeTab === 'evaluations' && id && <EvaluationsTab hackathonId={id} />}
         {activeTab === 'outcomes' && id && <OutcomesTab hackathonId={id} />}
+        {activeTab === 'forms' && id && <FormsTab hackathonId={id} />}
+        {activeTab === 'analytics' && <AnalyticsDashboard />}
       </div>
     </div>
   );

@@ -34,9 +34,13 @@ class HackathonService:
         search: str | None = None,
         mode: str | None = None,
         status_filter: str | None = None,
-        include_archived: bool = False
+        include_archived: bool = False,
+        is_template: bool | None = None
     ) -> tuple[list[Hackathon], int]:
         conditions = [Hackathon.workspace_id == workspace_id]
+        
+        if is_template is not None:
+            conditions.append(Hackathon.is_template == is_template)
         
         if not include_archived:
             conditions.append(Hackathon.archived_at.is_(None))
@@ -163,3 +167,32 @@ class HackathonService:
         hackathon = await HackathonService.get_hackathon_by_id(db, workspace_id, hackathon_id)
         await db.delete(hackathon)
         await db.commit()
+
+    @staticmethod
+    async def create_from_template(
+        db: AsyncSession,
+        workspace_id: UUID,
+        user_id: UUID,
+        template_id: UUID,
+        hackathon_data: HackathonCreate
+    ) -> Hackathon:
+        template = await HackathonService.get_hackathon_by_id(db, workspace_id, template_id)
+        if not template.is_template:
+            raise HTTPException(status_code=400, detail="Requested program is not a template")
+            
+        hackathon = Hackathon(
+            **hackathon_data.model_dump(exclude_unset=True),
+            workspace_id=workspace_id,
+            created_by=user_id,
+            status=hackathon_data.status or "draft",
+            program_type=template.program_type,
+            is_template=False
+        )
+        db.add(hackathon)
+        
+        # Note: in a real production system we would also clone rounds and deadlines here
+        # based on the template's rounds and deadlines.
+        
+        await db.commit()
+        await db.refresh(hackathon)
+        return hackathon

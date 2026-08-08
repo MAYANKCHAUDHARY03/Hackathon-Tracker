@@ -9,7 +9,8 @@ from app.models.team import Team
 from app.models.user import WorkspaceMembership
 from app.models.kanban import Task, KanbanBoard, ColumnSemanticType, KanbanColumn
 from app.models.activity import ActivityEvent
-from app.schemas.analytics import WorkspaceAnalyticsSummary
+from app.models.evaluation import EvaluationScore, Evaluation
+from app.schemas.analytics import WorkspaceAnalyticsSummary, AnalyticsOverview, AnalyticsDemographics, AnalyticsEvaluations, ScoreDistribution
 
 class AnalyticsService:
     def __init__(self, session: AsyncSession):
@@ -77,4 +78,55 @@ class AnalyticsService:
             tasks_completed=tasks_completed,
             tasks_pending=tasks_pending,
             recent_activity_count=recent_activity_count or 0
+        )
+
+    async def get_overview(self, workspace_id: UUID) -> AnalyticsOverview:
+        total_users = await self.session.scalar(
+            select(func.count()).select_from(WorkspaceMembership).where(WorkspaceMembership.workspace_id == workspace_id)
+        )
+        total_teams = await self.session.scalar(
+            select(func.count()).select_from(Team).where(Team.workspace_id == workspace_id)
+        )
+        total_projects = await self.session.scalar(
+            select(func.count()).select_from(Project).where(Project.workspace_id == workspace_id)
+        )
+        # Mock submissions count based on projects for now
+        return AnalyticsOverview(
+            total_users=total_users or 0,
+            total_teams=total_teams or 0,
+            total_projects=total_projects or 0,
+            total_submissions=total_projects or 0
+        )
+
+    async def get_demographics(self, workspace_id: UUID) -> AnalyticsDemographics:
+        # Mock demographics since user profiles are not fully fleshed out with skills in DB yet
+        return AnalyticsDemographics(
+            skills_distribution={"React": 45, "Python": 32, "Node.js": 28, "UI/UX": 15},
+            roles_distribution={"Frontend": 40, "Backend": 30, "Fullstack": 20, "Designer": 10}
+        )
+
+    async def get_evaluations(self, workspace_id: UUID) -> AnalyticsEvaluations:
+        # Get all evaluation scores for the workspace
+        stmt = (
+            select(EvaluationScore.score)
+            .join(Evaluation, Evaluation.id == EvaluationScore.evaluation_id)
+            .where(Evaluation.workspace_id == workspace_id)
+        )
+        scores = (await self.session.scalars(stmt)).all()
+        
+        total_evals = len(scores)
+        avg_score = sum(scores) / total_evals if total_evals > 0 else 0
+        
+        dist = ScoreDistribution(range_0_20=0, range_21_40=0, range_41_60=0, range_61_80=0, range_81_100=0)
+        for s in scores:
+            if s <= 20: dist.range_0_20 += 1
+            elif s <= 40: dist.range_21_40 += 1
+            elif s <= 60: dist.range_41_60 += 1
+            elif s <= 80: dist.range_61_80 += 1
+            else: dist.range_81_100 += 1
+            
+        return AnalyticsEvaluations(
+            average_score=round(avg_score, 1),
+            total_evaluations=total_evals,
+            score_distribution=dist
         )
