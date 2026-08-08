@@ -1,0 +1,530 @@
+﻿<USER_REQUEST>
+continue
+</USER_REQUEST>
+<ADDITIONAL_METADATA>
+The current local time is: 2026-08-07T20:59:08+05:30.
+</ADDITIONAL_METADATA>
+<USER_SETTINGS_CHANGE>
+The user changed setting `Model Selection` from None to Gemini 3.1 Pro (High). No need to comment on this change if the user doesn't ask about it. If reporting what model you are, please use a human readable name instead of the exact string.
+</USER_SETTINGS_CHANGE>
+<USER_REQUEST>
+Hackathon Tracker is now in production (Phase 11 launch gates passed). This
+phase is about running it, not building it further. Do not add speculative
+features ΓÇö only act on real signals from Stage A below.
+
+STAGE A ΓÇö Observability in Practice
+- Confirm monitoring/alerting from Phase 11 is actively capturing real
+  production data (errors, performance, usage patterns per page/widget).
+- Set up a lightweight weekly health-check summary (error rate, performance
+  trend, most/least used features).
+
+STAGE B ΓÇö Feedback Intake
+- Stand up a simple mechanism to collect user feedback and bug reports
+  (in-app widget, issue template, or feedback form ΓÇö whichever fits the
+  existing stack).
+- Triage incoming items into: Bug (breaks existing behavior), Friction
+  (works but confusing/slow), Request (new capability).
+
+STAGE C ΓÇö Defect Response
+- Fix confirmed production bugs, prioritized by severity and user impact.
+- For each fix, note whether it reveals a gap in Phase 11's testing
+  (regression/load/accessibility) and patch that test coverage too.
+
+STAGE D ΓÇö Backlog Reprioritization
+- Using real usage data + feedback triage, produce a ranked backlog of
+  "Friction" and "Request" items for the next actual feature phase.
+- Do NOT implement these yet ΓÇö this stage is a report/recommendation,
+  reviewed with me before anything gets built.
+
+Report after each stage before continuing. Start with Stage A.
+</USER_REQUEST>
+<ADDITIONAL_METADATA>
+The current local time is: 2026-08-07T21:04:42+05:30.
+
+The user's current state is as follows:
+Active Document: c:\Hackathon tracker\hackathon-tracker\src\api\enterprise.ts (LANGUAGE_TYPESCRIPT)
+Cursor is on line: 1
+Other open documents:
+- c:\Hackathon tracker\hackathon-tracker\backend\app\config.py (LANGUAGE_PYTHON)
+- c:\Hackathon tracker\hackathon-tracker\docs\runbook.md (LANGUAGE_MARKDOWN)
+- c:\Hackathon tracker\hackathon-tracker\backend\app\security_vault.py (LANGUAGE_PYTHON)
+- c:\Hackathon tracker\hackathon-tracker\src\pages\Register.tsx (LANGUAGE_TSX)
+- c:\Hackathon tracker\hackathon-tracker\backend\app\services\ai\providers.py (LANGUAGE_PYTHON)
+</ADDITIONAL_METADATA>
+<USER_REQUEST>
+continue
+</USER_REQUEST>
+<ADDITIONAL_METADATA>
+The current local time is: 2026-08-07T21:08:42+05:30.
+
+The user's current state is as follows:
+Active Document: c:\Hackathon tracker\hackathon-tracker\src\api\enterprise.ts (LANGUAGE_TYPESCRIPT)
+Cursor is on line: 1
+Other open documents:
+- c:\Hackathon tracker\hackathon-tracker\backend\alembic\versions\e661fa01abdb_add_automation_models.py (LANGUAGE_PYTHON)
+- c:\Hackathon tracker\hackathon-tracker\docs\phase-10\01-phase-10-implementation-plan.md (LANGUAGE_MARKDOWN)
+- c:\Hackathon tracker\hackathon-tracker\backend\app\schemas\ai.py (LANGUAGE_PYTHON)
+- c:\Hackathon tracker\hackathon-tracker\backend\app\routers\hackathons.py (LANGUAGE_PYTHON)
+- c:\Hackathon tracker\hackathon-tracker\backend\app\routers\rounds.py (LANGUAGE_PYTHON)
+</ADDITIONAL_METADATA>
+Comments on artifact URI: file:///c%3A/Users/mayan/.gemini/antigravity-ide/brain/0252a761-ea97-432f-8717-a8953ab3ae0f/implementation_plan.md
+
+The user has approved this document.
+
+
+<USER_REQUEST>
+
+</USER_REQUEST>
+<ADDITIONAL_METADATA>
+The current local time is: 2026-08-07T21:09:33+05:30.
+
+The user's current state is as follows:
+Active Document: c:\Hackathon tracker\hackathon-tracker\src\api\enterprise.ts (LANGUAGE_TYPESCRIPT)
+Cursor is on line: 1
+Other open documents:
+- c:\Hackathon tracker\hackathon-tracker\src\pages\Register.tsx (LANGUAGE_TSX)
+- c:\Hackathon tracker\hackathon-tracker\backend\app\services\ai\providers.py (LANGUAGE_PYTHON)
+- c:\Hackathon tracker\hackathon-tracker\backend\alembic\versions\ee86acbe1e02_add_integration_models.py (LANGUAGE_PYTHON)
+- c:\Hackathon tracker\hackathon-tracker\backend\app\services\automation_service.py (LANGUAGE_PYTHON)
+- c:\Hackathon tracker\hackathon-tracker\backend\alembic\versions\e661fa01abdb_add_automation_models.py (LANGUAGE_PYTHON)
+</ADDITIONAL_METADATA>
+<USER_REQUEST>
+continue
+</USER_REQUEST>
+<ADDITIONAL_METADATA>
+The current local time is: 2026-08-07T21:14:52+05:30.
+
+The user's current state is as follows:
+Active Document: c:\Hackathon tracker\hackathon-tracker\src\api\enterprise.ts (LANGUAGE_TYPESCRIPT)
+Cursor is on line: 1
+Other open documents:
+- c:\Hackathon tracker\hackathon-tracker\backend\app\routers\judges.py (LANGUAGE_PYTHON)
+- c:\Hackathon tracker\hackathon-tracker\src\pages\Settings.tsx (LANGUAGE_TSX)
+- c:\Hackathon tracker\hackathon-tracker\backend\app\schemas\automation.py (LANGUAGE_PYTHON)
+- c:\Hackathon tracker\hackathon-tracker\backend\app\models\__init__.py (LANGUAGE_PYTHON)
+- c:\Hackathon tracker\hackathon-tracker\src\components\settings\AutomationSettings.tsx (LANGUAGE_TSX)
+</ADDITIONAL_METADATA>
+<USER_REQUEST>
+continue
+</USER_REQUEST>
+<ADDITIONAL_METADATA>
+The current local time is: 2026-08-07T21:21:09+05:30.
+
+The user's current state is as follows:
+Active Document: c:\Hackathon tracker\hackathon-tracker\src\api\enterprise.ts (LANGUAGE_TYPESCRIPT)
+Cursor is on line: 1
+Other open documents:
+- c:\Hackathon tracker\hackathon-tracker\src\pages\Login.tsx (LANGUAGE_TSX)
+- c:\Hackathon tracker\hackathon-tracker\src\components\auth\ProtectedRoute.tsx (LANGUAGE_TSX)
+- c:\Hackathon tracker\hackathon-tracker\backend\app\routers\ai.py (LANGUAGE_PYTHON)
+- c:\Hackathon tracker\hackathon-tracker\docs\phase-10\13-security-ai-review.md (LANGUAGE_MARKDOWN)
+- c:\Hackathon tracker\hackathon-tracker\docs\phase-10\00-phase-9-regression-report.md (LANGUAGE_MARKDOWN)
+</ADDITIONAL_METADATA>
+Comments on artifact URI: file:///c%3A/Users/mayan/.gemini/antigravity-ide/brain/0252a761-ea97-432f-8717-a8953ab3ae0f/phase_12_roadmap.md
+
+The user has approved this document.
+
+
+<USER_REQUEST>
+
+</USER_REQUEST>
+<ADDITIONAL_METADATA>
+The current local time is: 2026-08-07T21:21:48+05:30.
+
+The user's current state is as follows:
+Active Document: c:\Hackathon tracker\hackathon-tracker\src\api\enterprise.ts (LANGUAGE_TYPESCRIPT)
+Cursor is on line: 1
+Other open documents:
+- c:\Hackathon tracker\hackathon-tracker\src\components\settings\AutomationSettings.tsx (LANGUAGE_TSX)
+- c:\Hackathon tracker\hackathon-tracker\backend\app\services\ai\base.py (LANGUAGE_PYTHON)
+- c:\Hackathon tracker\hackathon-tracker\backend\app\schemas\integration.py (LANGUAGE_PYTHON)
+- c:\Hackathon tracker\hackathon-tracker\backend\app\services\integrations\unstop.py (LANGUAGE_PYTHON)
+- c:\Hackathon tracker\hackathon-tracker\backend\app\services\integrations\devfolio.py (LANGUAGE_PYTHON)
+</ADDITIONAL_METADATA>
+<USER_REQUEST>
+PS C:\Hackathon tracker\hackathon-tracker> npm run dev            
+
+> hackathon-tracker@0.0.0 dev
+> vite
+
+  Γ₧£  Local:   http://localhost:5173/
+  Γ₧£  Network: use --host to expose
+  Γ₧£  press h + enter to show help
+9:24:25 pm [vite] (client) [optimizer] scanning dependencies...
+9:24:26 pm [vite] (client) [optimizer] bundling dependencies...
+9:24:46 pm [vite] Internal server error: Failed to resolve import "@/components/ui/dialog" from "src/components/feedback/FeedbackWidget.tsx". Does the file exist?
+  Plugin: vite:import-analysis
+  File: C:/Hackathon tracker/hackathon-tracker/src/components/feedback/FeedbackWidget.tsx:4:99
+  2  |  import { MessageSquarePlus, X } from "lucide-react";
+  3  |  import { Button } from "@/components/ui/button";   
+  4  |  ...scription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+     |                                                                 ^
+  5  |  import { Label } from "@/components/ui/label";     
+  6  |  import { Textarea } from "@/components/ui/textarea";
+      at TransformPluginContext._formatLog (file:///C:/Hackathon%20tracker/hackathon-tracker/node_modules/vite/dist/node/chunks/node.js:31011:39)
+      at TransformPluginContext.error (file:///C:/Hackathon%20tracker/hackathon-tracker/node_modules/vite/dist/node/chunks/node.js:31008:14)
+      at normalizeUrl (file:///C:/Hackathon%20tracker/hackathon-tracker/node_modules/vite/dist/node/chunks/node.js:27957:18)
+      at async file:///C:/Hackathon%20tracker/hackathon-tracker/node_modules/vite/dist/node/chunks/node.js:28025:30   
+      at async Promise.all (index 3)
+      at async TransformPluginContext.transform (file:///C:/Hackathon%20tracker/hackathon-tracker/node_modules/vite/dist/node/chunks/node.js:27993:4)
+      at async EnvironmentPluginContainer.transform (file:///C:/Hackathon%20tracker/hackathon-tracker/node_modules/vite/dist/node/chunks/node.js:30796:14)
+      at async loadAndTransform (file:///C:/Hackathon%20tracker/hackathon-tracker/node_modules/vite/dist/node/chunks/node.js:20594:26)
+9:24:46 pm [vite] (client) Pre-transform error: Failed to resolve import "@/components/ui/dialog" from "src/components/feedback/FeedbackWidget.tsx". Does the file exist?        
+  Plugin: vite:import-analysis
+  File: C:/Hackathon tracker/hackathon-tracker/src/components/feedback/FeedbackWidget.tsx:4:99
+  2  |  import { MessageSquarePlus, X } from "lucide-react";
+  3  |  import { Button } from "@/components/ui/button";   
+  4  |  ...scription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+     |                                                     
+            ^
+  5  |  import { Label } from "@/components/ui/label";     
+  6  |  import { Textarea } from "@/components/ui/textarea";
+9:24:46 pm [vite] (client) Pre-transform error: Failed to resolve import "@/components/ui/dialog" from "src/components/feedback/FeedbackWidget.tsx". Does the file exist?        
+  Plugin: vite:import-analysis
+  File: C:/Hackathon tracker/hackathon-tracker/src/components/feedback/FeedbackWidget.tsx:4:99
+  2  |  import { MessageSquarePlus, X } from "lucide-react";
+  3  |  import { Button } from "@/components/ui/button";   
+  4  |  ...scription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+     |                                                                 ^
+  5  |  import { Label } from "@/components/ui/label";     
+  6  |  import { Textarea } from "@/components/ui/textarea"; (x2)
+9:24:46 pm [vite] (client) Pre-transform error: Failed to resolve import "./axios" from "src/api/feedbackApi.ts". Does the file exist?
+  Plugin: vite:import-analysis
+  File: C:/Hackathon tracker/hackathon-tracker/src/api/feedbackApi.ts:1:16
+  1  |  import api from "./axios";
+     |                   ^
+  2  |  export const feedbackApi = {
+  3  |          createFeedback: (data) => api.post("/feedback", data),
+9:24:57 pm [vite] (client) Pre-transform error: Failed to resolve import "@/components/ui/dialog" from "src/components/feedback/FeedbackWidget.tsx". Does the file exist?        
+  Plugin: vite:import-analysis
+  File: C:/Hackathon tracker/hackathon-tracker/src/components/feedback/FeedbackWidget.tsx:4:99
+  2  |  import { MessageSquarePlus, X } from "lucide-react";
+  3  |  import { Button } from "@/components/ui/button";   
+  4  |  ...scription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+     |                                                     
+            ^
+  5  |  import { Label } from "@/components/ui/label";     
+  6  |  import { Textarea } from "@/components/ui/textarea";
+9:24:57 pm [vite] Internal server error: Failed to resolve import "@/components/ui/dialog" from "src/components/feedback/FeedbackWidget.tsx". Does the file exist?
+  Plugin: vite:import-analysis
+  File: C:/Hackathon tracker/hackathon-tracker/src/components/feedback/FeedbackWidget.tsx:4:99
+  2  |  import { MessageSquarePlus, X } from "lucide-react";
+  3  |  import { Button } from "@/components/ui/button";   
+  4  |  ...scription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+     |                                                                 ^
+  5  |  import { Label } from "@/components/ui/label";     
+  6  |  import { Textarea } from "@/components/ui/textarea";
+      at TransformPluginContext._formatLog (file:///C:/Hackathon%20tracker/hackathon-tracker/node_modules/vite/dist/node/chunks/node.js:31011:39)
+      at TransformPluginContext.error (file:///C:/Hackathon%20tracker/hackathon-tracker/node_modules/vite/dist/node/chunks/node.js:31008:14)
+      at normalizeUrl (file:///C:/Hackathon%20tracker/hackathon-tracker/node_modules/vite/dist/node/chunks/node.js:27957:18)
+      at async file:///C:/Hackathon%20tracker/hackathon-tracker/node_modules/vite/dist/node/chunks/node.js:28025:30   
+      at async Promise.all (index 3)
+      at async TransformPluginContext.transform (file:///C:/Hackathon%20tracker/hackathon-tracker/node_modules/vite/dist/node/chunks/node.js:27993:4)
+      at async EnvironmentPluginContainer.transform (file:///C:/Hackathon%20tracker/hackathon-tracker/node_modules/vite/dist/node/chunks/node.js:30796:14)
+      at async loadAndTransform (file:///C:/Hackathon%20tracker/hackathon-tracker/node_modules/vite/dist/node/chunks/node.js:20594:26)
+9:24:57 pm [vite] (client) Pre-transform error: Failed to resolve import "./axios" from "src/api/feedbackApi.ts". Does the file exist?
+  Plugin: vite:import-analysis
+  File: C:/Hackathon tracker/hackathon-tracker/src/api/feedbackApi.ts:1:16
+  1  |  import api from "./axios";
+     |                   ^
+  2  |  export const feedbackApi = {
+  3  |          createFeedback: (data) => api.post("/feedback", data),
+
+
+resolve all these issues permanently
+</USER_REQUEST>
+<ADDITIONAL_METADATA>
+The current local time is: 2026-08-07T21:25:54+05:30.
+
+The user's current state is as follows:
+Active Document: c:\Hackathon tracker\hackathon-tracker\src\api\enterprise.ts (LANGUAGE_TYPESCRIPT)
+Cursor is on line: 1
+Other open documents:
+- c:\Hackathon tracker\hackathon-tracker\docs\runbook.md (LANGUAGE_MARKDOWN)
+- c:\Hackathon tracker\hackathon-tracker\backend\app\security_vault.py (LANGUAGE_PYTHON)
+- c:\Hackathon tracker\hackathon-tracker\src\pages\Register.tsx (LANGUAGE_TSX)
+- c:\Hackathon tracker\hackathon-tracker\backend\app\services\ai\providers.py (LANGUAGE_PYTHON)
+- c:\Hackathon tracker\hackathon-tracker\backend\alembic\versions\ee86acbe1e02_add_integration_models.py (LANGUAGE_PYTHON)
+Running terminal commands:
+- npm run dev (in c:\Hackathon tracker\hackathon-tracker, running for 1m35s)
+- python -m uvicorn app.main:app --reload (in c:\Hackathon tracker\hackathon-tracker\backend, running for 1m21s)
+</ADDITIONAL_METADATA>
+<USER_REQUEST>
+resolve these issues permanently
+</USER_REQUEST>
+<ADDITIONAL_METADATA>
+The current local time is: 2026-08-07T21:29:37+05:30.
+
+The user's current state is as follows:
+Active Document: c:\Hackathon tracker\hackathon-tracker\src\api\enterprise.ts (LANGUAGE_TYPESCRIPT)
+Cursor is on line: 1
+Other open documents:
+- c:\Hackathon tracker\hackathon-tracker\src\components\settings\AutomationSettings.tsx (LANGUAGE_TSX)
+- c:\Hackathon tracker\hackathon-tracker\backend\app\services\ai\base.py (LANGUAGE_PYTHON)
+- c:\Hackathon tracker\hackathon-tracker\backend\app\schemas\integration.py (LANGUAGE_PYTHON)
+- c:\Hackathon tracker\hackathon-tracker\backend\app\services\integrations\unstop.py (LANGUAGE_PYTHON)
+- c:\Hackathon tracker\hackathon-tracker\backend\app\services\integrations\devfolio.py (LANGUAGE_PYTHON)
+Running terminal commands:
+- npm run dev (in c:\Hackathon tracker\hackathon-tracker, running for 1m19s)
+- python -m uvicorn app.main:app --reload (in c:\Hackathon tracker\hackathon-tracker\backend, running for 58s)
+</ADDITIONAL_METADATA>
+<USER_REQUEST>
+PS C:\Hackathon tracker\hackathon-tracker> npm run dev
+
+> hackathon-tracker@0.0.0 dev
+> vite
+
+
+  VITE v8.2.0  ready in 468 ms
+
+  Γ₧£  Local:   http://localhost:5173/
+  Γ₧£  Network: use --host to expose
+  Γ₧£  press h + enter to show help
+9:30:55 pm [vite] Internal server error: Failed to resolve import "@/components/ui/select" from "src/components/feedback/FeedbackWidget.tsx". Does the file exist?
+  Plugin: vite:import-analysis
+  File: C:/Hackathon tracker/hackathon-tracker/src/components/feedback/FeedbackWidget.tsx:7:78
+  5  |  import { Label } from "@/components/ui/label";
+  6  |  import { Textarea } from "@/components/ui/textarea";
+  7  |  import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+     |                                              
+                                   ^
+  8  |  import { feedbackApi, FeedbackType } from "@/api/feedbackApi";
+  9  |  import { toast } from "sonner";
+      at TransformPluginContext._formatLog (file:///C:/Hackathon%20tracker/hackathon-tracker/node_modules/vite/dist/node/chunks/node.js:31011:39)
+      at TransformPluginContext.error (file:///C:/Hackathon%20tracker/hackathon-tracker/node_modules/vite/dist/node/chunks/node.js:31008:14)
+      at normalizeUrl (file:///C:/Hackathon%20tracker/hackathon-tracker/node_modules/vite/dist/node/chunks/node.js:27957:18)
+      at async file:///C:/Hackathon%20tracker/hackathon-tracker/node_modules/vite/dist/node/chunks/node.js:28025:30
+      at async Promise.all (index 6)
+      at async TransformPluginContext.transform (file:///C:/Hackathon%20tracker/hackathon-tracker/node_modules/vite/dist/node/chunks/node.js:27993:4)       
+      at async EnvironmentPluginContainer.transform (file:///C:/Hackathon%20tracker/hackathon-tracker/node_modules/vite/dist/node/chunks/node.js:30796:14)  
+      at async loadAndTransform (file:///C:/Hackathon%20tracker/hackathon-tracker/node_modules/vite/dist/node/chunks/node.js:20594:26)
+9:30:55 pm [vite] (client) Pre-transform error: Failed to resolve import "@/components/ui/select" from "src/components/feedback/FeedbackWidget.tsx". Does the file exist?
+  Plugin: vite:import-analysis
+  File: C:/Hackathon tracker/hackathon-tracker/src/components/feedback/FeedbackWidget.tsx:7:78
+  5  |  import { Label } from "@/components/ui/label";
+  6  |  import { Textarea } from "@/components/ui/textarea";
+  7  |  import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+     |                                              
+                                   ^
+  8  |  import { feedbackApi, FeedbackType } from "@/api/feedbackApi";
+  9  |  import { toast } from "sonner";
+9:30:55 pm [vite] (client) Pre-transform error: Failed to resolve import "@/components/ui/select" from "src/components/feedback/FeedbackWidget.tsx". Does the file exist?
+  Plugin: vite:import-analysis
+  File: C:/Hackathon tracker/hackathon-tracker/src/components/feedback/FeedbackWidget.tsx:7:78
+  5  |  import { Label } from "@/components/ui/label";
+  6  |  import { Textarea } from "@/components/ui/textarea";
+  7  |  import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+     |                                              
+                                   ^
+  8  |  import { feedbackApi, FeedbackType } from "@/api/feedbackApi";
+  9  |  import { toast } from "sonner"; (x2)        
+9:30:55 pm [vite] (client) Pre-transform error: Failed to resolve import "class-variance-authority" from "src/components/ui/label.tsx". Does the file exist?
+  Plugin: vite:import-analysis
+  File: C:/Hackathon tracker/hackathon-tracker/src/components/ui/label.tsx:5:39
+  2  |  import * as React from "react";
+  3  |  import * as LabelPrimitive from "@radix-ui/react-label";
+  4  |  import { cva } from "class-variance-authority";
+     |                       ^
+  5  |  import { cn } from "@/lib/utils";
+  6  |  var _jsxFileName = "C:/Hackathon tracker/hackathon-tracker/src/components/ui/label.tsx";        
+9:30:55 pm [vite] (client) Pre-transform error: Failed to resolve import "class-variance-authority" from "src/components/ui/label.tsx". Does the file exist?
+  Plugin: vite:import-analysis
+  File: C:/Hackathon tracker/hackathon-tracker/src/components/ui/label.tsx:5:39
+  2  |  import * as React from "react";
+  3  |  import * as LabelPrimitive from "@radix-ui/react-label";
+  4  |  import { cva } from "class-variance-authority";
+     |                       ^
+  5  |  import { cn } from "@/lib/utils";
+  6  |  var _jsxFileName = "C:/Hackathon tracker/hackathon-tracker/src/components/ui/label.tsx"; (x2)   
+
+</USER_REQUEST>
+<ADDITIONAL_METADATA>
+The current local time is: 2026-08-07T21:31:08+05:30.
+
+The user's current state is as follows:
+Active Document: c:\Hackathon tracker\hackathon-tracker\src\api\enterprise.ts (LANGUAGE_TYPESCRIPT)
+Cursor is on line: 1
+Other open documents:
+- c:\Hackathon tracker\hackathon-tracker\backend\scripts\backup_db.py (LANGUAGE_PYTHON)
+- c:\Hackathon tracker\hackathon-tracker\src\pages\Kanban.tsx (LANGUAGE_TSX)
+- c:\Hackathon tracker\hackathon-tracker\src\components\kanban\AIInsightsModal.tsx (LANGUAGE_TSX)
+- c:\Hackathon tracker\hackathon-tracker\backend\app\models\integration.py (LANGUAGE_PYTHON)
+- c:\Hackathon tracker\hackathon-tracker\backend\app\models\automation.py (LANGUAGE_PYTHON)
+Running terminal commands:
+- python -m uvicorn app.main:app --reload (in c:\Hackathon tracker\hackathon-tracker\backend, running for 2m29s)
+- npm run dev (in c:\Hackathon tracker\hackathon-tracker, running for 29s)
+</ADDITIONAL_METADATA>
+<USER_REQUEST>
+not resolved
+</USER_REQUEST>
+<ADDITIONAL_METADATA>
+The current local time is: 2026-08-07T21:32:24+05:30.
+
+The user's current state is as follows:
+Active Document: c:\Hackathon tracker\hackathon-tracker\src\api\enterprise.ts (LANGUAGE_TYPESCRIPT)
+Cursor is on line: 1
+Other open documents:
+- c:\Hackathon tracker\hackathon-tracker\backend\app\services\calendar_service.py (LANGUAGE_PYTHON)
+- c:\Hackathon tracker\hackathon-tracker\src\lib\api-client.ts (LANGUAGE_TYPESCRIPT)
+- c:\Hackathon tracker\hackathon-tracker\src\components\settings\IntegrationSettings.tsx (LANGUAGE_TSX)
+- c:\Hackathon tracker\hackathon-tracker\backend\app\routers\integration.py (LANGUAGE_PYTHON)
+- c:\Hackathon tracker\hackathon-tracker\backend\test_automation.py (LANGUAGE_PYTHON)
+Running terminal commands:
+- python -m uvicorn app.main:app --reload (in c:\Hackathon tracker\hackathon-tracker\backend, running for 3m45s)
+- npm run dev (in c:\Hackathon tracker\hackathon-tracker, running for 1m45s)
+</ADDITIONAL_METADATA>
+<USER_REQUEST>
+You are evolving the Hackathon Tracker platform (React, TypeScript,
+TailwindCSS, shadcn/ui, Framer Motion, Zustand, TanStack Table, React Hook
+Form, Recharts) from Version 2.0 (Hackathon Ecosystem) into Version 3.0:
+"Hackathon OS" ΓÇö a full operating system for innovation ecosystems serving
+universities, colleges, companies, incubators, accelerators, government
+organizations, communities, startup programs, and innovation labs. The same
+core platform must power hackathons, innovation challenges, startup
+competitions, and internal ideation programs through one shared core:
+Identity, Organizations, Projects, Teams, AI, Automation, Analytics,
+Integrations, APIs, Observability.
+
+EXECUTION MODE: Autonomous, sequential, no confirmation gates.
+Work through Phases 13 ΓåÆ 18 in order. Within each phase, run all four
+workflow stages in order: Architecture Specification ΓåÆ Implementation ΓåÆ
+Verification ΓåÆ Refinement. Do NOT pause to ask for approval between stages
+or between phases. Log a short status entry after each stage (what was
+done, what was found) and move immediately to the next stage. Only stop for
+one of the Halt Conditions listed at the very end of this prompt.
+
+For EVERY phase, execute this four-stage cycle:
+
+  STAGE 1 ΓÇö Architecture Specification
+  - Define the feature scope, data model / schema changes, API surface,
+    and UX changes needed for this phase, in writing, before touching code.
+  - Identify integration points with existing Phase 1ΓÇô12 functionality.
+  - Note any breaking changes and how they'll be avoided or migrated.
+
+  STAGE 2 ΓÇö Implementation
+  - Generate the code for this phase's scope only (per the spec above).
+  - Follow existing conventions (component structure, Zustand store
+    patterns, TanStack Table usage, shadcn/ui primitives, styling tokens).
+
+  STAGE 3 ΓÇö Verification
+  - Run/simulate regression tests against existing functionality.
+  - Run performance checks relevant to the new feature (e.g. rendering
+    cost of new dashboards, query cost of new data model).
+  - Run a basic security pass on any new inputs, endpoints, or permissions
+    introduced.
+
+  STAGE 4 ΓÇö Refinement
+  - Fix any defects found in Stage 3.
+  - Optimize any performance issues found.
+  - Update/extend documentation (architecture notes, API docs, runbooks)
+    to reflect what was actually built.
+  - Confirm the phase's Completion Gate (below) is met before advancing.
+
+ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+PHASE 13 ΓÇö Innovation Program Engine
+Transform hackathons into configurable programs.
+Scope:
+  - Innovation challenge templates
+  - Internal company innovation campaigns
+  - Startup incubation workflows
+  - Multi-round evaluation pipelines
+  - Program lifecycle management (draft ΓåÆ active ΓåÆ evaluation ΓåÆ closed)
+  - Configurable timelines per program
+  - Custom participant journeys (different steps for different program types)
+Completion Gate: A new innovation program can be created without code changes.
+
+ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+PHASE 14 ΓÇö Low-Code Configuration Platform
+Let administrators configure behavior instead of requiring development.
+Scope:
+  - Custom forms (form builder, field types, validation rules)
+  - Dynamic workflows (state machines admins can define)
+  - Custom statuses per program/organization
+  - Custom evaluation rubrics (weighted criteria, scoring templates)
+  - Configurable dashboards (widget picker/layout per org)
+  - Rule builders (trigger ΓåÆ condition ΓåÆ action)
+  - Notification templates (editable copy + trigger bindings)
+Completion Gate: Most business workflows are configurable through the UI.
+
+ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+PHASE 15 ΓÇö Enterprise Integration Hub
+Expand integrations via a standard connector framework.
+Scope:
+  - Build a generic adapter interface (auth, request/response mapping,
+    rate limiting, error handling) that all connectors implement
+  - Reference connectors: identity providers (SSO), calendar systems,
+    communication tools, cloud storage, issue trackers, LMS, HR systems
+    (where appropriate), analytics platforms
+  - Connector management UI (enable/disable, configure credentials,
+    view sync status)
+Completion Gate: New connectors can be added through the standard adapter
+interface without modifying core application code.
+
+ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+PHASE 16 ΓÇö Data & Insights Platform
+Advanced reporting on top of everything built so far.
+Scope:
+  - Executive dashboards (org-level rollups)
+  - Cross-event analytics (compare across hackathons/programs)
+  - Trend analysis over time
+  - Participation insights (who's engaging, drop-off points)
+  - Team performance reports
+  - Innovation program metrics (conversion through program stages)
+  - Exportable executive reports (PDF/CSV export of the above)
+Completion Gate: Organizations can build meaningful dashboards from
+platform data without engineering help.
+
+ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+PHASE 17 ΓÇö Platform Governance
+Operational controls for enterprise/institutional customers.
+Scope:
+  - Data retention policies (configurable per org, enforced automatically)
+  - Organization lifecycle management (provision, suspend, offboard)
+  - Advanced audit search (who did what, when, filterable)
+  - Approval workflows (multi-step sign-off for sensitive actions)
+  - Delegated administration (scoped admin roles per org/program)
+  - Policy enforcement (block actions that violate configured policy)
+Completion Gate: Enterprise governance requirements are centrally
+manageable from one governance surface.
+
+ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+PHASE 18 ΓÇö Extensibility Framework
+Let external developers extend the platform without touching core.
+Scope:
+  - Plugin SDK (defined interface + local dev/test harness)
+  - Event bus (publish/subscribe for platform events)
+  - Extension points (defined slots in UI/logic plugins can hook into)
+  - Webhook improvements (retries, signing, delivery logs)
+  - Versioned APIs (formal versioning strategy + deprecation policy)
+  - Compatibility management (plugin manifest declares required core version)
+Completion Gate: External developers can build extensions without
+modifying the core application.
+
+ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+HALT CONDITIONS ΓÇö stop and report immediately if any of these occur:
+  1. A Completion Gate cannot be met after Refinement (i.e. the phase
+     genuinely cannot be finished as specified).
+  2. Implementing a phase would require breaking/removing functionality
+     from Phases 1ΓÇô12 with no viable migration path.
+  3. A security issue is found that could expose user data.
+  4. Ambiguity in scope that materially changes the data model in a way
+     that would be costly to reverse (pick the most conservative
+     interpretation and note the assumption instead of halting, unless
+     it's genuinely a fork in the road).
+
+Otherwise: keep going, phase after phase, stage after stage, until Phase 18
+is complete. Begin now with Phase 13, Stage 1.
+</USER_REQUEST>
+<ADDITIONAL_METADATA>
+The current local time is: 2026-08-07T21:56:18+05:30.
+
+The user's current state is as follows:
+Active Document: c:\Hackathon tracker\hackathon-tracker\src\api\enterprise.ts (LANGUAGE_TYPESCRIPT)
+Cursor is on line: 1
+Other open documents:
+- c:\Hackathon tracker\hackathon-tracker\docs\phase-10\01-phase-10-implementation-plan.md (LANGUAGE_MARKDOWN)
+- c:\Hackathon tracker\hackathon-tracker\backend\app\schemas\ai.py (LANGUAGE_PYTHON)
+- c:\Hackathon tracker\hackathon-tracker\backend\app\routers\hackathons.py (LANGUAGE_PYTHON)
+- c:\Hackathon tracker\hackathon-tracker\backend\app\routers\rounds.py (LANGUAGE_PYTHON)
+- c:\Hackathon tracker\hackathon-tracker\backend\app\routers\notifications.py (LANGUAGE_PYTHON)
+</ADDITIONAL_METADATA>

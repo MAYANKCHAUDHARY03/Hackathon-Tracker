@@ -18,6 +18,7 @@ const Analytics = lazy(() => import('@/pages/Workspace/Analytics'))
 const Portfolio = lazy(() => import('@/pages/Portfolio'))
 const Enterprise = lazy(() => import('@/pages/Enterprise'))
 const ApplyPage = lazy(() => import('@/pages/ApplyPage'))
+const GraphExplorer = lazy(() => import('@/pages/GraphExplorer'))
 
 // Loading fallback
 const PageLoader = () => (
@@ -161,6 +162,14 @@ const router = createBrowserRouter([
         element: (
           <Suspense fallback={<PageLoader />}>
             <Enterprise />
+          </Suspense>
+        ),
+      },
+      {
+        path: 'graph',
+        element: (
+          <Suspense fallback={<PageLoader />}>
+            <GraphExplorer />
           </Suspense>
         ),
       },

@@ -1,0 +1,191 @@
+<USER_REQUEST>
+@directory:
+You are evolving the platform from Version 3.0 (Hackathon OS, Phases 13–18
+complete: Innovation Program Engine, Low-Code Configuration Platform,
+Enterprise Integration Hub, Data & Insights Platform, Platform Governance,
+Extensibility Framework) into Version 4.0: "Innovation Intelligence Network."
+
+The platform's purpose is expanding from running innovation programs to
+discovering, connecting, evaluating, and scaling innovation across the full
+lifecycle:
+
+  Problem → Challenge → Participants → Teams → Ideas → Projects →
+  Evaluation → Winners → Startups/Products → Funding/Incubation →
+  Hiring/Partnerships → Real-world Impact
+
+CRITICAL ARCHITECTURAL PRINCIPLE — read before doing anything else:
+Do NOT start by coding individual features. Phase 19 (Innovation Graph)
+must be built first as the canonical relationship layer. Every phase after
+19 (Discovery, Matching, Analytics, etc.) must CONSUME that graph rather
+than building its own independent data layer. If you find yourself about to
+create a new relationship/entity-linking structure in Phase 20 or later,
+stop and route it through the Phase 19 graph instead.
+
+EXECUTION MODE: Autonomous, sequential, no confirmation gates.
+Work through Phases 19 → 27 in order. Log a short status entry after each
+stage/phase (what was done, what was found) and move immediately to the
+next one. Do NOT pause for approval. Only stop for a Halt Condition (listed
+at the end).
+
+──────────────────────────────────────────────────────────────────────────
+PHASE 19 — Innovation Graph (build this first, exactly in this sequence)
+
+Build a unified relationship graph connecting: User, Team, Project,
+Hackathon, Judge, Mentor, Organization, Sponsor, Startup, Challenge — e.g.
+Organization —hosted→ Hackathon —contains→ Challenge —solved-by→ Project,
+Hackathon —contains→ Team —contains→ User, Organization —sponsors→ Program.
+
+Features to deliver as part of this graph:
+  - Relationship discovery
+  - Project lineage
+  - Participant history
+  - Organization relationships
+  - Mentor/team relationships
+  - Challenge/project relationships
+  - Innovation portfolio (feeds Phase 23)
+
+Execute in this exact order:
+  1. Repository Audit — inventory existing entities/relationships in the
+     current codebase (Phases 1–18) that the graph needs to represent.
+  2. Phase 18 Regression — confirm nothing from Version 3.0 is broken
+     before extending the data model.
+  3. Domain Model Audit — reconcile existing schemas/types against the
+     relationships listed above; identify gaps.
+  4. Graph Data Model — design the canonical graph schema (nodes, edge
+     types, direction, cardinality).
+  5. Relationship API — define the API surface for creating/querying
+     relationships.
+  6. Graph Query Service — implement traversal/query logic (e.g. challenge
+     → project → team → participants → previous projects → hackathons →
+     organization).
+  7. Backend Integration — wire the graph into existing services so
+     existing entities register relationships automatically where possible.
+  8. Frontend Relationship Explorer — build a UI to navigate the graph
+     (the completion gate below is a UI-testable requirement).
+  9. Permissions + Privacy — ensure graph traversal respects existing
+     access controls (Phase 17 governance) and doesn't leak cross-org data.
+  10. Performance Testing — verify traversal performance at realistic
+      scale (hundreds of hackathons, thousands of relationships).
+  11. E2E Testing — test full traversal paths end-to-end.
+  12. Documentation — document the graph schema and query API for
+      Phases 20+ to consume.
+  13. PASS/FAIL Gate — confirm the gate below before proceeding to Phase 20.
+
+Completion Gate: A user can navigate from a challenge → project → team →
+participants → previous projects → hackathons → organization, entirely
+through graph traversal.
+
+──────────────────────────────────────────────────────────────────────────
+For Phases 20–27, run the four-stage cycle (Architecture Specification →
+Implementation → Verification → Refinement) used in prior phases, with one
+addition: every Architecture Specification stage must state explicitly
+which parts of the Phase 19 graph this phase reads from or writes to.
+
+PHASE 20 — Innovation Discovery Engine
+Scope:
+  - Search across projects, ideas, challenges, teams, participants,
+    mentors, organizations, technologies, domains, previous hackathons.
+  - Example query: "Find projects using computer vision for healthcare" →
+    return project, team, technology, hackathon, organization, status.
+  - REUSE the existing search infrastructure from earlier phases — do not
+    build a second search system.
+Completion Gate: Natural-language-style discovery queries return correct,
+cross-entity results sourced from the Phase 19 graph.
+
+PHASE 21 — Talent & Expertise Graph
+Scope:
+  - Build expertise profiles from verified platform activity only:
+    verified skills, project experience, hackathon history, achievements,
+    awards, contributions, team roles, and derived expertise signals —
+    not arbitrary AI inference.
+  - AI may assist with summarizing verified data, but verified platform
+    data remains the authoritative source, never an AI guess presented
+    as fact.
+Completion Gate: A profile's listed skills/experience trace back to actual
+graph-verifiable platform activity.
+
+PHASE 22 — Opportunity Matching
+Scope:
+  - Connect problems ↔ projects ↔ people ↔ organizations ↔ opportunities
+    (hackathons, challenges, internships, mentorship, collaborations,
+    sponsorship, incubation, recruitment).
+  - Every match result must include: score, reasons, evidence, limitations.
+  - NEVER present an AI-generated match as a guaranteed recommendation —
+    this must be enforced in the UI copy and API response shape, not just
+    a convention.
+Completion Gate: Every surfaced match includes reasons/evidence/limitations
+and no UI surface implies certainty.
+
+PHASE 23 — Innovation Portfolio
+Scope:
+  - Organization-level portfolio view: total/active/completed projects,
+    startups spawned, patents/research output, top technologies, and
+    tracking of challenges, outcomes, winners, partnerships, impact.
+Completion Gate: An organization can view an accurate, graph-sourced
+innovation portfolio summary.
+
+PHASE 24 — Project Lifecycle Beyond Hackathon
+Scope:
+  - Extend project state beyond Hackathon → Submission → Result into:
+    IDEA → PROTOTYPE → VALIDATION → MVP → INCUBATION → PILOT →
+    PRODUCTION → ARCHIVED.
+  - This is a critical-priority phase — treat lifecycle-state transitions
+    as first-class graph relationships, not a bolted-on status field.
+Completion Gate: A project can be tracked through every listed lifecycle
+state with history preserved.
+
+PHASE 25 — Incubation & Acceleration
+Scope:
+  - For projects continuing post-hackathon: milestones, mentors, advisors,
+    funding rounds, documents, KPIs, progress reports, investor updates,
+    pilot programs, stakeholder management.
+  - REUSE the existing project/task infrastructure rather than building
+    a parallel system.
+Completion Gate: A project in INCUBATION or later lifecycle state has
+working milestone/KPI/progress-report tracking built on existing
+project/task infrastructure.
+
+PHASE 26 — Innovation Marketplace
+Scope:
+  - Connect Company → Problem → Challenge → Hackathon → Project → Pilot.
+  - Companies can discover relevant projects; projects can discover
+    sponsors, mentors, incubators, pilot partners.
+  - Do NOT introduce automatic commercial transactions in this phase —
+    discovery/connection only.
+Completion Gate: Cross-discovery works both directions (company→project,
+project→partner) with no transactional/payment logic introduced.
+
+PHASE 27 — Global Innovation Intelligence
+Scope:
+  - Aggregate ecosystem-level analytics: emerging technologies, popular
+    challenge categories, recurring problem domains, technology adoption,
+    participation trends, project survival rates, innovation pipeline.
+  - HARD PRIVACY REQUIREMENT: only aggregated/anonymized data may enter
+    ecosystem-level analytics, unless an organization has explicitly
+    opted in to sharing identifiable data. No private organization data
+    may be exposed by default.
+Completion Gate: Ecosystem analytics are demonstrably aggregated/anonymized
+by default, with opt-in as the only path to non-anonymized visibility.
+
+──────────────────────────────────────────────────────────────────────────
+HALT CONDITIONS — stop and report immediately if any of these occur:
+  1. A Completion Gate cannot be met after Refinement.
+  2. A later phase (20–27) would require building a relationship/data
+     layer independent of the Phase 19 graph — stop and reconcile with
+     the graph instead of proceeding.
+  3. Any change would risk exposing private organization data in ways
+     Phase 27's privacy requirement (or Phase 17 governance) forbids.
+  4. An opportunity-matching or talent-profile feature would present an
+     AI-generated inference as verified fact or a guaranteed outcome.
+  5. Implementing a phase would break Phase 1–18 functionality with no
+     viable migration path.
+
+Otherwise: keep going, phase after phase, stage after stage, until Phase 27
+is complete. Begin now with Phase 19, Step 1 (Repository Audit).
+</USER_REQUEST>
+<ADDITIONAL_METADATA>
+The current local time is: 2026-08-08T21:00:07+05:30.
+</ADDITIONAL_METADATA>
+<USER_SETTINGS_CHANGE>
+The user changed setting `Model Selection` from None to Gemini 3.1 Pro (High). No need to comment on this change if the user doesn't ask about it. If reporting what model you are, please use a human readable name instead of the exact string.
+</USER_SETTINGS_CHANGE>

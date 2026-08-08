@@ -26,6 +26,11 @@ logging.basicConfig(level=logging.INFO, handlers=[handler])
 
 from app.config import settings
 from app.database import get_db
+from app.core.graph_events import register_graph_events
+
+# Register graph events
+register_graph_events()
+
 from app.exceptions import CustomException, custom_exception_handler
 from app.middleware import SecurityHeadersMiddleware
 from app.core.event_bus import event_bus
@@ -88,7 +93,7 @@ async def health_check(db: AsyncSession = Depends(get_db)):
         "database": db_status
     }
 
-from app.routers import auth, users, workspaces, hackathons, dashboard, invitations, teams, projects, kanban, activity, rounds, submissions, notifications, mentors, judges, evaluations, outcomes, search, analytics, export_import, portfolio, automation, integration, ai, hub_integrations, audit, webhook
+from app.routers import auth, users, workspaces, hackathons, dashboard, invitations, teams, projects, kanban, activity, rounds, submissions, notifications, mentors, judges, evaluations, outcomes, search, analytics, export_import, portfolio, automation, integration, ai, hub_integrations, audit, webhook, graph
 
 app.include_router(auth.router, prefix=f"{settings.API_V1_STR}/auth", tags=["auth"])
 app.include_router(users.router, prefix=f"{settings.API_V1_STR}/users", tags=["users"])
@@ -117,6 +122,8 @@ app.include_router(integration.router, prefix=f"{settings.API_V1_STR}", tags=["i
 app.include_router(ai.router, prefix=f"{settings.API_V1_STR}", tags=["ai_intelligence"])
 app.include_router(audit.router, prefix=f"{settings.API_V1_STR}", tags=["audit"])
 app.include_router(webhook.router, prefix=f"{settings.API_V1_STR}", tags=["webhook"])
+app.include_router(graph.router, prefix=f"{settings.API_V1_STR}", tags=["graph"])
+
 from app.routers import feedback, application
 app.include_router(feedback.router, prefix=f"{settings.API_V1_STR}", tags=["feedback"])
 app.include_router(application.router, prefix=f"{settings.API_V1_STR}", tags=["application"])

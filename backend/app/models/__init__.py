@@ -26,6 +26,10 @@ from app.models.calendar_integration import CalendarIntegration
 from app.models.automation import AutomationRule, AutomationExecution
 from app.models.feedback import Feedback
 from app.models.application import ApplicationForm, ApplicationSubmission
+from app.models.graph import GraphEdge
+from app.models.challenge import Challenge
+from app.models.startup import Startup
+from app.models.sponsor import Sponsor
 
 __all__ = [
     "Base", 
@@ -76,5 +80,9 @@ __all__ = [
     "ExternalSubmissionMapping",
     "Feedback",
     "ApplicationForm",
-    "ApplicationSubmission"
+    "ApplicationSubmission",
+    "GraphEdge",
+    "Challenge",
+    "Startup",
+    "Sponsor"
 ]
