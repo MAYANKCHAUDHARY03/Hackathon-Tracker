@@ -72,7 +72,7 @@ export function SearchModal({ isOpen, onClose }: { isOpen: boolean; onClose: () 
             ref={inputRef}
             type="text"
             className="flex-1 bg-transparent border-none outline-none text-foreground text-lg placeholder:text-muted-foreground"
-            placeholder="Search hackathons, projects, teams..."
+            placeholder="Ask anything, e.g. 'Find projects using computer vision for healthcare'..."
             value={query}
             onChange={(e) => setQuery(e.target.value)}
           />
@@ -98,6 +98,17 @@ export function SearchModal({ isOpen, onClose }: { isOpen: boolean; onClose: () 
                     </div>
                     {item.description && (
                       <span className="text-sm text-muted-foreground mt-1 line-clamp-1">{item.description}</span>
+                    )}
+                    {item.graph_context && Object.keys(item.graph_context).length > 0 && (
+                      <div className="flex flex-wrap gap-1 mt-2">
+                        {Object.entries(item.graph_context).map(([type, names]) => 
+                          names.map((name, idx) => (
+                            <span key={`${type}-${idx}`} className="text-[10px] px-1.5 py-0.5 bg-muted text-muted-foreground rounded border border-border">
+                              {type}: {name}
+                            </span>
+                          ))
+                        )}
+                      </div>
                     )}
                   </button>
                 ))}

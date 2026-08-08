@@ -5,7 +5,7 @@ import { GlassPanel } from '@/components/ui/glass-panel';
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { format } from 'date-fns';
-import { Download } from 'lucide-react';
+import { Upload } from 'lucide-react';
 import { toast } from 'sonner';
 
 export function AuditLogs() {
@@ -42,7 +42,7 @@ export function AuditLogs() {
           <p className="text-muted-foreground mt-1">Immutable record of all critical actions performed in the workspace.</p>
         </div>
         <Button variant="outline" className="flex items-center gap-2">
-          <Download className="h-4 w-4" />
+          <Upload className="h-4 w-4" />
           Export CSV
         </Button>
       </div>

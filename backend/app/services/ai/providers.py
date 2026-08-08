@@ -33,6 +33,30 @@ class MockAIProvider(AIProviderAdapter):
             ] if risk_score > 50 else ["Keep up the good work"]
         }
 
+    async def extract_search_intent(self, query: str) -> Dict[str, Any]:
+        """Mock extraction of search intent based on simple keywords."""
+        query_lower = query.lower()
+        entities = []
+        if "project" in query_lower:
+            entities.append("project")
+        if "team" in query_lower:
+            entities.append("team")
+        if "hackathon" in query_lower:
+            entities.append("hackathon")
+            
+        if not entities:
+            entities = ["project", "hackathon", "team", "task"]
+            
+        # Very basic keyword extraction - remove common stop words
+        stop_words = {"find", "search", "show", "me", "using", "for", "in", "with", "projects", "teams", "hackathons"}
+        keywords = [word for word in query_lower.split() if word not in stop_words]
+        
+        return {
+            "entities": entities,
+            "keywords": keywords,
+            "raw_query": query
+        }
+
 class GeminiAIProvider(AIProviderAdapter):
     def __init__(self, api_key: str):
         super().__init__(api_key)
@@ -88,6 +112,31 @@ class GeminiAIProvider(AIProviderAdapter):
             return json.loads(response.text)
         except Exception as e:
             return {"health_status": "error", "risk_score": 0, "recommendations": [f"Error: {str(e)}"]}
+
+    async def extract_search_intent(self, query: str) -> Dict[str, Any]:
+        if not self.client:
+            return {"entities": ["project", "hackathon", "team", "task"], "keywords": query.split(), "raw_query": query}
+            
+        prompt = f"""
+        Extract the search intent from this natural language query: "{query}"
+        
+        Return exactly valid JSON with:
+        - entities (list of strings: can include 'project', 'hackathon', 'team', 'task'. if they don't specify, include all)
+        - keywords (list of strings: the most important topical keywords they are searching for, e.g. "computer vision", "healthcare")
+        - raw_query (string: the original query)
+        """
+        
+        try:
+            response = self.client.models.generate_content(
+                model='gemini-2.5-flash',
+                contents=prompt,
+                config={'response_mime_type': 'application/json'}
+            )
+            import json
+            return json.loads(response.text)
+        except Exception as e:
+            # Fallback to simple split
+            return {"entities": ["project", "hackathon", "team", "task"], "keywords": query.split(), "raw_query": query}
 
 class AIProviderFactory:
     @staticmethod

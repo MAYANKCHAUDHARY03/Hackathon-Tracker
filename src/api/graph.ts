@@ -1,4 +1,4 @@
-import { api } from './client'
+import { apiClient as api } from '@/lib/api-client'
 
 export interface GraphEdge {
   id: string

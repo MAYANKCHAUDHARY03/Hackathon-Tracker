@@ -20,3 +20,8 @@ class AIProviderAdapter(ABC):
     async def analyze_project_health(self, project_data: Dict[str, Any], tasks: List[Dict[str, Any]]) -> Dict[str, Any]:
         """Returns health insights and risk scores."""
         pass
+        
+    @abstractmethod
+    async def extract_search_intent(self, query: str) -> Dict[str, Any]:
+        """Extracts intent and entities from a natural language search query."""
+        pass

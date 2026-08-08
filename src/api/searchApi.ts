@@ -8,6 +8,7 @@ export interface SearchResultItem {
   url: string;
   created_at: string;
   metadata: Record<string, any>;
+  graph_context?: Record<string, string[]>;
 }
 
 export interface SearchResponse {

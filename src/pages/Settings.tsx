@@ -238,7 +238,7 @@ export default function Settings() {
               <p className="text-sm text-muted-foreground">Download a complete JSON backup.</p>
             </div>
             <Button onClick={handleExport} disabled={exporting} variant="outline" size="sm">
-              <Download className="h-4 w-4 mr-2" />
+              <Upload className="h-4 w-4 mr-2" />
               {exporting ? 'Exporting...' : 'Export'}
             </Button>
           </div>
@@ -250,7 +250,7 @@ export default function Settings() {
             </div>
             <input type="file" accept=".json" className="hidden" ref={fileInputRef} onChange={handleFileUpload} />
             <Button onClick={() => fileInputRef.current?.click()} disabled={importing} variant="outline" size="sm">
-              <Upload className="h-4 w-4 mr-2" />
+              <Download className="h-4 w-4 mr-2" />
               {importing ? 'Importing...' : 'Import'}
             </Button>
           </div>
