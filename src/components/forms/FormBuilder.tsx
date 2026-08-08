@@ -7,7 +7,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Trash2, Plus, GripVertical } from 'lucide-react';
-import { FormField } from '@/api/applicationApi';
+import type { FormField } from '@/api/applicationApi';
 
 interface FormBuilderProps {
   fields: FormField[];

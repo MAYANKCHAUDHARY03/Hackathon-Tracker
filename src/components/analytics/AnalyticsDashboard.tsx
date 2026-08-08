@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import { GlassPanel } from '@/components/ui/glass-panel';
 import { useWorkspaceStore } from '@/store/workspaceStore';
-import { analyticsApi, AnalyticsOverview, AnalyticsDemographics, AnalyticsEvaluations } from '@/api/analyticsApi';
+import { analyticsApi } from '@/api/analyticsApi';
+import type { AnalyticsOverview, AnalyticsDemographics, AnalyticsEvaluations } from '@/api/analyticsApi';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 import { Users, Briefcase, FileText, Activity } from 'lucide-react';
 import { toast } from 'sonner';

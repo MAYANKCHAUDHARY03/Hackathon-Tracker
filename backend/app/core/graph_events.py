@@ -1,3 +1,4 @@
+import uuid
 from sqlalchemy import event
 from sqlalchemy.orm import object_session
 from app.models.graph import GraphEdge
@@ -12,16 +13,18 @@ def register_graph_events():
     def after_team_insert(mapper, connection, target):
         session = object_session(target)
         if session:
-            # Hackathon -> contains -> Team
-            edge = GraphEdge(
-                workspace_id=target.workspace_id,
-                source_type="Hackathon",
-                source_id=target.hackathon_id,
-                target_type="Team",
-                target_id=target.id,
-                relation_type="contains"
+            connection.execute(
+                GraphEdge.__table__.insert().values(
+                    id=uuid.uuid4(),
+                    workspace_id=target.workspace_id,
+                    source_type="Hackathon",
+                    source_id=target.hackathon_id,
+                    target_type="Team",
+                    target_id=target.id,
+                    relation_type="contains",
+                    properties={}
+                )
             )
-            session.add(edge)
 
     @event.listens_for(TeamMember, 'after_insert')
     def after_team_member_insert(mapper, connection, target):
@@ -37,28 +40,31 @@ def register_graph_events():
     def after_project_insert(mapper, connection, target):
         session = object_session(target)
         if session:
-            # Team -> created -> Project
-            edge = GraphEdge(
-                workspace_id=target.workspace_id,
-                source_type="Team",
-                source_id=target.team_id,
-                target_type="Project",
-                target_id=target.id,
-                relation_type="created"
+            connection.execute(
+                GraphEdge.__table__.insert().values(
+                    id=uuid.uuid4(),
+                    workspace_id=target.workspace_id,
+                    source_type="Team",
+                    source_id=target.team_id,
+                    target_type="Project",
+                    target_id=target.id,
+                    relation_type="created",
+                    properties={}
+                )
             )
-            session.add(edge)
-            
     @event.listens_for(Challenge, 'after_insert')
     def after_challenge_insert(mapper, connection, target):
         session = object_session(target)
         if session:
-            # Hackathon -> contains -> Challenge
-            edge = GraphEdge(
-                workspace_id=target.workspace_id,
-                source_type="Hackathon",
-                source_id=target.hackathon_id,
-                target_type="Challenge",
-                target_id=target.id,
-                relation_type="contains"
+            connection.execute(
+                GraphEdge.__table__.insert().values(
+                    id=uuid.uuid4(),
+                    workspace_id=target.workspace_id,
+                    source_type="Hackathon",
+                    source_id=target.hackathon_id,
+                    target_type="Challenge",
+                    target_id=target.id,
+                    relation_type="contains",
+                    properties={}
+                )
             )
-            session.add(edge)

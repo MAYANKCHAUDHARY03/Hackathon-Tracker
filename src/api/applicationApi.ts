@@ -1,4 +1,4 @@
-import { api } from './api';
+import { apiClient as api } from '@/lib/api-client';
 
 export interface FormField {
   id: string;

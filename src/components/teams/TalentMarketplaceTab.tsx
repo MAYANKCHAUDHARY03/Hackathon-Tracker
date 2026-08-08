@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useWorkspaceStore } from '@/store/workspaceStore';
-import { teamApi, Team, TalentMatch } from '@/api/teamApi';
-import { peopleApi, Person } from '@/api/people';
+import { teamApi } from '@/api/teamApi';
+import type { Team, TalentMatch } from '@/api/teamApi';
+import { peopleApi } from '@/api/people';
+import type { Person } from '@/api/people';
 import { GlassPanel } from '@/components/ui/glass-panel';
 import { Button } from '@/components/ui/button';
 import { Users, Search, Target, UserPlus } from 'lucide-react';

@@ -25,7 +25,7 @@ export function useNotifications() {
     if (!workspaceId) return;
     try {
       const result = await notificationsApi.getNotifications(workspaceId);
-      setNotifications(result);
+      setNotifications(Array.isArray(result) ? result : []);
     } catch (error) {
       console.error("Failed to load notifications", error);
     }

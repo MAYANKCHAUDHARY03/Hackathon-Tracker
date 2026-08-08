@@ -13,7 +13,8 @@ import {
   Menu,
   Trophy,
   Building,
-  Network
+  Network,
+  Sparkles
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
@@ -26,6 +27,7 @@ const navItems = [
   { path: '/teams', label: 'Team Database', icon: Users },
   { path: '/projects', label: 'Project Database', icon: FolderGit2 },
   { path: '/graph', label: 'Innovation Graph', icon: Network },
+  { path: '/opportunities', label: 'Opportunities', icon: Sparkles },
   { path: '/vault', label: 'API Vault', icon: KeyRound },
   { path: '/enterprise', label: 'Enterprise', icon: Building },
   { path: '/settings', label: 'Settings', icon: Settings },

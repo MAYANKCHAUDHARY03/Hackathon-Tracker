@@ -93,7 +93,7 @@ async def health_check(db: AsyncSession = Depends(get_db)):
         "database": db_status
     }
 
-from app.routers import auth, users, workspaces, hackathons, dashboard, invitations, teams, projects, kanban, activity, rounds, submissions, notifications, mentors, judges, evaluations, outcomes, search, analytics, export_import, portfolio, automation, integration, ai, hub_integrations, audit, webhook, graph
+from app.routers import auth, users, workspaces, hackathons, dashboard, invitations, teams, projects, kanban, activity, rounds, submissions, notifications, mentors, judges, evaluations, outcomes, search, analytics, export_import, portfolio, automation, integration, ai, hub_integrations, audit, webhook, graph, opportunities
 
 app.include_router(auth.router, prefix=f"{settings.API_V1_STR}/auth", tags=["auth"])
 app.include_router(users.router, prefix=f"{settings.API_V1_STR}/users", tags=["users"])
@@ -120,6 +120,7 @@ app.include_router(portfolio.router, prefix=f"{settings.API_V1_STR}", tags=["por
 app.include_router(automation.router, prefix=f"{settings.API_V1_STR}", tags=["automation"])
 app.include_router(integration.router, prefix=f"{settings.API_V1_STR}", tags=["integration"])
 app.include_router(ai.router, prefix=f"{settings.API_V1_STR}", tags=["ai_intelligence"])
+app.include_router(opportunities.router, prefix=f"{settings.API_V1_STR}", tags=["opportunities"])
 app.include_router(audit.router, prefix=f"{settings.API_V1_STR}", tags=["audit"])
 app.include_router(webhook.router, prefix=f"{settings.API_V1_STR}", tags=["webhook"])
 app.include_router(graph.router, prefix=f"{settings.API_V1_STR}", tags=["graph"])

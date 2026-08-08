@@ -5,9 +5,9 @@ import {
   getCoreRowModel, 
   useReactTable, 
   getPaginationRowModel,
-  getSortedRowModel,
-  SortingState
+  getSortedRowModel
 } from '@tanstack/react-table';
+import type { SortingState } from "@tanstack/react-table";
 import { 
   Table, 
   TableBody, 
@@ -18,7 +18,8 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ApplicationSubmission, applicationApi, FormSchema } from '@/api/applicationApi';
+import type { ApplicationSubmission, FormSchema } from '@/api/applicationApi';
+import { applicationApi } from '@/api/applicationApi';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
 import { 

@@ -22,7 +22,7 @@ export interface GraphTraversalResult {
 
 export const graphApi = {
   traverseGraph: async (workspaceId: string, nodeId: string, depth: number = 2) => {
-    const { data } = await api.get<GraphTraversalResult>(`/workspaces/${workspaceId}/graph/traverse/${nodeId}?depth=${depth}`)
-    return data
+    const result = await api.get<GraphTraversalResult>(`/workspaces/${workspaceId}/graph/traverse/${nodeId}?depth=${depth}`)
+    return result
   },
 }

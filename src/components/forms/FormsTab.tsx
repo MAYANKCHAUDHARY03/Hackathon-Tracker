@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { applicationApi, ApplicationForm, FormSchema } from '@/api/applicationApi';
+import { applicationApi } from '@/api/applicationApi';
+import type { ApplicationForm, FormSchema } from '@/api/applicationApi';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { applicationApi, ApplicationForm } from '@/api/applicationApi';
+import { applicationApi } from '@/api/applicationApi';
+import type { ApplicationForm } from '@/api/applicationApi';
 import { PublicFormRenderer } from '@/components/forms/PublicFormRenderer';
 import { Loader2, CheckCircle2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
