@@ -9,6 +9,7 @@ from app.models.team import Team
 from app.models.user import WorkspaceMembership
 from app.models.kanban import Task, KanbanBoard, ColumnSemanticType, KanbanColumn
 from app.models.activity import ActivityEvent
+from app.models.organization import Organization
 from app.models.evaluation import EvaluationScore, Evaluation
 from app.schemas.analytics import WorkspaceAnalyticsSummary, AnalyticsOverview, AnalyticsDemographics, AnalyticsEvaluations, ScoreDistribution
 
@@ -130,3 +131,59 @@ class AnalyticsService:
             total_evaluations=total_evals,
             score_distribution=dist
         )
+
+    async def get_ecosystem_summary(self) -> dict:
+        """
+        Phase 27 - Platform Governance:
+        Returns ecosystem-level analytics, aggregating data across multiple organizations.
+        Strictly enforces that data from organizations with ecosystem_opt_in=False
+        is anonymized (e.g., project/user details scrubbed), while opted-in orgs
+        can contribute deeper trends.
+        """
+        # Fetch all organizations and their opt-in status
+        orgs = (await self.session.execute(select(Organization.id, Organization.name, Organization.ecosystem_opt_in))).all()
+        
+        ecosystem_stats = {
+            "total_organizations": len(orgs),
+            "opted_in_organizations": sum(1 for o in orgs if o.ecosystem_opt_in),
+            "opted_out_organizations": sum(1 for o in orgs if not o.ecosystem_opt_in),
+            "aggregated_data": {
+                "total_projects": 0,
+                "total_users": 0
+            },
+            "public_trends": []
+        }
+        
+        # Calculate cross-org stats
+        for org in orgs:
+            # Get basic aggregates per org (which is safe even if opted out as long as it's just a count)
+            # In a real system, you might not even expose the breakdown per opted-out org.
+            
+            # Since workspaces belong to organizations, we get all workspaces for the org
+            from app.models.workspace import Workspace
+            workspaces = (await self.session.execute(select(Workspace.id).where(Workspace.organization_id == org.id))).scalars().all()
+            
+            org_projects = 0
+            org_users = 0
+            for ws_id in workspaces:
+                org_projects += (await self.session.scalar(select(func.count()).select_from(Project).where(Project.workspace_id == ws_id))) or 0
+                org_users += (await self.session.scalar(select(func.count()).select_from(WorkspaceMembership).where(WorkspaceMembership.workspace_id == ws_id))) or 0
+                
+            ecosystem_stats["aggregated_data"]["total_projects"] += org_projects
+            ecosystem_stats["aggregated_data"]["total_users"] += org_users
+            
+            # If opted in, they contribute to detailed public trends
+            if org.ecosystem_opt_in:
+                ecosystem_stats["public_trends"].append({
+                    "organization_name": org.name,
+                    "projects": org_projects,
+                    "users": org_users
+                })
+            else:
+                ecosystem_stats["public_trends"].append({
+                    "organization_name": "[ANONYMIZED]",
+                    "projects": "[HIDDEN]",
+                    "users": "[HIDDEN]"
+                })
+                
+        return ecosystem_stats

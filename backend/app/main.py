@@ -35,6 +35,7 @@ from app.exceptions import CustomException, custom_exception_handler
 from app.middleware import SecurityHeadersMiddleware
 from app.core.event_bus import event_bus
 from app.plugins.plugin_manager import plugin_manager
+from app.services.integration_dispatcher import register_integration_dispatcher
 from contextlib import asynccontextmanager
 
 @asynccontextmanager
@@ -43,6 +44,7 @@ async def lifespan(app: FastAPI):
     logger.info("Initializing plugins and event bus...")
     plugin_manager.discover_plugins("app.plugins.installed")
     plugin_manager.initialize_plugins(event_bus)
+    register_integration_dispatcher()
     yield
     # Cleanup on shutdown
     pass
@@ -121,6 +123,8 @@ app.include_router(automation.router, prefix=f"{settings.API_V1_STR}", tags=["au
 app.include_router(integration.router, prefix=f"{settings.API_V1_STR}", tags=["integration"])
 app.include_router(ai.router, prefix=f"{settings.API_V1_STR}", tags=["ai_intelligence"])
 app.include_router(opportunities.router, prefix=f"{settings.API_V1_STR}", tags=["opportunities"])
+from app.routers import matching
+app.include_router(matching.router, prefix=f"{settings.API_V1_STR}", tags=["matching"])
 app.include_router(audit.router, prefix=f"{settings.API_V1_STR}", tags=["audit"])
 app.include_router(webhook.router, prefix=f"{settings.API_V1_STR}", tags=["webhook"])
 app.include_router(graph.router, prefix=f"{settings.API_V1_STR}", tags=["graph"])

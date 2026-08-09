@@ -3,9 +3,9 @@ import { useWorkspaceStore } from "@/store/workspaceStore";
 import { useAuthStore } from "@/store/authStore";
 import { peopleApi } from "@/api/people";
 import type { Person } from "@/api/people";
-import { opportunityApi } from "@/api/opportunityApi";
-import type { OpportunityMatch } from "@/api/opportunityApi";
-import { MatchCard } from "@/components/opportunities/MatchCard";
+import { matchingApi } from "@/api/matchingApi";
+import type { MatchResult } from "@/api/matchingApi";
+import { GraphMatchCard } from "@/components/opportunities/GraphMatchCard";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Sparkles, Loader2 } from "lucide-react";
@@ -16,7 +16,7 @@ export default function Opportunities() {
   
   const [person, setPerson] = useState<Person | null>(null);
   const [targetType, setTargetType] = useState<string>("Hackathon");
-  const [matches, setMatches] = useState<OpportunityMatch[]>([]);
+  const [matches, setMatches] = useState<MatchResult[]>([]);
   const [loading, setLoading] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
 
@@ -42,13 +42,12 @@ export default function Opportunities() {
     try {
       setLoading(true);
       setHasSearched(true);
-      const res = await opportunityApi.getMatches(
+      const res = await matchingApi.findMatches(
         currentWorkspaceId,
         person.id,
-        "Person",
         targetType
       );
-      setMatches(res.matches || []);
+      setMatches(res || []);
     } catch (err) {
       console.error(err);
       setMatches([]);
@@ -112,7 +111,7 @@ export default function Opportunities() {
             )}
 
             {!loading && matches.map(match => (
-              <MatchCard key={match.target_id} match={match} />
+              <GraphMatchCard key={match.node_id} match={match} />
             ))}
           </div>
         </div>

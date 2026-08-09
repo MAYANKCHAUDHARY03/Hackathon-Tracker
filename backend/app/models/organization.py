@@ -16,6 +16,7 @@ class Organization(BaseEntity):
     status: Mapped[str] = mapped_column(String, default="active")
     timezone: Mapped[str] = mapped_column(String, default="UTC")
     settings: Mapped[dict] = mapped_column(JSON, default=dict)
+    ecosystem_opt_in: Mapped[bool] = mapped_column(Boolean, default=False)
 
     memberships: Mapped[list["OrganizationMembership"]] = relationship("OrganizationMembership", back_populates="organization", cascade="all, delete-orphan")
     workspaces: Mapped[list["Workspace"]] = relationship("Workspace", back_populates="organization")

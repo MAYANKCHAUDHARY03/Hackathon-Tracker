@@ -4,6 +4,7 @@ from sqlalchemy import select, or_
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import class_mapper
 
+from app.core.event_bus import event_bus
 from app.models.graph import GraphEdge
 from app.models.user import User
 from app.models.team import Team
@@ -62,6 +63,18 @@ class GraphQueryService:
         self.db.add(edge)
         await self.db.commit()
         await self.db.refresh(edge)
+        
+        # Publish event for Integrations
+        await event_bus.publish("graph_edge_created", {
+            "workspace_id": str(workspace_id),
+            "source_type": source_type,
+            "source_id": str(source_id),
+            "target_type": target_type,
+            "target_id": str(target_id),
+            "relation_type": relation_type,
+            "properties": properties or {}
+        })
+        
         return edge
 
     async def get_edges(self, node_id: uuid.UUID, workspace_id: uuid.UUID, direction: str = "both") -> List[GraphEdge]:

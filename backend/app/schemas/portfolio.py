@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from typing import List, Optional
+from typing import List, Optional, Dict, Any
 from datetime import datetime
 
 class PortfolioItem(BaseModel):
@@ -15,3 +15,26 @@ class UserPortfolio(BaseModel):
     full_name: str
     bio: Optional[str]
     items: List[PortfolioItem]
+
+class OrgPortfolioStats(BaseModel):
+    total_projects: int
+    active_projects: int
+    completed_projects: int
+    startups_spawned: int
+    patents_research: int
+    top_technologies: List[str]
+
+class OrgPortfolioProject(BaseModel):
+    id: str
+    name: str
+    status: str
+    technologies: List[str]
+    description: Optional[str]
+
+class OrganizationPortfolio(BaseModel):
+    org_id: str
+    name: str
+    stats: OrgPortfolioStats
+    projects: List[OrgPortfolioProject]
+    startups: List[Dict[str, Any]]
+

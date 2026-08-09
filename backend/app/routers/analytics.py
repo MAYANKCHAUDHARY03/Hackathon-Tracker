@@ -75,3 +75,9 @@ async def get_evaluations(
     await verify_workspace_access(workspace_id=workspace_id, current_user=current_user, db=db)
     analytics_service = AnalyticsService(db)
     return await analytics_service.get_evaluations(workspace_id)
+
+
+@router.get("/ecosystem/analytics", status_code=200)
+async def get_ecosystem_analytics(db: AsyncSession = Depends(get_db)):
+    analytics_service = AnalyticsService(db)
+    return await analytics_service.get_ecosystem_summary()

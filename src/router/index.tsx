@@ -16,6 +16,8 @@ const Calendar = lazy(() => import('@/pages/Calendar'))
 const Notifications = lazy(() => import('@/pages/Notifications'))
 const Analytics = lazy(() => import('@/pages/Workspace/Analytics'))
 const Portfolio = lazy(() => import('@/pages/Portfolio'))
+const OrgPortfolio = lazy(() => import('@/pages/OrgPortfolio'))
+const ProjectDetails = lazy(() => import('@/pages/ProjectDetails'))
 const Enterprise = lazy(() => import('@/pages/Enterprise'))
 const ApplyPage = lazy(() => import('@/pages/ApplyPage'))
 const GraphExplorer = lazy(() => import('@/pages/GraphExplorer'))
@@ -135,6 +137,14 @@ const router = createBrowserRouter([
         ),
       },
       {
+        path: 'projects/:id',
+        element: (
+          <Suspense fallback={<PageLoader />}>
+            <ProjectDetails />
+          </Suspense>
+        ),
+      },
+      {
         path: 'vault',
         element: (
           <Suspense fallback={<PageLoader />}>
@@ -187,6 +197,14 @@ const router = createBrowserRouter([
         element: (
           <Suspense fallback={<PageLoader />}>
             <Portfolio />
+          </Suspense>
+        ),
+      },
+      {
+        path: 'organizations/:orgId/portfolio',
+        element: (
+          <Suspense fallback={<PageLoader />}>
+            <OrgPortfolio />
           </Suspense>
         ),
       },
