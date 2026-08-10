@@ -23,6 +23,7 @@ const ApplyPage = lazy(() => import('@/pages/ApplyPage'))
 const GraphExplorer = lazy(() => import('@/pages/GraphExplorer'))
 const Opportunities = lazy(() => import('@/pages/Opportunities'))
 const Marketplace = lazy(() => import('@/pages/Marketplace'))
+const Intelligence = lazy(() => import('@/pages/Intelligence'))
 
 // Loading fallback
 const PageLoader = () => (
@@ -134,6 +135,14 @@ const router = createBrowserRouter([
         element: (
           <Suspense fallback={<PageLoader />}>
             <Analytics />
+          </Suspense>
+        ),
+      },
+      {
+        path: 'intelligence',
+        element: (
+          <Suspense fallback={<PageLoader />}>
+            <Intelligence />
           </Suspense>
         ),
       },

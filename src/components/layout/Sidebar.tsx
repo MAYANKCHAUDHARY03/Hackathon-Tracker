@@ -15,7 +15,8 @@ import {
   Building,
   Network,
   Sparkles,
-  Store
+  Store,
+  Globe
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
@@ -32,6 +33,7 @@ const navItems = [
   { path: '/vault', label: 'API Vault', icon: KeyRound },
   { path: '/portfolio', label: 'Portfolio', icon: Building },
   { path: '/marketplace', label: 'Marketplace', icon: Store },
+  { path: '/intelligence', label: 'Ecosystem Intelligence', icon: Globe },
   { path: '/settings', label: 'Settings', icon: Settings },
 ]
 
@@ -41,7 +43,7 @@ export function Sidebar() {
   return (
     <aside 
       className={cn(
-        "glass-panel fixed left-0 top-0 z-40 h-screen transition-all duration-300 ease-custom-bezier",
+        "glass-panel fixed left-0 top-0 z-40 h-screen flex flex-col transition-all duration-300 ease-custom-bezier",
         isSidebarOpen ? "w-64" : "w-20"
       )}
     >
@@ -57,7 +59,7 @@ export function Sidebar() {
         </Button>
       </div>
 
-      <nav className="p-3 space-y-1">
+      <nav className="p-3 space-y-1 flex-1 overflow-y-auto">
         {navItems.map((item) => (
           <NavLink
             key={item.path}

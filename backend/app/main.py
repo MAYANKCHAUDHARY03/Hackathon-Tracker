@@ -139,6 +139,9 @@ app.include_router(calendar_router.router, prefix=f"{settings.API_V1_STR}", tags
 from app.routers import incubation
 app.include_router(incubation.router, prefix=f"{settings.API_V1_STR}", tags=["incubation"])
 
+from app.routers import intelligence
+app.include_router(intelligence.router, prefix=f"{settings.API_V1_STR}/intelligence", tags=["intelligence"])
+
 app.include_router(marketplace.router, prefix=f"{settings.API_V1_STR}", tags=["marketplace"])
 
 from app.routers import sso
