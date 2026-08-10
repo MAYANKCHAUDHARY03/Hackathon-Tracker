@@ -133,18 +133,17 @@ from app.routers import feedback, application
 app.include_router(feedback.router, prefix=f"{settings.API_V1_STR}", tags=["feedback"])
 app.include_router(application.router, prefix=f"{settings.API_V1_STR}", tags=["application"])
 
+from app.routers import calendar as calendar_router
+app.include_router(calendar_router.router, prefix=f"{settings.API_V1_STR}", tags=["calendar"])
 
 from app.routers import sso
 app.include_router(sso.router, prefix=f"{settings.API_V1_STR}/sso", tags=["sso"])
 
-
 from app.routers import scim
 app.include_router(scim.router, prefix=f"{settings.API_V1_STR}/scim/v2", tags=["scim"])
-
 
 from app.routers import hackathon_sync
 app.include_router(hackathon_sync.router, prefix=f"{settings.API_V1_STR}/hackathon-sync", tags=["hackathon-sync"])
 
 from app.routers import health
 app.include_router(health.router, prefix="/api/ops", tags=["ops"])
-
