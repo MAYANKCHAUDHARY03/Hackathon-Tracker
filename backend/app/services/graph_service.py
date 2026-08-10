@@ -154,3 +154,57 @@ class GraphQueryService:
             "path": edges_list,
             "nodes": hydrated_nodes
         }
+
+    async def get_workspace_portfolio(self, workspace_id: uuid.UUID) -> Dict[str, Any]:
+        metrics = {
+            "total_projects": 0,
+            "active_projects": 0,
+            "completed_projects": 0,
+            "startups_spawned": 0,
+            "patents_filed": 0,
+            "top_technologies": [],
+            "total_participants": 0
+        }
+
+        # 1. Projects
+        project_stmt = select(Project).where(Project.workspace_id == workspace_id)
+        projects = (await self.db.execute(project_stmt)).scalars().all()
+        metrics["total_projects"] = len(projects)
+        metrics["completed_projects"] = sum(1 for p in projects if p.status == "completed")
+        metrics["active_projects"] = metrics["total_projects"] - metrics["completed_projects"]
+
+        # 2. Edges for workspace
+        edge_stmt = select(GraphEdge).where(GraphEdge.workspace_id == workspace_id)
+        edges = (await self.db.execute(edge_stmt)).scalars().all()
+
+        # 3. Startups & Patents (from edges)
+        metrics["startups_spawned"] = sum(1 for e in edges if e.target_type == "Startup")
+        metrics["patents_filed"] = sum(1 for e in edges if e.target_type == "Patent")
+
+        # 4. Total participants (unique Users in graph)
+        user_ids = set()
+        for e in edges:
+            if e.source_type == "User":
+                user_ids.add(e.source_id)
+            if e.target_type == "User":
+                user_ids.add(e.target_id)
+        metrics["total_participants"] = len(user_ids)
+
+        # 5. Top technologies
+        tech_edges = [e for e in edges if e.target_type == "Technology" and e.relation_type == "uses"]
+        tech_counts = {}
+        for e in tech_edges:
+            tech_counts[e.target_id] = tech_counts.get(e.target_id, 0) + 1
+        
+        if tech_counts:
+            from app.models.project import Technology
+            tech_ids = list(tech_counts.keys())
+            tech_stmt = select(Technology).where(Technology.id.in_(tech_ids))
+            techs = (await self.db.execute(tech_stmt)).scalars().all()
+            tech_map = {t.id: t.name for t in techs}
+            
+            top_techs = [{"name": tech_map.get(tid, str(tid)), "count": count} for tid, count in tech_counts.items()]
+            top_techs.sort(key=lambda x: x["count"], reverse=True)
+            metrics["top_technologies"] = top_techs[:5]
+
+        return metrics

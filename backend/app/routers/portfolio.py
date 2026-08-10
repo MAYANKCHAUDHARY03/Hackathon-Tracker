@@ -4,8 +4,9 @@ from uuid import UUID
 
 from app.database import get_db
 from app.dependencies import get_current_user
-from app.schemas.portfolio import UserPortfolio, OrganizationPortfolio
+from app.schemas.portfolio import UserPortfolio, OrganizationPortfolio, PortfolioMetrics
 from app.services.portfolio_service import PortfolioService
+from app.services.graph_service import GraphQueryService
 
 router = APIRouter()
 
@@ -41,3 +42,16 @@ async def get_organization_portfolio(
         return await service.get_organization_portfolio(org_id, workspace_id)
     except ValueError as e:
         raise HTTPException(status_code=404, detail=str(e))
+
+@router.get(
+    "/workspaces/{workspace_id}/portfolio",
+    response_model=PortfolioMetrics,
+    status_code=200
+)
+async def get_workspace_portfolio(
+    workspace_id: UUID,
+    db: AsyncSession = Depends(get_db),
+    current_user = Depends(get_current_user)
+):
+    service = GraphQueryService(db)
+    return await service.get_workspace_portfolio(workspace_id)

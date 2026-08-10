@@ -38,3 +38,15 @@ class OrganizationPortfolio(BaseModel):
     projects: List[OrgPortfolioProject]
     startups: List[Dict[str, Any]]
 
+class TechnologyCount(BaseModel):
+    name: str
+    count: int
+
+class PortfolioMetrics(BaseModel):
+    total_projects: int
+    active_projects: int
+    completed_projects: int
+    startups_spawned: int
+    patents_filed: int
+    top_technologies: List[TechnologyCount]
+    total_participants: int

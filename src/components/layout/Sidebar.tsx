@@ -29,7 +29,7 @@ const navItems = [
   { path: '/graph', label: 'Innovation Graph', icon: Network },
   { path: '/opportunities', label: 'Opportunities', icon: Sparkles },
   { path: '/vault', label: 'API Vault', icon: KeyRound },
-  { path: '/enterprise', label: 'Enterprise', icon: Building },
+  { path: '/portfolio', label: 'Portfolio', icon: Building },
   { path: '/settings', label: 'Settings', icon: Settings },
 ]
 

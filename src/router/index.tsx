@@ -1,5 +1,5 @@
 import { lazy, Suspense } from 'react'
-import { createBrowserRouter, RouterProvider } from 'react-router-dom'
+import { createBrowserRouter, RouterProvider, useRouteError } from 'react-router-dom'
 import { AppLayout } from '@/components/layout/AppLayout'
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute'
 import { Login } from '@/pages/Login'
@@ -18,7 +18,7 @@ const Analytics = lazy(() => import('@/pages/Workspace/Analytics'))
 const Portfolio = lazy(() => import('@/pages/Portfolio'))
 const OrgPortfolio = lazy(() => import('@/pages/OrgPortfolio'))
 const ProjectDetails = lazy(() => import('@/pages/ProjectDetails'))
-const Enterprise = lazy(() => import('@/pages/Enterprise'))
+const WorkspacePortfolio = lazy(() => import('@/pages/WorkspacePortfolio'))
 const ApplyPage = lazy(() => import('@/pages/ApplyPage'))
 const GraphExplorer = lazy(() => import('@/pages/GraphExplorer'))
 const Opportunities = lazy(() => import('@/pages/Opportunities'))
@@ -29,6 +29,22 @@ const PageLoader = () => (
     <div className="h-8 w-8 animate-pulse rounded-full bg-primary/50" />
   </div>
 )
+
+const RootErrorBoundary = () => {
+  const error = useRouteError() as any;
+  console.error(error);
+  return (
+    <div className="p-8 text-destructive">
+      <h1 className="text-2xl font-bold">An error occurred in the layout.</h1>
+      <pre className="mt-4 p-4 bg-secondary/50 rounded overflow-auto text-sm">
+        {error?.message || error?.statusText || String(error)}
+      </pre>
+      <pre className="mt-4 p-4 bg-secondary/50 rounded overflow-auto text-xs">
+        {error?.stack}
+      </pre>
+    </div>
+  );
+}
 
 const router = createBrowserRouter([
   {
@@ -54,7 +70,7 @@ const router = createBrowserRouter([
         <AppLayout />
       </ProtectedRoute>
     ),
-    errorElement: <div className="p-8 text-destructive">An error occurred in the layout.</div>,
+    errorElement: <RootErrorBoundary />,
     children: [
       {
         path: 'invitations/:token/accept',
@@ -169,10 +185,10 @@ const router = createBrowserRouter([
         ),
       },
       {
-        path: 'enterprise',
+        path: 'portfolio',
         element: (
           <Suspense fallback={<PageLoader />}>
-            <Enterprise />
+            <WorkspacePortfolio />
           </Suspense>
         ),
       },

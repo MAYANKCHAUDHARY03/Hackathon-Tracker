@@ -41,11 +41,29 @@ export interface OrganizationPortfolio {
   startups: any[];
 }
 
+export interface TechnologyCount {
+  name: string;
+  count: number;
+}
+
+export interface WorkspacePortfolioMetrics {
+  total_projects: number;
+  active_projects: number;
+  completed_projects: number;
+  startups_spawned: number;
+  patents_filed: number;
+  top_technologies: TechnologyCount[];
+  total_participants: number;
+}
+
 export const portfolioApi = {
   getUserPortfolio: (userId: string) =>
     api.get<UserPortfolio>(`/users/${userId}/portfolio`),
     
   getOrganizationPortfolio: (workspaceId: string, orgId: string) =>
     api.get<OrganizationPortfolio>(`/workspaces/${workspaceId}/organizations/${orgId}/portfolio`),
+    
+  getWorkspacePortfolio: (workspaceId: string) =>
+    api.get<WorkspacePortfolioMetrics>(`/workspaces/${workspaceId}/portfolio`),
 };
 
