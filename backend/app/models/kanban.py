@@ -1,7 +1,7 @@
 from enum import Enum
 import uuid
 from datetime import datetime
-from sqlalchemy import String, Float, Integer, ForeignKey, DateTime, Text, UniqueConstraint
+from sqlalchemy import String, Float, Integer, ForeignKey, DateTime, Text, UniqueConstraint, Boolean
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.dialects.postgresql import UUID
 
@@ -60,6 +60,7 @@ class Task(BaseEntity):
     started_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     completed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     
+    is_milestone: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
     version: Mapped[int] = mapped_column(Integer, nullable=False, default=1)
 
     board = relationship("KanbanBoard", back_populates="tasks")

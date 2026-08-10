@@ -30,6 +30,7 @@ from app.models.graph import GraphEdge
 from app.models.challenge import Challenge
 from app.models.startup import Startup
 from app.models.sponsor import Sponsor
+from app.models.incubation import ProjectUpdate, ProjectDocument, ProjectFunding
 
 __all__ = [
     "Base", 
@@ -84,5 +85,8 @@ __all__ = [
     "GraphEdge",
     "Challenge",
     "Startup",
-    "Sponsor"
+    "Sponsor",
+    "ProjectUpdate",
+    "ProjectDocument",
+    "ProjectFunding"
 ]
