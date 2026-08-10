@@ -27,9 +27,9 @@ export function AnalyticsDashboard() {
           analyticsApi.getDemographics(activeWorkspaceId),
           analyticsApi.getEvaluations(activeWorkspaceId)
         ]);
-        setOverview(o.data);
-        setDemographics(d.data);
-        setEvaluations(e.data);
+        setOverview(o);
+        setDemographics(d);
+        setEvaluations(e);
       } catch (err) {
         console.error(err);
         toast.error('Failed to load analytics data.');

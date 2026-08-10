@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { useWorkspaceStore } from '@/store/workspaceStore'
 import { useQuery } from '@tanstack/react-query'
 import { graphApi } from '@/api/graph'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
@@ -10,10 +11,12 @@ export default function GraphExplorer() {
   const [nodeId, setNodeId] = useState<string>('')
   const [activeNode, setActiveNode] = useState<string>('')
 
+  const workspaceId = useWorkspaceStore(s => s.activeWorkspaceId)
+
   const { data, isLoading, error } = useQuery({
-    queryKey: ['graph', activeNode],
-    queryFn: () => graphApi.traverseGraph(activeNode, 2),
-    enabled: !!activeNode,
+    queryKey: ['graph', activeNode, workspaceId],
+    queryFn: () => graphApi.traverseGraph(workspaceId!, activeNode, 2),
+    enabled: !!activeNode && !!workspaceId,
   })
 
   const handleSearch = (e: React.FormEvent) => {

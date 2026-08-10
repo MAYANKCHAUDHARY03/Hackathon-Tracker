@@ -30,9 +30,9 @@ export interface JudgeAssignment {
 }
 
 export interface CsvImportResult {
-  total_processed: int;
-  successful: int;
-  failed: int;
+  total_processed: number;
+  successful: number;
+  failed: number;
   errors: string[];
 }
 

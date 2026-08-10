@@ -47,32 +47,32 @@ export interface ApplicationSubmissionCreate {
 
 export const applicationApi = {
   createForm: async (hackathonId: string, form: ApplicationFormCreate): Promise<ApplicationForm> => {
-    const response = await api.post(`/hackathons/${hackathonId}/forms`, form);
-    return response.data;
+    const response = await api.post<ApplicationForm>(`/hackathons/${hackathonId}/forms`, form);
+    return response;
   },
 
   listForms: async (hackathonId: string): Promise<ApplicationForm[]> => {
-    const response = await api.get(`/hackathons/${hackathonId}/forms`);
-    return response.data;
+    const response = await api.get<ApplicationForm[]>(`/hackathons/${hackathonId}/forms`);
+    return response;
   },
 
   getForm: async (formId: string): Promise<ApplicationForm> => {
-    const response = await api.get(`/forms/${formId}`);
-    return response.data;
+    const response = await api.get<ApplicationForm>(`/forms/${formId}`);
+    return response;
   },
 
   submitApplication: async (formId: string, submission: ApplicationSubmissionCreate): Promise<ApplicationSubmission> => {
-    const response = await api.post(`/forms/${formId}/submissions`, submission);
-    return response.data;
+    const response = await api.post<ApplicationSubmission>(`/forms/${formId}/submissions`, submission);
+    return response;
   },
 
   listSubmissions: async (hackathonId: string): Promise<ApplicationSubmission[]> => {
-    const response = await api.get(`/hackathons/${hackathonId}/submissions`);
-    return response.data;
+    const response = await api.get<ApplicationSubmission[]>(`/hackathons/${hackathonId}/submissions`);
+    return response;
   },
 
   updateSubmissionStatus: async (submissionId: string, status: 'pending' | 'approved' | 'rejected'): Promise<ApplicationSubmission> => {
-    const response = await api.patch(`/submissions/${submissionId}/status`, { status });
-    return response.data;
+    const response = await api.patch<ApplicationSubmission>(`/submissions/${submissionId}/status`, { status });
+    return response;
   }
 };

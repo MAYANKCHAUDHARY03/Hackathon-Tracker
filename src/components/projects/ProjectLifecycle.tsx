@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { projectsApi, ProjectTransition } from "@/api/projectsApi";
+import { projectsApi, type ProjectTransition } from "@/api/projectsApi";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useWorkspaceStore } from "@/store/workspaceStore";
-import { portfolioApi, OrganizationPortfolio } from "@/api/portfolioApi";
+import { portfolioApi, type OrganizationPortfolio } from "@/api/portfolioApi";
 import { 
   Building2, Loader2, Target, Rocket, Lightbulb, 
   CheckCircle, Briefcase, ChevronRight 
