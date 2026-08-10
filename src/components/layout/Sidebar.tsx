@@ -14,7 +14,8 @@ import {
   Trophy,
   Building,
   Network,
-  Sparkles
+  Sparkles,
+  Store
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
@@ -30,6 +31,7 @@ const navItems = [
   { path: '/opportunities', label: 'Opportunities', icon: Sparkles },
   { path: '/vault', label: 'API Vault', icon: KeyRound },
   { path: '/portfolio', label: 'Portfolio', icon: Building },
+  { path: '/marketplace', label: 'Marketplace', icon: Store },
   { path: '/settings', label: 'Settings', icon: Settings },
 ]
 

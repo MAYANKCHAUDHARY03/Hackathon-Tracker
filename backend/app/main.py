@@ -95,7 +95,7 @@ async def health_check(db: AsyncSession = Depends(get_db)):
         "database": db_status
     }
 
-from app.routers import auth, users, workspaces, hackathons, dashboard, invitations, teams, projects, kanban, activity, rounds, submissions, notifications, mentors, judges, evaluations, outcomes, search, analytics, export_import, portfolio, automation, integration, ai, hub_integrations, audit, webhook, graph, opportunities
+from app.routers import auth, users, workspaces, hackathons, dashboard, invitations, teams, projects, kanban, activity, rounds, submissions, notifications, mentors, judges, evaluations, outcomes, search, analytics, export_import, portfolio, automation, integration, ai, hub_integrations, audit, webhook, graph, opportunities, marketplace
 
 app.include_router(auth.router, prefix=f"{settings.API_V1_STR}/auth", tags=["auth"])
 app.include_router(users.router, prefix=f"{settings.API_V1_STR}/users", tags=["users"])
@@ -138,6 +138,8 @@ app.include_router(calendar_router.router, prefix=f"{settings.API_V1_STR}", tags
 
 from app.routers import incubation
 app.include_router(incubation.router, prefix=f"{settings.API_V1_STR}", tags=["incubation"])
+
+app.include_router(marketplace.router, prefix=f"{settings.API_V1_STR}", tags=["marketplace"])
 
 from app.routers import sso
 app.include_router(sso.router, prefix=f"{settings.API_V1_STR}/sso", tags=["sso"])

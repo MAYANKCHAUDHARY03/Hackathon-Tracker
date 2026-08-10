@@ -1,4 +1,4 @@
-import api from './index';
+import { apiClient as api } from "@/lib/api-client";
 
 export interface ProjectUpdate {
   id: string;
