@@ -61,6 +61,24 @@ async def create_project(db: AsyncSession, workspace_id: uuid.UUID, team_id: uui
     # Initialize the project state as IDEA in the graph
     await transition_project_state(db, workspace_id, project.id, "IDEA", user)
     
+    # Emit event
+    from app.services.event_service import EventService
+    from app.schemas.event import EventCreate
+    event_svc = EventService(db)
+    await event_svc.publish(EventCreate(
+        workspace_id=workspace_id,
+        actor_id=user.id,
+        entity_type="project",
+        entity_id=str(project.id),
+        event_type="project_created",
+        source="api",
+        metadata_json={
+            "project_name": project.title,
+            "team_id": str(team_id)
+        }
+    ))
+    await db.commit()
+    
     return project
 
 async def transition_project_state(db: AsyncSession, workspace_id: uuid.UUID, project_id: uuid.UUID, new_state: str, user: User, notes: str = ""):

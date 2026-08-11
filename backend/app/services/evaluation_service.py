@@ -194,4 +194,22 @@ async def update_evaluation(db: AsyncSession, workspace_id: uuid.UUID, evaluatio
     s_result = await db.execute(scores_query)
     evaluation.scores = s_result.scalars().all()
     
+    if data.status in [EvaluationStatus.completed, EvaluationStatus.locked]:
+        from app.services.event_service import EventService
+        from app.schemas.event import EventCreate
+        event_svc = EventService(db)
+        await event_svc.publish(EventCreate(
+            workspace_id=workspace_id,
+            actor_id=user_id,
+            entity_type="evaluation",
+            entity_id=str(evaluation.id),
+            event_type="evaluation_completed",
+            source="api",
+            metadata_json={
+                "submission_id": str(evaluation.submission_id) if evaluation.submission_id else None,
+                "template_id": str(evaluation.template_id),
+                "total_score": float(evaluation.total_score) if evaluation.total_score else None
+            }
+        ))
+    
     return evaluation

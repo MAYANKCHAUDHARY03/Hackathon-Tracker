@@ -11,6 +11,7 @@ from app.models.hackathon import Hackathon
 from app.models.team import Team, TeamMember
 from app.models.project import Project, Technology, ProjectTechnology
 from app.models.workspace_invitation import WorkspaceInvitation
+from app.models.event import PlatformEvent
 from sqlalchemy.pool import StaticPool
 
 # Use a file-based SQLite database for testing to avoid connection isolation issues
@@ -19,6 +20,7 @@ TEST_DATABASE_URL = "sqlite+aiosqlite:///./test_db.sqlite"
 engine = create_async_engine(
     TEST_DATABASE_URL, 
     connect_args={"check_same_thread": False}, 
+    echo=True,
 )
 TestingSessionLocal = async_sessionmaker(autocommit=False, autoflush=False, expire_on_commit=False, bind=engine, class_=AsyncSession)
 
@@ -34,6 +36,7 @@ def anyio_backend():
 
 @pytest.fixture(autouse=True)
 async def prepare_database():
+    print(f"DEBUG TABLES: {Base.metadata.tables.keys()}")
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
     yield

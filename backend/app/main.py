@@ -160,6 +160,9 @@ app.include_router(scim.router, prefix=f"{settings.API_V1_STR}/scim/v2", tags=["
 from app.routers import hackathon_sync
 app.include_router(hackathon_sync.router, prefix=f"{settings.API_V1_STR}/hackathon-sync", tags=["hackathon-sync"])
 
+from app.routers import events
+app.include_router(events.router, prefix=f"{settings.API_V1_STR}/workspaces/{{workspace_id}}/events", tags=["events"])
+
 from app.routers import health
 app.include_router(health.router, prefix="/api/ops", tags=["ops"])
 

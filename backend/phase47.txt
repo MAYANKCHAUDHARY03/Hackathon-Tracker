@@ -1,0 +1,238 @@
+y new module must consume the canonical ontology (Phase 46) and emit to the canonical event stream (Phase 47) rather than inventing its own data model or activity log.
+8. Every AI-initiated action, regardless of phase, must be permission-checked, logged, traceable, and reversible where possible.
+
+**Per-phase step template (run all four for every phase, in order):**
+- **Architecture Spec** — define data model / entities / interfaces / risk classification (as applicable) for this phase before writing code.
+- **Implementation** — build the phase per the scope below.
+- **Verification** — test against the phase's definition of done; confirm it correctly consumes/produces ontology entities and events where relevant.
+- **Refinement** — fix gaps found in verification; polish UI/UX to match the existing SaaS design system (primary #2563EB, secondary #0F172A, accent #14B8A6, glassmorphism, Inter typography).
+
+---
+
+## Phase 46 — Universal Innovation Ontology 🔴
+**Why:** Before adding more AI, the platform needs one canonical vocabulary. Every future module (agents, copilots, analytics, federation) should consume this ontology instead of inventing its own representation — this is what lets a new program type reuse core entities without duplicate models.
+
+**Scope:**
+- Define canonical entity types: Person, Organization, Community, Program, Hackathon, Challenge, Problem, Idea, Team, Project, Technology, Skill, Mentor, Judge, Sponsor, Research, Dataset, Startup, Product, Pilot, Opportunity, Achievement, Impact.
+- Give every entity a common base shape: `ID, Type, Owner, Source, Verification, Visibility, Created, Updated, Relationships`.
+- Build the relationship/graph layer connecting entities.
+- Migrate at least one existing module to read/write through the ontology instead of its local schema, as proof of the pattern.
+
+**Definition of done:** A new entity type or program type can be added by reusing existing base entities — no duplicate models required.
+
+---
+
+## Phase 47 — Universal Event & Activity Stream 🔴
+**Why:** Right now, Task/Notification/Analytics/AI/Integration/Audit systems would each track activity independently. A single canonical event stream lets Analytics, AI, and Automation all subscribe to one source of truth instead of drifting out of sync.
+
+**Scope:**
+- Define the event envelope: immutable event ID, timestamp, actor, organization, entity, event type, source, correlation ID, metadata. No sensitive credentials in events, ever.
+- Implement event types: `project_created, task_completed, challenge_created, team_joined, submission_created, evaluation_completed, award_verified, project_deployed`, plus any others needed by existing modules.
+- Wire existing systems (tasks, notifications, analytics) to publish into this stream.
+- Build a minimal internal event viewer/log for debugging.
+
+**Definition of done:** Every meaningful platform action produces one immutable, correctly-shaped event, and at least one downstream consumer (e.g. notifications) reads from the stream rather than being called directly.
+
+---
+
+## Phase 48 — AI Agent Framework 🔴
+**Why:** Multiple narrow, permissioned agents are safer than one unrestricted agent. Each agent should only be able to do what its role requires.
+
+**Scope:**
+- Build the agent framework/runtime with a registry for: Research Agent, Project Agent, Submission Agent, Mentor Agent, Organizer Agent, Analytics Agent, Documentation Agent.
+- Each agent gets an explicit allow-list of tools (e.g. Submission Agent: read project, validate submission, generate checklist, prepare submission — explicitly **not** delete project, change permissions, modify organization, or submit without confirmation).
+- Every tool invocation must be permission-checked, logged, traceable, and reversible where possible — build this as shared middleware all agents pass through, not per-agent logic.
+- No agent ships with a "high risk" or "critical" action wired up yet — those stay blocked until Phase 49 exists.
+
+**Definition of done:** Agents can be invoked, their tool calls are fully logged and permission-scoped, and no agent can perform an action outside its declared tool list.
+
+---
+
+## Phase 49 — Human Approval Framework 🔴
+**Why:** This is the safety backbone of the entire autonomous layer. Without it, later agents could become uncontrolled automation.
+
+**Scope:**
+- Build risk classification: `Low Risk → Automatic`, `Medium Risk → User Approval`, `High Risk → Admin Approval`, `Critical → Blocked/Manual Only`.
+- Classify known action types: Low (summarize project, suggest task, generate documentation), Medium (create tasks, modify project metadata, schedule meetings), High (publish project, external communication, external submission), Critical (permission changes, destructive operations, financial operations).
+- Build the approval queue/UI: pending approvals show affected entities, exact action, reason, and expected impact.
+- Retrofit Phase 48's agent framework so every agent tool call routes through this classifier — no agent may bypass the approval engine, under any circumstance.
+
+**Definition of done:** A medium-or-higher-risk action from any agent cannot execute without passing through this engine, and this is enforced at the framework level, not per-agent.
+
+---
+
+## Phase 50 — Agent Memory & Context 🔴
+**Why:** Agents need context to be useful, but memory must be scoped and revocable — one organization must never be able to retrieve another's memory.
+
+**Scope:**
+- Implement three memory layers: Conversation Memory, Task Memory, Organization Knowledge.
+- For each agent, define what it's allowed to hold in memory (e.g. Project Agent: current project, tasks, hackathon, team, previous decisions, approved documents).
+- Implement scoped memory, expiration, deletion, and provenance tracking.
+- Enforce hard organization-boundary isolation on all memory reads.
+
+**Definition of done:** Memory is provably scoped per organization/agent, expires and can be deleted on request, and every memory item is traceable to its source.
+
+---
+
+## Phase 51 — Autonomous Project Operations 🔴
+**Why:** The first real user-facing copilot — proves out the ontology, event stream, agent framework, approval engine, and memory layers together.
+
+**Scope:**
+- Build the Project Copilot UI: status/progress, risk flags (e.g. approaching deadline), detected issues (incomplete critical tasks, unvalidated demo URL, missing README sections), and recommended actions.
+- With approval, allow it to: create tasks, assign tasks, schedule reminders, generate checklists, generate documentation.
+- Ensure it cannot silently change critical project state — any state change routes through Phase 49.
+
+**Definition of done:** A real project can be monitored end-to-end by the copilot, with all mutating actions gated by approval and fully logged.
+
+---
+
+## Phase 52 — Autonomous Organizer Operations 🟠
+**Why:** Extends the copilot pattern to program-wide oversight for organizers running an entire hackathon/program.
+
+**Scope:**
+- Build Organizer Copilot: surfaces incomplete submissions, missing demos, incomplete judge evaluations, and other program-health signals.
+- Recommended actions: send reminder, reassign judge, extend internal review deadline — each shown with affected entities, exact action, reason, and expected impact before approval.
+
+**Definition of done:** An organizer can see program-wide risk at a glance and act on recommendations only through the approval flow.
+
+---
+
+## Phase 53 — Autonomous Mentor Operations 🟠
+**Why:** Reduces mentor prep overhead by summarizing team state ahead of meetings.
+
+**Scope:**
+- Build Mentor Copilot: identifies teams needing help, summarizes progress, prepares meeting briefs, flags recurring blockers, recommends resources.
+- Meeting brief view: progress %, main blocker, previous discussion summary, suggested topics.
+
+**Definition of done:** A mentor can open a brief for any assigned team and get an accurate, evidence-backed summary generated from real project/event data.
+
+---
+
+## Phase 54 — Autonomous Analytics 🟠
+**Why:** Moves users from manually reading dashboards to receiving interpreted, evidence-backed insight.
+
+**Scope:**
+- Build the pipeline: Analytics → AI Interpretation → Insights → Recommended Actions.
+- Every generated insight (e.g. "submission completion dropped 18% this week, primarily among teams in the AI challenge category") must cite the underlying evidence/data it's derived from.
+
+**Definition of done:** Insights are never presented without traceable supporting data, and recommended actions from insights also route through the approval engine if they're mutating.
+
+---
+
+## Phase 55 — Organizational Digital Twin 🟡
+**Why:** Gives organizations a simulate-before-you-commit view of their innovation ecosystem. This phase is explicitly **simulation, not autonomous decision-making**.
+
+**Scope:**
+- Build a dynamic model spanning Programs, Challenges, Teams, People, Projects, Technologies, Mentors, Judges, Outcomes, Impact.
+- Support what-if queries such as "what happens if we increase teams by 30%?" or "how many additional judges will this program require?"
+
+**Definition of done:** What-if queries return plausible, data-grounded projections without taking any real action on the platform.
+
+---
+
+## Phase 56 — Program Simulation Engine 🟠
+**Why:** Lets organizers stress-test a program's configuration before launch.
+
+**Scope:**
+- Build the simulation pipeline: Configure Program → Simulation → Expected Load → Judge Requirements → Mentor Requirements → Infrastructure Requirements → Projected Risks.
+- Support tunable inputs: participant count, team count, rounds, judges, mentors, deadlines, evaluation criteria.
+
+**Definition of done:** An organizer can configure a hypothetical program and get concrete resourcing/risk projections before committing.
+
+---
+
+## Phase 57 — Intelligent Resource Allocation 🟠
+**Why:** Judge/mentor/reviewer assignment should be governed by deterministic constraints, with AI explaining rather than deciding.
+
+**Scope:**
+- Build allocation for judges, mentors, reviewers, challenges, teams, infrastructure using optimization logic (not a raw LLM decision).
+- Judge assignment pipeline specifically: Expertise → Conflict Check → Availability → Workload → Assignment.
+- AI may generate a human-readable explanation of any assignment, but the deterministic constraint engine remains authoritative.
+
+**Definition of done:** Assignments are reproducible from the constraint engine alone; the AI explanation layer is provably non-authoritative (removing it doesn't change any assignment).
+
+---
+
+## Phase 58 — Real-Time Innovation Operations Center 🔴
+**Why:** Centralizes program-wide operational visibility into one command-center view, pulling together everything built so far.
+
+**Scope:**
+- Build the Operations Center dashboard: active programs, teams, at-risk projects, pending evaluations, critical incidents, live AI alerts (e.g. evaluation backlog increasing, projects approaching deadline).
+- Should aggregate from the event stream (Phase 47) and copilots (Phases 51–54) rather than querying modules directly.
+
+**Definition of done:** The Operations Center reflects real-time platform state and becomes the default landing view for admins/organizers.
+
+---
+
+## Phase 59 — Federated Innovation Network 🟡
+**Why:** Enables cross-organization collaboration (universities, companies, startups, research labs) while keeping privacy boundaries explicit.
+
+**Scope:**
+- Support cross-organization challenges, shared programs, verified identities, shared mentors/judges, project discovery across orgs.
+- Every cross-org data exposure must respect explicit, auditable privacy boundaries — default to private, not shared.
+
+**Definition of done:** Two test organizations can run a shared challenge without either seeing more of the other's private data than explicitly permitted.
+
+---
+
+## Phase 60 — Portable Innovation Identity 🔴
+**Why:** Expands the existing Innovation Passport into a full portable identity users can carry across organizations.
+
+**Scope:**
+- Build a portable profile covering verified achievements, skills, projects, contributions, awards, certifications, innovation history.
+- Implement visibility tiers: `Private → Connection Only → Selective Sharing → Public`, defaulting to Private for anything new.
+
+**Definition of done:** A user can control exactly what's visible to whom, and nothing is exposed publicly by default.
+
+---
+
+## Phase 61 — Global Trust Layer 🔴
+**Why:** Strengthens claim verification across the platform so achievements/skills carry real evidentiary weight.
+
+**Scope:**
+- Implement verification levels: `Unverified → Self-Declared → Platform-Verified → Organization-Verified → Multi-Source Verified`.
+- Every claim (e.g. a skill) must show its evidence trail (linked projects, submissions, org verifications).
+
+**Definition of done:** Any claim on a user's profile can be inspected to see its verification level and full evidence trail.
+
+---
+
+## Phase 62 — Innovation Financing Intelligence 🟡
+**Why:** Provides funding-opportunity intelligence without taking on the scope/risk of an actual financial transaction system.
+
+**Scope:**
+- Aggregate grants, competitions, incubators, accelerators, funding opportunities, sponsor programs.
+- Match opportunities to projects using verified profile/project data from Phases 60–61 — no unverified matching.
+- Explicitly out of scope: any actual movement of money.
+
+**Definition of done:** A project owner can see relevant funding opportunities matched against their verified project data.
+
+---
+
+## Phase 63 — Impact Intelligence 🔴
+**Why:** Connects project activity to real-world, measurable outcomes rather than stopping at "hackathon submitted."
+
+**Scope:**
+- Build the pipeline: Project → Pilot → Deployment → Impact Metrics.
+- Support organization-defined metrics (users served, cost savings, efficiency improvement, environmental impact, educational impact, jobs created) rather than a fixed metric set.
+
+**Definition of done:** An organization can define its own impact metrics and track a project's progression from submission through real-world deployment.
+
+---
+
+## Phase 64 — Global Innovation Observatory 2.0 🟠
+**Why:** Upgrades the existing Observatory from a static view into a predictive, explorable one.
+
+**Scope:**
+- Build exploration across Technology → Geography → Domain → Organization → Challenge → Project → Outcome.
+- Support time-series analysis and trend visualization across all of the above.
+
+**Definition of done:** A user can drill from a technology or domain all the way down to real outcomes, with trend charts over time.
+
+---
+
+## Phase 65 — Autonomous Innovation Network 🔴
+**Why:** This is the culmination of Version 6 — closing the full feedback loop across everything built in Phases 46–64.
+
+**Scope:**
+- Wire the full loop: `Events → Knowledge Graph → Analytics → AI Agen

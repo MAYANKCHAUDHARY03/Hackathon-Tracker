@@ -18,7 +18,7 @@ async def get_projects(
 ):
     return await project_service.get_projects(db, workspace_id)
 
-@router.post("/workspaces/{workspace_id}/teams/{team_id}/projects", response_model=ProjectResponse)
+@router.post("/workspaces/{workspace_id}/teams/{team_id}/projects", response_model=ProjectResponse, status_code=status.HTTP_201_CREATED)
 async def create_project(
     workspace_id: uuid.UUID,
     team_id: uuid.UUID,

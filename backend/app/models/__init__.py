@@ -38,6 +38,7 @@ from app.models.incubation import ProjectUpdate, ProjectDocument, ProjectFunding
 from app.models.search import ContentEmbedding
 from app.models.research import ResearchLink
 from app.models.api_auth import APIKey, OAuthApp
+from app.models.event import PlatformEvent
 
 __all__ = [
     "Base", 
@@ -104,5 +105,6 @@ __all__ = [
     "ContentEmbedding",
     "ResearchLink",
     "APIKey",
-    "OAuthApp"
+    "OAuthApp",
+    "PlatformEvent"
 ]
