@@ -42,7 +42,7 @@ class NotificationBase(BaseModel):
     entity_type: str | None = None
     entity_id: UUID | None = None
     event_key: str | None = None
-    safe_metadata: dict | None = None
+    safe_edge_metadata: dict | None = None
     occurred_at: datetime
     expires_at: datetime | None = None
 

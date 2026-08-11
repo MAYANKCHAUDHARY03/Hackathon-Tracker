@@ -40,7 +40,7 @@ class Notification(BaseEntity):
     entity_type = Column(String, nullable=True)
     entity_id = Column(UUID(as_uuid=True), nullable=True)
     event_key = Column(String, nullable=True, unique=True, index=True)
-    safe_metadata = Column(JSON, nullable=True)
+    safe_edge_metadata = Column(JSON, nullable=True)
     occurred_at = Column(DateTime(timezone=True), default=utc_now, nullable=False)
     read_at = Column(DateTime(timezone=True), nullable=True)
     dismissed_at = Column(DateTime(timezone=True), nullable=True)

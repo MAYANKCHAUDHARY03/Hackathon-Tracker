@@ -6,7 +6,7 @@ from app.database import get_db
 from app.dependencies import get_current_user
 from app.schemas.portfolio import UserPortfolio, OrganizationPortfolio, PortfolioMetrics
 from app.services.portfolio_service import PortfolioService
-from app.services.graph_service import GraphQueryService
+from app.services.graph_service import KnowledgeGraphService
 
 router = APIRouter()
 
@@ -53,5 +53,5 @@ async def get_workspace_portfolio(
     db: AsyncSession = Depends(get_db),
     current_user = Depends(get_current_user)
 ):
-    service = GraphQueryService(db)
+    service = KnowledgeGraphService(db)
     return await service.get_workspace_portfolio(workspace_id)

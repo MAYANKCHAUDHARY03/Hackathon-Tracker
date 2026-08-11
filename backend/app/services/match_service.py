@@ -6,7 +6,7 @@ from sqlalchemy import select, or_, func
 from app.models.team import Team
 from app.models.people import Person
 from app.models.user import User
-from app.services.graph_service import GraphQueryService
+from app.services.graph_service import KnowledgeGraphService
 from app.services.ai.providers import AIProviderFactory
 from app.config import settings
 from fastapi import HTTPException
@@ -71,8 +71,8 @@ class MatchService:
         if not person:
             raise HTTPException(status_code=404, detail="User must have a Person profile to apply.")
             
-        # Create GraphEdge using GraphQueryService
-        graph_service = GraphQueryService(db)
+        # Create GraphEdge using KnowledgeGraphService
+        graph_service = KnowledgeGraphService(db)
         await graph_service.create_edge(
             workspace_id=workspace_id,
             source_type="Person",
@@ -86,8 +86,8 @@ class MatchService:
 
     @staticmethod
     async def invite_to_team(db: AsyncSession, workspace_id: uuid.UUID, team_id: uuid.UUID, person_id: uuid.UUID, user: User):
-        # Create GraphEdge using GraphQueryService
-        graph_service = GraphQueryService(db)
+        # Create GraphEdge using KnowledgeGraphService
+        graph_service = KnowledgeGraphService(db)
         await graph_service.create_edge(
             workspace_id=workspace_id,
             source_type="Team",

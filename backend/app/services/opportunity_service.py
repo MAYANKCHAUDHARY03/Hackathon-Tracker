@@ -5,7 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 
 from app.schemas.opportunity import OpportunityMatch, OpportunityMatchResponse
-from app.services.graph_service import GraphQueryService
+from app.services.graph_service import KnowledgeGraphService
 from app.services.ai.providers import AIProviderFactory
 from app.config import settings
 
@@ -19,7 +19,7 @@ class OpportunityService:
         target_type: str
     ) -> OpportunityMatchResponse:
         
-        graph_service = GraphQueryService(db)
+        graph_service = KnowledgeGraphService(db)
         
         # 1. Fetch the source entity's graph (depth=2 to get skills, past projects, etc.)
         source_graph = await graph_service.traverse(start_id=entity_id, workspace_id=workspace_id, depth=2)

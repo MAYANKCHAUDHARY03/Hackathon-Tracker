@@ -10,7 +10,7 @@ class WorkspaceAnalyticsSummary(BaseModel):
     tasks_completed: int
     tasks_pending: int
     recent_activity_count: int
-    metadata: Dict[str, Any] = {}
+    edge_metadata: Dict[str, Any] = {}
 
 class AnalyticsOverview(BaseModel):
     total_users: int

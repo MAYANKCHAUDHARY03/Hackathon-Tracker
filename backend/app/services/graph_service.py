@@ -1,11 +1,12 @@
 import uuid
-from typing import List, Dict, Any
-from sqlalchemy import select, or_
+from typing import List, Dict, Any, Set
+from datetime import datetime, timezone
+from sqlalchemy import select, or_, func, in_
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import class_mapper
 
 from app.core.event_bus import event_bus
-from app.models.graph import GraphEdge
+from app.models.graph import GraphEdge, EdgeProvenance
 from app.models.user import User
 from app.models.team import Team
 from app.models.project import Project
@@ -16,7 +17,8 @@ from app.models.challenge import Challenge
 from app.models.startup import Startup
 from app.models.sponsor import Sponsor
 
-class GraphQueryService:
+
+class KnowledgeGraphService:
     def __init__(self, db: AsyncSession):
         self.db = db
         self.type_to_model = {
@@ -31,12 +33,12 @@ class GraphQueryService:
             "Sponsor": Sponsor
         }
 
-    async def get_node_by_type_and_id(self, node_type: str, node_id: uuid.UUID):
+    async def get_nodes_by_type_and_ids(self, node_type: str, node_ids: List[uuid.UUID]):
         model = self.type_to_model.get(node_type)
-        if not model:
-            return None
-        result = await self.db.execute(select(model).where(model.id == node_id))
-        return result.scalars().first()
+        if not model or not node_ids:
+            return []
+        result = await self.db.execute(select(model).where(model.id.in_(node_ids)))
+        return result.scalars().all()
 
     def serialize_node(self, node) -> Dict[str, Any]:
         if not node:
@@ -49,8 +51,25 @@ class GraphQueryService:
         workspace_id: uuid.UUID,
         source_type: str, source_id: uuid.UUID, 
         target_type: str, target_id: uuid.UUID, 
-        relation_type: str, properties: Dict[str, Any] = None
+        relation_type: str, 
+        properties: Dict[str, Any] = None,
+        provenance: str = EdgeProvenance.user_provided.value,
+        confidence: float = 1.0,
+        created_by: uuid.UUID = None,
+        edge_metadata: Dict[str, Any] = None
     ) -> GraphEdge:
+        
+        # Check for existing edge
+        stmt = select(GraphEdge).where(
+            GraphEdge.workspace_id == workspace_id,
+            GraphEdge.source_id == source_id,
+            GraphEdge.target_id == target_id,
+            GraphEdge.relation_type == relation_type
+        )
+        existing = (await self.db.execute(stmt)).scalars().first()
+        if existing:
+            return existing
+
         edge = GraphEdge(
             workspace_id=workspace_id,
             source_type=source_type,
@@ -58,8 +77,18 @@ class GraphQueryService:
             target_type=target_type,
             target_id=target_id,
             relation_type=relation_type,
-            properties=properties or {}
+            properties=properties or {},
+            provenance=provenance,
+            confidence=confidence,
+            created_by=created_by,
+            edge_edge_metadata=edge_metadata or {}
         )
+        
+        # If it's created as verified, set verification fields
+        if provenance == EdgeProvenance.verified.value and created_by:
+            edge.verified_at = datetime.now(timezone.utc)
+            edge.verified_by = created_by
+
         self.db.add(edge)
         await self.db.commit()
         await self.db.refresh(edge)
@@ -67,76 +96,100 @@ class GraphQueryService:
         # Publish event for Integrations
         await event_bus.publish("graph_edge_created", {
             "workspace_id": str(workspace_id),
+            "edge_id": str(edge.id),
             "source_type": source_type,
             "source_id": str(source_id),
             "target_type": target_type,
             "target_id": str(target_id),
             "relation_type": relation_type,
-            "properties": properties or {}
+            "provenance": provenance
         })
         
         return edge
 
-    async def get_edges(self, node_id: uuid.UUID, workspace_id: uuid.UUID, direction: str = "both") -> List[GraphEdge]:
-        if direction == "out":
-            stmt = select(GraphEdge).where(GraphEdge.source_id == node_id, GraphEdge.workspace_id == workspace_id)
-        elif direction == "in":
-            stmt = select(GraphEdge).where(GraphEdge.target_id == node_id, GraphEdge.workspace_id == workspace_id)
-        else:
-            stmt = select(GraphEdge).where(
-                or_(GraphEdge.source_id == node_id, GraphEdge.target_id == node_id),
-                GraphEdge.workspace_id == workspace_id
-            )
+    async def verify_edge(self, edge_id: uuid.UUID, workspace_id: uuid.UUID, user_id: uuid.UUID) -> GraphEdge:
+        stmt = select(GraphEdge).where(GraphEdge.id == edge_id, GraphEdge.workspace_id == workspace_id)
+        edge = (await self.db.execute(stmt)).scalars().first()
+        if not edge:
+            return None
+            
+        edge.provenance = EdgeProvenance.verified.value
+        edge.confidence = 1.0
+        edge.verified_at = datetime.now(timezone.utc)
+        edge.verified_by = user_id
         
-        result = await self.db.execute(stmt)
-        return result.scalars().all()
+        await self.db.commit()
+        await self.db.refresh(edge)
+        return edge
 
     async def traverse(self, start_id: uuid.UUID, workspace_id: uuid.UUID, depth: int = 2) -> Dict[str, Any]:
         """
-        Traverses the graph starting from start_id up to the specified depth.
+        Traverses the graph using level-based batch fetching to avoid N+1 queries.
         Returns a dictionary containing the path relationships and hydrated nodes.
         """
-        visited_nodes = set()
-        queue = [(start_id, 0)]
+        visited_nodes = {start_id}
+        current_level_nodes = {start_id}
         edges_list = []
-        nodes_dict = {}
+        nodes_dict = {str(start_id): {"type": "Unknown", "id": start_id}} # We will correct type later if needed
+        
+        all_edges_seen = set()
 
-        while queue:
-            current_id, current_depth = queue.pop(0)
+        for current_depth in range(depth):
+            if not current_level_nodes:
+                break
+                
+            # Batch fetch all edges for current level nodes
+            stmt = select(GraphEdge).where(
+                or_(
+                    GraphEdge.source_id.in_(current_level_nodes), 
+                    GraphEdge.target_id.in_(current_level_nodes)
+                ),
+                GraphEdge.workspace_id == workspace_id
+            )
+            edges = (await self.db.execute(stmt)).scalars().all()
             
-            if current_id in visited_nodes:
-                continue
+            next_level_nodes = set()
             
-            visited_nodes.add(current_id)
+            for edge in edges:
+                if edge.id in all_edges_seen:
+                    continue
+                all_edges_seen.add(edge.id)
+                
+                edges_list.append({
+                    "id": str(edge.id),
+                    "source_type": edge.source_type,
+                    "source_id": str(edge.source_id),
+                    "target_type": edge.target_type,
+                    "target_id": str(edge.target_id),
+                    "relation_type": edge.relation_type,
+                    "properties": edge.properties,
+                    "provenance": edge.provenance,
+                    "confidence": edge.confidence
+                })
+                
+                # Identify next nodes to traverse
+                next_id = edge.target_id if edge.source_id in current_level_nodes else edge.source_id
+                if next_id not in visited_nodes:
+                    next_level_nodes.add(next_id)
+                    visited_nodes.add(next_id)
+                
+                # Register node types
+                nodes_dict[str(edge.source_id)] = {"type": edge.source_type, "id": edge.source_id}
+                nodes_dict[str(edge.target_id)] = {"type": edge.target_type, "id": edge.target_id}
+                
+            current_level_nodes = next_level_nodes
 
-            if current_depth < depth:
-                # Get all edges where current_id is source or target
-                edges = await self.get_edges(current_id, workspace_id, direction="both")
-                for edge in edges:
-                    edges_list.append({
-                        "id": str(edge.id),
-                        "source_type": edge.source_type,
-                        "source_id": str(edge.source_id),
-                        "target_type": edge.target_type,
-                        "target_id": str(edge.target_id),
-                        "relation_type": edge.relation_type,
-                        "properties": edge.properties
-                    })
-                    
-                    next_id = edge.target_id if edge.source_id == current_id else edge.source_id
-                    queue.append((next_id, current_depth + 1))
-                    
-                    # Store node types for hydration
-                    if str(edge.source_id) not in nodes_dict:
-                        nodes_dict[str(edge.source_id)] = {"type": edge.source_type, "id": edge.source_id}
-                    if str(edge.target_id) not in nodes_dict:
-                        nodes_dict[str(edge.target_id)] = {"type": edge.target_type, "id": edge.target_id}
-
-        # Hydrate nodes
+        # Batch hydrate nodes grouped by type
         hydrated_nodes = {}
-        for node_str_id, info in nodes_dict.items():
-            node = await self.get_node_by_type_and_id(info["type"], info["id"])
-            if node:
+        nodes_by_type = {}
+        for str_id, info in nodes_dict.items():
+            if info["type"] == "Unknown":
+                continue
+            nodes_by_type.setdefault(info["type"], []).append(info["id"])
+            
+        for n_type, n_ids in nodes_by_type.items():
+            nodes = await self.get_nodes_by_type_and_ids(n_type, n_ids)
+            for node in nodes:
                 hydrated = self.serialize_node(node)
                 # Convert UUIDs/datetimes for JSON serialization safely
                 for k, v in hydrated.items():
@@ -144,9 +197,15 @@ class GraphQueryService:
                         hydrated[k] = str(v)
                     elif isinstance(v, datetime):
                         hydrated[k] = v.isoformat()
+                        
+                # Strip PII (Privacy Audit requirement)
+                if n_type == "User" or n_type == "Person":
+                    hydrated.pop("email", None)
+                    hydrated.pop("phone", None)
+                    hydrated.pop("password_hash", None)
                 
-                hydrated_nodes[node_str_id] = {
-                    "type": info["type"],
+                hydrated_nodes[str(node.id)] = {
+                    "type": n_type,
                     "data": hydrated
                 }
 
@@ -156,6 +215,7 @@ class GraphQueryService:
         }
 
     async def get_workspace_portfolio(self, workspace_id: uuid.UUID) -> Dict[str, Any]:
+        # Using optimized aggregate queries
         metrics = {
             "total_projects": 0,
             "active_projects": 0,
@@ -166,45 +226,51 @@ class GraphQueryService:
             "total_participants": 0
         }
 
-        # 1. Projects
-        project_stmt = select(Project).where(Project.workspace_id == workspace_id)
-        projects = (await self.db.execute(project_stmt)).scalars().all()
-        metrics["total_projects"] = len(projects)
-        metrics["completed_projects"] = sum(1 for p in projects if p.status == "completed")
-        metrics["active_projects"] = metrics["total_projects"] - metrics["completed_projects"]
+        # 1. Projects (aggregate)
+        stmt_proj = select(Project.status, func.count(Project.id)).where(Project.workspace_id == workspace_id).group_by(Project.status)
+        proj_counts = (await self.db.execute(stmt_proj)).all()
+        for status, count in proj_counts:
+            metrics["total_projects"] += count
+            if status == "completed":
+                metrics["completed_projects"] += count
+            else:
+                metrics["active_projects"] += count
 
-        # 2. Edges for workspace
-        edge_stmt = select(GraphEdge).where(GraphEdge.workspace_id == workspace_id)
-        edges = (await self.db.execute(edge_stmt)).scalars().all()
-
-        # 3. Startups & Patents (from edges)
-        metrics["startups_spawned"] = sum(1 for e in edges if e.target_type == "Startup")
-        metrics["patents_filed"] = sum(1 for e in edges if e.target_type == "Patent")
-
-        # 4. Total participants (unique Users in graph)
-        user_ids = set()
-        for e in edges:
-            if e.source_type == "User":
-                user_ids.add(e.source_id)
-            if e.target_type == "User":
-                user_ids.add(e.target_id)
-        metrics["total_participants"] = len(user_ids)
-
-        # 5. Top technologies
-        tech_edges = [e for e in edges if e.target_type == "Technology" and e.relation_type == "uses"]
-        tech_counts = {}
-        for e in tech_edges:
-            tech_counts[e.target_id] = tech_counts.get(e.target_id, 0) + 1
+        # 2. Startups & Patents (from edges)
+        stmt_outcomes = select(GraphEdge.target_type, func.count(GraphEdge.id)).where(
+            GraphEdge.workspace_id == workspace_id,
+            GraphEdge.target_type.in_(["Startup", "Patent"])
+        ).group_by(GraphEdge.target_type)
         
-        if tech_counts:
+        outcome_counts = (await self.db.execute(stmt_outcomes)).all()
+        for t_type, count in outcome_counts:
+            if t_type == "Startup":
+                metrics["startups_spawned"] = count
+            elif t_type == "Patent":
+                metrics["patents_filed"] = count
+
+        # 3. Total participants (unique Users connected to workspace)
+        stmt_users = select(func.count(func.distinct(GraphEdge.source_id))).where(
+            GraphEdge.workspace_id == workspace_id,
+            GraphEdge.source_type == "User"
+        )
+        metrics["total_participants"] = (await self.db.execute(stmt_users)).scalar() or 0
+
+        # 4. Top technologies
+        stmt_tech = select(GraphEdge.target_id, func.count(GraphEdge.id).label("cnt")).where(
+            GraphEdge.workspace_id == workspace_id,
+            GraphEdge.target_type == "Technology",
+            GraphEdge.relation_type == "uses"
+        ).group_by(GraphEdge.target_id).order_by(func.count(GraphEdge.id).desc()).limit(5)
+        
+        top_tech_rows = (await self.db.execute(stmt_tech)).all()
+        if top_tech_rows:
             from app.models.project import Technology
-            tech_ids = list(tech_counts.keys())
-            tech_stmt = select(Technology).where(Technology.id.in_(tech_ids))
-            techs = (await self.db.execute(tech_stmt)).scalars().all()
-            tech_map = {t.id: t.name for t in techs}
+            tech_ids = [row[0] for row in top_tech_rows]
+            tech_map_stmt = select(Technology.id, Technology.name).where(Technology.id.in_(tech_ids))
+            techs = (await self.db.execute(tech_map_stmt)).all()
+            tech_map = {t_id: name for t_id, name in techs}
             
-            top_techs = [{"name": tech_map.get(tid, str(tid)), "count": count} for tid, count in tech_counts.items()]
-            top_techs.sort(key=lambda x: x["count"], reverse=True)
-            metrics["top_technologies"] = top_techs[:5]
+            metrics["top_technologies"] = [{"name": tech_map.get(row[0], str(row[0])), "count": row[1]} for row in top_tech_rows]
 
         return metrics

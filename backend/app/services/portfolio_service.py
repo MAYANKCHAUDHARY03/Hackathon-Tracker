@@ -6,7 +6,7 @@ from app.models.user import User
 from app.models.team import Team, TeamMember
 from app.models.organization import Organization
 from app.schemas.portfolio import UserPortfolio, PortfolioItem, OrganizationPortfolio, OrgPortfolioStats, OrgPortfolioProject
-from app.services.graph_service import GraphQueryService
+from app.services.graph_service import KnowledgeGraphService
 
 class PortfolioService:
     def __init__(self, session: AsyncSession):
@@ -45,7 +45,7 @@ class PortfolioService:
 
         # Traverse the graph to find all projects and startups connected to this organization
         # Org -> Hackathon/Challenge -> Project -> Startup
-        graph_service = GraphQueryService(self.session)
+        graph_service = KnowledgeGraphService(self.session)
         traversal = await graph_service.traverse(start_id=org_id, workspace_id=workspace_id, depth=3)
         
         nodes = traversal.get("nodes", {})

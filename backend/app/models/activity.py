@@ -18,7 +18,7 @@ class ActivityEvent(BaseEntity):
     entity_id: Mapped[uuid.UUID | None] = mapped_column(UUID(as_uuid=True), nullable=True)
     
     action: Mapped[str] = mapped_column(String, nullable=False) # e.g., 'created', 'updated', 'moved'
-    safe_metadata: Mapped[dict | None] = mapped_column(JSON, nullable=True) # E.g. {"old_column": "Todo", "new_column": "Done", "task_title": "Fix bug"}
+    safe_edge_metadata: Mapped[dict | None] = mapped_column(JSON, nullable=True) # E.g. {"old_column": "Todo", "new_column": "Done", "task_title": "Fix bug"}
 
     workspace = relationship("Workspace")
     project = relationship("Project")

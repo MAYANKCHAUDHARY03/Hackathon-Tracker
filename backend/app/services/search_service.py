@@ -16,7 +16,7 @@ class SearchService:
 
     async def search(self, workspace_id: UUID, query: str) -> SearchResponse:
         from app.services.ai.providers import AIProviderFactory
-        from app.services.graph_service import GraphQueryService
+        from app.services.graph_service import KnowledgeGraphService
         from app.config import settings
         
         results: List[SearchResultItem] = []
@@ -61,7 +61,7 @@ class SearchService:
                     description=h.description[:100] + "..." if h.description and len(h.description) > 100 else h.description,
                     url=f"/workspaces/{workspace_id}/hackathons/{h.id}",
                     created_at=h.created_at,
-                    metadata={"status": h.status}
+                    edge_edge_metadata={"status": h.status}
                 ))
 
         if "project" in entities_to_search:
@@ -85,7 +85,7 @@ class SearchService:
                     description=p.description[:100] + "..." if p.description and len(p.description) > 100 else p.description,
                     url=f"/workspaces/{workspace_id}/projects/{p.id}",
                     created_at=p.created_at,
-                    metadata={"team_id": str(p.team_id)}
+                    edge_edge_metadata={"team_id": str(p.team_id)}
                 ))
 
         if "team" in entities_to_search:
@@ -108,7 +108,7 @@ class SearchService:
                     description=t.description[:100] + "..." if t.description and len(t.description) > 100 else t.description,
                     url=f"/workspaces/{workspace_id}/teams/{t.id}",
                     created_at=t.created_at,
-                    metadata={"status": t.status}
+                    edge_edge_metadata={"status": t.status}
                 ))
 
         if "task" in entities_to_search:
@@ -136,14 +136,14 @@ class SearchService:
                     description=task.description[:100] + "..." if task.description and len(task.description) > 100 else task.description,
                     url=f"/workspaces/{workspace_id}/projects/{board.project_id}/kanban?task={task.id}",
                     created_at=task.created_at,
-                    metadata={"priority": task.priority}
+                    edge_edge_metadata={"priority": task.priority}
                 ))
                 
         # Sort results by created_at descending
         results.sort(key=lambda x: x.created_at, reverse=True)
         
         # 3. Graph Context Hydration (Phase 19 integration)
-        graph_service = GraphQueryService(self.session)
+        graph_service = KnowledgeGraphService(self.session)
         for result in results[:15]:
             try:
                 graph_data = await graph_service.traverse(start_id=result.id, workspace_id=workspace_id, depth=1)

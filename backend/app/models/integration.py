@@ -37,7 +37,7 @@ class ExternalSubmissionMapping(BaseEntity):
     external_reference_id: Mapped[str] = mapped_column(String(255), nullable=False)
     external_status: Mapped[str] = mapped_column(String(50), nullable=True)
     
-    sync_metadata: Mapped[Dict[str, Any]] = mapped_column(JSON, default=dict)
+    sync_edge_metadata: Mapped[Dict[str, Any]] = mapped_column(JSON, default=dict)
     
     submission = relationship("RoundSubmission", backref="external_mappings")
     connection = relationship("ExternalSubmissionConnection")

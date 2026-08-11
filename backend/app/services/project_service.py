@@ -7,7 +7,7 @@ from app.models.project import Project
 from app.schemas.project import ProjectCreate
 from app.models.user import User
 from app.models.kanban import KanbanBoard, KanbanColumn
-from app.services.graph_service import GraphQueryService
+from app.services.graph_service import KnowledgeGraphService
 from datetime import datetime
 
 async def get_projects(db: AsyncSession, workspace_id: uuid.UUID):
@@ -77,7 +77,7 @@ async def transition_project_state(db: AsyncSession, workspace_id: uuid.UUID, pr
     # Generate a deterministic UUID for the state node so it's consistent across transitions
     state_id = uuid.uuid5(uuid.NAMESPACE_OID, f"LifecycleState:{new_state}")
     
-    graph_service = GraphQueryService(db)
+    graph_service = KnowledgeGraphService(db)
     # Create the transition edge
     await graph_service.create_edge(
         workspace_id=workspace_id,
@@ -102,7 +102,7 @@ async def transition_project_state(db: AsyncSession, workspace_id: uuid.UUID, pr
     return project
 
 async def get_project_transitions(db: AsyncSession, workspace_id: uuid.UUID, project_id: uuid.UUID):
-    graph_service = GraphQueryService(db)
+    graph_service = KnowledgeGraphService(db)
     edges = await graph_service.get_edges(node_id=project_id, workspace_id=workspace_id, direction="out")
     
     transitions = []

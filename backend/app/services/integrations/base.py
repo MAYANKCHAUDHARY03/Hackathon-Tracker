@@ -13,7 +13,7 @@ class ExternalSubmissionData(BaseModel):
     team_name: Optional[str] = None
     repository_url: Optional[str] = None
     demo_url: Optional[str] = None
-    metadata: Dict[str, Any] = {}
+    edge_metadata: Dict[str, Any] = {}
 
 class SubmissionProviderAdapter(ABC):
     """

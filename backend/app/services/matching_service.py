@@ -1,12 +1,12 @@
 import uuid
 from typing import List, Dict, Any
 from sqlalchemy.ext.asyncio import AsyncSession
-from app.services.graph_service import GraphQueryService
+from app.services.graph_service import KnowledgeGraphService
 
 class EcosystemMatchingEngine:
     def __init__(self, db: AsyncSession):
         self.db = db
-        self.graph_service = GraphQueryService(db)
+        self.graph_service = KnowledgeGraphService(db)
 
     async def compute_match_score(self, workspace_id: uuid.UUID, source_id: uuid.UUID, target_id: uuid.UUID) -> float:
         """

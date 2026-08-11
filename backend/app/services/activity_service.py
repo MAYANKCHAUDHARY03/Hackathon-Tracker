@@ -12,7 +12,7 @@ async def log_activity(
     entity_type: str,
     entity_id: uuid.UUID | None = None,
     project_id: uuid.UUID | None = None,
-    safe_metadata: dict | None = None
+    safe_edge_metadata: dict | None = None
 ):
     event = ActivityEvent(
         workspace_id=workspace_id,
@@ -21,7 +21,7 @@ async def log_activity(
         action=action,
         entity_type=entity_type,
         entity_id=entity_id,
-        safe_metadata=safe_metadata
+        safe_edge_metadata=safe_edge_metadata
     )
     db.add(event)
     await db.commit()

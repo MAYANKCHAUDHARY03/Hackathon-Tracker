@@ -73,16 +73,16 @@ async def update_column(db: AsyncSession, column_id: uuid.UUID, column_in: Kanba
     if not column:
         raise HTTPException(status_code=404, detail="Column not found")
         
-    metadata = {}
+    edge_metadata = {}
     if column_in.name is not None and column_in.name != column.name:
-        metadata["old_name"] = column.name
-        metadata["new_name"] = column_in.name
+        edge_metadata["old_name"] = column.name
+        edge_metadata["new_name"] = column_in.name
         column.name = column_in.name
     if column_in.position is not None:
         column.position = column_in.position
         
     await activity_service.log_activity(
-        db, column.workspace_id, user.id, "updated", "KanbanColumn", column.id, column.board.project_id, metadata
+        db, column.workspace_id, user.id, "updated", "KanbanColumn", column.id, column.board.project_id, edge_metadata
     )
         
     await db.commit()
@@ -123,10 +123,10 @@ async def update_task(db: AsyncSession, task_id: uuid.UUID, task_in: KanbanTaskU
 
     board = await get_board_for_column(db, task.column_id)
 
-    metadata = {}
+    edge_metadata = {}
     if task_in.title is not None and task_in.title != task.title:
-        metadata["old_title"] = task.title
-        metadata["new_title"] = task_in.title
+        edge_metadata["old_title"] = task.title
+        edge_metadata["new_title"] = task_in.title
         task.title = task_in.title
         
     if task_in.description is not None:
@@ -135,15 +135,15 @@ async def update_task(db: AsyncSession, task_id: uuid.UUID, task_in: KanbanTaskU
     action = "updated"
     if task_in.column_id is not None and task_in.column_id != task.column_id:
         action = "moved"
-        metadata["old_column_id"] = str(task.column_id)
-        metadata["new_column_id"] = str(task_in.column_id)
+        edge_metadata["old_column_id"] = str(task.column_id)
+        edge_metadata["new_column_id"] = str(task_in.column_id)
         task.column_id = task_in.column_id
         
     if task_in.position is not None:
         task.position = task_in.position
 
     await activity_service.log_activity(
-        db, task.workspace_id, user.id, action, "KanbanTask", task.id, board.project_id, metadata
+        db, task.workspace_id, user.id, action, "KanbanTask", task.id, board.project_id, edge_metadata
     )
 
     await db.commit()

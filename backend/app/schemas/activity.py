@@ -6,7 +6,7 @@ class ActivityEventBase(BaseModel):
     action: str
     entity_type: str
     entity_id: uuid.UUID | None = None
-    safe_metadata: dict | None = None
+    safe_edge_metadata: dict | None = None
 
 class ActivityEventResponse(ActivityEventBase):
     id: uuid.UUID
