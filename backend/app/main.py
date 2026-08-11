@@ -144,6 +144,9 @@ app.include_router(intelligence.router, prefix=f"{settings.API_V1_STR}/intellige
 
 app.include_router(marketplace.router, prefix=f"{settings.API_V1_STR}", tags=["marketplace"])
 
+from app.routers import research
+app.include_router(research.router, prefix=f"{settings.API_V1_STR}", tags=["research"])
+
 from app.routers import sso
 app.include_router(sso.router, prefix=f"{settings.API_V1_STR}/sso", tags=["sso"])
 
@@ -155,3 +158,10 @@ app.include_router(hackathon_sync.router, prefix=f"{settings.API_V1_STR}/hackath
 
 from app.routers import health
 app.include_router(health.router, prefix="/api/ops", tags=["ops"])
+
+from app.routers import api_keys
+from app.routers.public_api_v1 import hackathons as public_hackathons
+from app.routers.public_api_v1 import data_exchange
+app.include_router(api_keys.router, prefix=f"{settings.API_V1_STR}", tags=["api_keys"])
+app.include_router(public_hackathons.router, prefix="/api", tags=["public_api"])
+app.include_router(data_exchange.router, prefix="/api/v1", tags=["Data Exchange"])
