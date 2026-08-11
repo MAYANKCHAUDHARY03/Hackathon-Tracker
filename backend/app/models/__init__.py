@@ -13,6 +13,7 @@ from app.models.audit import AuditLog
 from app.models.webhook import WebhookSubscription, WebhookDelivery
 from app.models.activity import ActivityEvent
 from app.models.matchmaking import MatchOpportunity, MatchProfile, MatchRecommendation
+from app.models.portfolio import Portfolio, PortfolioProject
 from app.models.round import HackathonRound, Deadline, RoundProgress
 from app.models.submission import SubmissionRequirement, RoundSubmission, SubmissionItem
 from app.models.notification import Notification, NotificationPreference

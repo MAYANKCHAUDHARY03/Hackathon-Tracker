@@ -26,6 +26,10 @@ class Project(BaseEntity):
     created_by: Mapped[uuid.UUID] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
     archived_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
 
+    @property
+    def name(self) -> str:
+        return self.title
+
     __table_args__ = (
         UniqueConstraint("hackathon_id", "slug", name="uq_project_slug_per_hackathon"),
     )

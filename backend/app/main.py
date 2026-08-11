@@ -164,12 +164,14 @@ app.include_router(health.router, prefix="/api/ops", tags=["ops"])
 from app.routers import api_keys
 from app.routers import verification
 from app.routers import matchmaking
+from app.routers import cross_portfolio
 from app.routers.public_api_v1 import hackathons as public_hackathons
 from app.routers.public_api_v1 import data_exchange
 app.include_router(api_keys.router, prefix=f"{settings.API_V1_STR}", tags=["api_keys"])
 app.include_router(data_exchange.router, prefix="/api/v1")
 app.include_router(verification.router, prefix="/api/v1")
 app.include_router(matchmaking.router, prefix="/api/v1")
+app.include_router(cross_portfolio.router, prefix="/api/v1")
 
 # Include the Public API router
 app.include_router(public_hackathons.router, prefix="/api", tags=["public_api"])

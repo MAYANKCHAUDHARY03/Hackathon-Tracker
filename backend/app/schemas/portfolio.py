@@ -50,3 +50,31 @@ class PortfolioMetrics(BaseModel):
     patents_filed: int
     top_technologies: List[TechnologyCount]
     total_participants: int
+
+
+import uuid
+from pydantic import ConfigDict
+from app.schemas.project import ProjectResponse
+
+class PortfolioBase(BaseModel):
+    title: str
+    description: Optional[str] = None
+    is_public: bool = False
+
+class PortfolioCreate(PortfolioBase):
+    pass
+
+class PortfolioResponse(PortfolioBase):
+    id: uuid.UUID
+    workspace_id: uuid.UUID
+    owner_id: uuid.UUID
+    owner_type: str
+    created_at: datetime
+    updated_at: datetime
+    
+    projects: List[ProjectResponse] = []
+    
+    model_config = ConfigDict(from_attributes=True)
+
+class PortfolioProjectAdd(BaseModel):
+    project_id: uuid.UUID
