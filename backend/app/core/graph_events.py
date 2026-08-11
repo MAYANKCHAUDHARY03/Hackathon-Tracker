@@ -108,3 +108,24 @@ def register_graph_events():
                     properties={}
                 )
             )
+
+    from app.models.research import ResearchLink
+    
+    @event.listens_for(ResearchLink, 'after_insert')
+    def after_research_link_insert(mapper, connection, target):
+        session = object_session(target)
+        if session:
+            connection.execute(
+                GraphEdge.__table__.insert().values(
+                    id=uuid.uuid4(),
+                    workspace_id=target.workspace_id,
+                    source_type="Project",
+                    source_id=target.project_id,
+                    target_type="ResearchLink",
+                    target_id=target.id,
+                    relation_type="cites",
+                    provenance=target.provenance,
+                    confidence=1.0 if target.provenance == "verified" else 0.8,
+                    properties={"type": target.type}
+                )
+            )

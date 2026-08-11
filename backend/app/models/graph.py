@@ -94,7 +94,7 @@ class GraphEdge(BaseEntity):
         Index("ix_graph_edges_target", "target_type", "target_id"),
         Index("ix_graph_edges_relation", "source_id", "relation_type", "target_id", unique=True),
         Index("ix_graph_edges_workspace_relation", "workspace_id", "relation_type"),
-        Index("ix_graph_edges_provenance", "workspace_id", "provenance"),
+        Index("ix_graph_edges_ws_provenance", "workspace_id", "provenance"),
     )
 
     # Relationships for creator/verifier

@@ -96,10 +96,12 @@ async def health_check(db: AsyncSession = Depends(get_db)):
     }
 
 from app.routers import auth, users, workspaces, hackathons, dashboard, invitations, teams, projects, kanban, activity, rounds, submissions, notifications, mentors, judges, evaluations, outcomes, search, analytics, export_import, portfolio, automation, integration, ai, hub_integrations, audit, webhook, graph, opportunities, marketplace
+from app.routers import verification
 
 app.include_router(auth.router, prefix=f"{settings.API_V1_STR}/auth", tags=["auth"])
 app.include_router(users.router, prefix=f"{settings.API_V1_STR}/users", tags=["users"])
 app.include_router(workspaces.router, prefix=f"{settings.API_V1_STR}", tags=["workspaces"])
+app.include_router(verification.router, prefix=f"{settings.API_V1_STR}", tags=["Verification"])
 app.include_router(invitations.router, prefix=f"{settings.API_V1_STR}", tags=["invitations"])
 app.include_router(hackathons.router, prefix=f"{settings.API_V1_STR}", tags=["hackathons"])
 app.include_router(dashboard.router, prefix=f"{settings.API_V1_STR}", tags=["dashboard"])

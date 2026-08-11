@@ -27,11 +27,14 @@ from app.models.automation import AutomationRule, AutomationExecution
 from app.models.feedback import Feedback
 from app.models.application import ApplicationForm, ApplicationSubmission
 from app.models.graph import GraphEdge
+from app.models.problem import Problem
 from app.models.challenge import Challenge
 from app.models.startup import Startup
 from app.models.sponsor import Sponsor
 from app.models.incubation import ProjectUpdate, ProjectDocument, ProjectFunding
 from app.models.search import ContentEmbedding
+from app.models.research import ResearchLink
+from app.models.api_auth import APIKey, OAuthApp
 
 __all__ = [
     "Base", 
@@ -84,11 +87,15 @@ __all__ = [
     "ApplicationForm",
     "ApplicationSubmission",
     "GraphEdge",
+    "Problem",
     "Challenge",
     "Startup",
     "Sponsor",
     "ProjectUpdate",
     "ProjectDocument",
     "ProjectFunding",
-    "ContentEmbedding"
+    "ContentEmbedding",
+    "ResearchLink",
+    "APIKey",
+    "OAuthApp"
 ]
