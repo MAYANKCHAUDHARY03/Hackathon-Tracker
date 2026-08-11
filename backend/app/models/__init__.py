@@ -31,6 +31,7 @@ from app.models.application import ApplicationForm, ApplicationSubmission
 from app.models.graph import GraphEdge
 from app.models.problem import Problem
 from app.models.challenge import Challenge
+from app.models.ontology import UniversalEntity, EntityType
 from app.models.startup import Startup
 from app.models.sponsor import Sponsor
 from app.models.incubation import ProjectUpdate, ProjectDocument, ProjectFunding
@@ -89,6 +90,10 @@ __all__ = [
     "ApplicationForm",
     "ApplicationSubmission",
     "GraphEdge",
+    "UniversalEntity",
+    "EntityType",
+    "VerificationLevel",
+    "VisibilityLevel",
     "Problem",
     "Challenge",
     "Startup",

@@ -9,7 +9,7 @@ class Challenge(BaseEntity):
 
     workspace_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("workspaces.id", ondelete="CASCADE"), index=True)
     hackathon_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("hackathons.id", ondelete="SET NULL"), nullable=True, index=True)
-    problem_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("problems.id", ondelete="SET NULL"), nullable=True, index=True)
+    problem_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("ontology_entities.id", ondelete="SET NULL"), nullable=True, index=True)
     
     title: Mapped[str] = mapped_column(String, index=True)
     slug: Mapped[str] = mapped_column(String, index=True)

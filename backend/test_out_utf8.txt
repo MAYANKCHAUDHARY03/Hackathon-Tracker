@@ -1,0 +1,133 @@
+﻿============================= test session starts =============================
+platform win32 -- Python 3.13.14, pytest-9.1.1, pluggy-1.6.0
+rootdir: C:\Hackathon tracker\hackathon-tracker\backend
+configfile: pytest.ini
+plugins: anyio-4.14.2, asyncio-1.4.0
+asyncio: mode=Mode.AUTO, debug=False, asyncio_default_fixture_loop_scope=function, asyncio_default_test_loop_scope=function
+collected 1 item
+
+tests\api\test_ontology.py E                                             [100%]
+
+=================================== ERRORS ====================================
+________________ ERROR at setup of test_ontology_polymorphism _________________
+file C:\Hackathon tracker\hackathon-tracker\backend\tests\api\test_ontology.py, line 10
+  @pytest.mark.asyncio
+  async def test_ontology_polymorphism(db_session, workspace_id, user_id):
+      # Test creating a Problem through UniversalEntity hierarchy
+      problem = Problem(
+          workspace_id=workspace_id,
+          owner_id=user_id,
+          title="Test Ontology Problem",
+          slug="test-ontology-problem",
+          description="This problem is stored in ontology_entities",
+          domain="Climate",
+          status="open"
+      )
+
+      db_session.add(problem)
+      await db_session.commit()
+
+      # Query via UniversalEntity
+      stmt = select(UniversalEntity).where(UniversalEntity.workspace_id == workspace_id, UniversalEntity.entity_type == EntityType.PROBLEM)
+      result = await db_session.execute(stmt)
+      entities = result.scalars().all()
+
+      assert len(entities) == 1
+      entity = entities[0]
+
+      # Assert polymorphic loading
+      assert isinstance(entity, Problem)
+      assert entity.entity_type == EntityType.PROBLEM
+      assert entity.title == "Test Ontology Problem"
+      assert entity.slug == "test-ontology-problem"
+      assert entity.properties["domain"] == "Climate"
+
+      # Test hybrid property expressions
+      stmt2 = select(Problem).where(Problem.domain == "Climate")
+      res2 = await db_session.execute(stmt2)
+      filtered_problems = res2.scalars().all()
+
+      assert len(filtered_problems) == 1
+      assert filtered_problems[0].id == problem.id
+E       fixture 'db_session' not found
+>       available fixtures: _asyncio_loop_factory, _class_scoped_runner, _function_scoped_runner, _module_scoped_runner, _package_scoped_runner, _session_scoped_runner, anyio_backend, anyio_backend_name, anyio_backend_options, async_client, cache, capfd, capfdbinary, caplog, capsys, capsysbinary, capteesys, doctest_namespace, event_loop_policy, free_tcp_port, free_tcp_port_factory, free_udp_port, free_udp_port_factory, monkeypatch, prepare_database, pytestconfig, record_property, record_testsuite_property, record_xml_attribute, recwarn, subtests, tmp_path, tmp_path_factory, tmpdir, tmpdir_factory, unused_tcp_port, unused_tcp_port_factory, unused_udp_port, unused_udp_port_factory
+>       use 'pytest --fixtures [testpath]' for help on them.
+
+C:\Hackathon tracker\hackathon-tracker\backend\tests\api\test_ontology.py:10
+============================== warnings summary ===============================
+app\schemas\hackathon.py:21
+  C:\Hackathon tracker\hackathon-tracker\backend\app\schemas\hackathon.py:21: PydanticDeprecatedSince20: Pydantic V1 style `@validator` validators are deprecated. You should migrate to Pydantic V2 style `@field_validator` validators, see the migration guide for more details. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    @validator("program_type")
+
+app\schemas\hackathon.py:28
+  C:\Hackathon tracker\hackathon-tracker\backend\app\schemas\hackathon.py:28: PydanticDeprecatedSince20: Pydantic V1 style `@validator` validators are deprecated. You should migrate to Pydantic V2 style `@field_validator` validators, see the migration guide for more details. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    @validator("mode")
+
+app\schemas\hackathon.py:35
+  C:\Hackathon tracker\hackathon-tracker\backend\app\schemas\hackathon.py:35: PydanticDeprecatedSince20: Pydantic V1 style `@validator` validators are deprecated. You should migrate to Pydantic V2 style `@field_validator` validators, see the migration guide for more details. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    @validator("status")
+
+app\schemas\hackathon.py:74
+  C:\Hackathon tracker\hackathon-tracker\backend\app\schemas\hackathon.py:74: PydanticDeprecatedSince20: Pydantic V1 style `@validator` validators are deprecated. You should migrate to Pydantic V2 style `@field_validator` validators, see the migration guide for more details. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    @validator("program_type")
+
+app\schemas\hackathon.py:82
+  C:\Hackathon tracker\hackathon-tracker\backend\app\schemas\hackathon.py:82: PydanticDeprecatedSince20: Pydantic V1 style `@validator` validators are deprecated. You should migrate to Pydantic V2 style `@field_validator` validators, see the migration guide for more details. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    @validator("mode")
+
+app\schemas\hackathon.py:90
+  C:\Hackathon tracker\hackathon-tracker\backend\app\schemas\hackathon.py:90: PydanticDeprecatedSince20: Pydantic V1 style `@validator` validators are deprecated. You should migrate to Pydantic V2 style `@field_validator` validators, see the migration guide for more details. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    @validator("status")
+
+app\schemas\hackathon.py:101
+  C:\Hackathon tracker\hackathon-tracker\backend\app\schemas\hackathon.py:101: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    class HackathonResponse(HackathonBase):
+
+app\schemas\dashboard.py:6
+  C:\Hackathon tracker\hackathon-tracker\backend\app\schemas\dashboard.py:6: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    class DashboardHackathonItem(BaseModel):
+
+app\schemas\feedback.py:15
+  C:\Hackathon tracker\hackathon-tracker\backend\app\schemas\feedback.py:15: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    class FeedbackResponse(FeedbackBase):
+
+app\schemas\application.py:5
+  C:\Hackathon tracker\hackathon-tracker\backend\app\schemas\application.py:5: UserWarning: Field name "schema_json" in "ApplicationFormBase" shadows an attribute in parent "BaseModel"
+    class ApplicationFormBase(BaseModel):
+
+app\schemas\application.py:14
+  C:\Hackathon tracker\hackathon-tracker\backend\app\schemas\application.py:14: UserWarning: Field name "schema_json" in "ApplicationFormUpdate" shadows an attribute in parent "BaseModel"
+    class ApplicationFormUpdate(BaseModel):
+
+app\schemas\research.py:25
+  C:\Hackathon tracker\hackathon-tracker\backend\app\schemas\research.py:25: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    class ResearchLinkResponse(ResearchLinkBase):
+
+app\schemas\forecast.py:18
+  C:\Hackathon tracker\hackathon-tracker\backend\app\schemas\forecast.py:18: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    class ForecastResponse(ForecastBase):
+
+app\schemas\impact.py:14
+  C:\Hackathon tracker\hackathon-tracker\backend\app\schemas\impact.py:14: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    class CustomMetricResponse(CustomMetricBase):
+
+app\schemas\impact.py:37
+  C:\Hackathon tracker\hackathon-tracker\backend\app\schemas\impact.py:37: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    class ProjectImpactResponse(ProjectImpactBase):
+
+app\schemas\federation.py:18
+  C:\Hackathon tracker\hackathon-tracker\backend\app\schemas\federation.py:18: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    class WorkspaceFederationResponse(WorkspaceFederationBase):
+
+app\schemas\developer.py:13
+  C:\Hackathon tracker\hackathon-tracker\backend\app\schemas\developer.py:13: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    class DeveloperAppResponse(DeveloperAppBase):
+
+app\schemas\developer.py:31
+  C:\Hackathon tracker\hackathon-tracker\backend\app\schemas\developer.py:31: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    class WebhookEndpointResponse(WebhookEndpointBase):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+ERROR tests/api/test_ontology.py::test_ontology_polymorphism
+======================== 18 warnings, 1 error in 2.66s ========================
