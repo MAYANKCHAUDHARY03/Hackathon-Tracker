@@ -61,6 +61,25 @@ class MockAIProvider(AIProviderAdapter):
         # Return a mock vector of length 768 filled with 0.1s
         return [0.1] * 768
 
+    async def generate_copilot_response(self, query: str, context: str) -> Dict[str, Any]:
+        """Mock Copilot Response based on context"""
+        AIPrivacyFilter.audit_log("MockAI", "generate_copilot_response", len(context))
+        return {
+            "answer": "This is a mock AI answer based on the provided trusted context.",
+            "evidence": ["Mock evidence piece 1 from context"],
+            "confidence": 0.85,
+            "recommended_action": "Check out related projects."
+        }
+
+    async def generate_forecast(self, target_type: str, target_data: Dict[str, Any], historical_data: List[Dict[str, Any]]) -> Dict[str, Any]:
+        """Mock Forecast Generation"""
+        AIPrivacyFilter.audit_log("MockAI", "generate_forecast", len(str(target_data)))
+        return {
+            "prediction": {"outcome": "success_likely", "score": 85},
+            "confidence": 0.75,
+            "factors": ["Strong team engagement", "Clear milestones completed"]
+        }
+
 class GeminiAIProvider(AIProviderAdapter):
     def __init__(self, api_key: str):
         super().__init__(api_key)
@@ -155,6 +174,89 @@ class GeminiAIProvider(AIProviderAdapter):
             return response.embeddings[0].values
         except Exception as e:
             return [0.1] * 768
+
+    async def generate_copilot_response(self, query: str, context: str) -> Dict[str, Any]:
+        if not self.client:
+            return {
+                "answer": "Gemini not installed. This is a fallback mock answer.",
+                "evidence": ["Fallback evidence"],
+                "confidence": 0.5,
+                "recommended_action": "Install google-genai"
+            }
+            
+        AIPrivacyFilter.audit_log("GeminiAI", "generate_copilot_response", len(context))
+        
+        prompt = f"""
+        You are the Hackathon Tracker Innovation Copilot. 
+        Answer the following query using ONLY the provided verified context. Do not invent knowledge.
+        
+        Query: "{query}"
+        
+        Context:
+        {context}
+        
+        Return exactly valid JSON with:
+        - answer (string: the AI-generated answer)
+        - evidence (list of strings: quotes or facts from the context that support the answer)
+        - confidence (float: confidence score from 0.0 to 1.0)
+        - recommended_action (string or null: a suggested next action for the user)
+        """
+        
+        try:
+            response = self.client.models.generate_content(
+                model='gemini-2.5-flash',
+                contents=prompt,
+                config={'response_mime_type': 'application/json'}
+            )
+            import json
+            return json.loads(response.text)
+        except Exception as e:
+            return {
+                "answer": f"Error generating copilot response: {str(e)}",
+                "evidence": [],
+                "confidence": 0.0,
+                "recommended_action": None
+            }
+
+    async def generate_forecast(self, target_type: str, target_data: Dict[str, Any], historical_data: List[Dict[str, Any]]) -> Dict[str, Any]:
+        if not self.client:
+            return {
+                "prediction": {"outcome": "fallback", "message": "Gemini not installed"},
+                "confidence": 0.5,
+                "factors": []
+            }
+            
+        AIPrivacyFilter.audit_log("GeminiAI", "generate_forecast", len(str(target_data)))
+        
+        prompt = f"""
+        You are the Hackathon Tracker Innovation Predictor.
+        Generate a forecast based on the target data and historical context. 
+        Crucially, output MUST be explicitly labeled as a prediction. No high-impact actions should be auto-triggered.
+        
+        Target Type: {target_type}
+        Target Data: {target_data}
+        Historical Data: {historical_data}
+        
+        Return exactly valid JSON with:
+        - prediction (object: structured details about the predicted outcome)
+        - confidence (float: score from 0.0 to 1.0)
+        - factors (list of strings: reasons behind this prediction)
+        """
+        
+        try:
+            response = self.client.models.generate_content(
+                model='gemini-2.5-flash',
+                contents=prompt,
+                config={'response_mime_type': 'application/json'}
+            )
+            import json
+            return json.loads(response.text)
+        except Exception as e:
+            return {
+                "prediction": {"error": str(e)},
+                "confidence": 0.0,
+                "factors": []
+            }
 
 class AIProviderFactory:
     @staticmethod

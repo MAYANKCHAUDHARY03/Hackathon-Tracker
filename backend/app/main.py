@@ -62,6 +62,8 @@ from app.limiter import limiter
 app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
+from app.middleware import GlobalScaleMiddleware
+app.add_middleware(GlobalScaleMiddleware)
 app.add_middleware(SecurityHeadersMiddleware)
 from starlette.middleware.sessions import SessionMiddleware
 app.add_middleware(SessionMiddleware, secret_key=settings.SECRET_KEY)
@@ -165,6 +167,14 @@ from app.routers import api_keys
 from app.routers import verification
 from app.routers import matchmaking
 from app.routers import cross_portfolio
+from app.routers import copilot
+from app.routers import forecasting
+from app.routers import impact
+from app.routers import observatory
+from app.routers import federation
+from app.routers import developer
+from app.routers import governance
+from app.routers import network
 from app.routers.public_api_v1 import hackathons as public_hackathons
 from app.routers.public_api_v1 import data_exchange
 app.include_router(api_keys.router, prefix=f"{settings.API_V1_STR}", tags=["api_keys"])
@@ -172,6 +182,14 @@ app.include_router(data_exchange.router, prefix="/api/v1")
 app.include_router(verification.router, prefix="/api/v1")
 app.include_router(matchmaking.router, prefix="/api/v1")
 app.include_router(cross_portfolio.router, prefix="/api/v1")
+app.include_router(copilot.router, prefix="/api/v1")
+app.include_router(forecasting.router, prefix="/api/v1")
+app.include_router(impact.router, prefix="/api/v1")
+app.include_router(observatory.router, prefix="/api/v1")
+app.include_router(federation.router, prefix="/api/v1")
+app.include_router(developer.router, prefix="/api/v1")
+app.include_router(governance.router, prefix="/api/v1")
+app.include_router(network.router, prefix="/api/v1")
 
 # Include the Public API router
 app.include_router(public_hackathons.router, prefix="/api", tags=["public_api"])

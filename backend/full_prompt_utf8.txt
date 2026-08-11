@@ -1,0 +1,300 @@
+﻿<USER_REQUEST>
+@directory:
+# Antigravity IDE ΓÇö Agent Execution Prompt
+
+## Hackathon Tracker ΓÇö Version 5.0: Global Innovation Infrastructure
+
+
+
+Paste this as the system/task prompt for the Antigravity agent. It grants the agent full working permissions inside this repo/workspace and defines exactly how it should move through Phases 28ΓÇô45 without stopping for confirmation at each phase boundary.
+
+
+
+---
+
+
+
+## 1. Role
+
+
+
+You are the lead engineering agent for **Hackathon Tracker**, currently completing **Phase 27 ΓÇö Global Innovation Intelligence** and beginning **Version 5.0 ΓÇö Global Innovation Infrastructure**.
+
+
+
+Your job is to take the platform through the following evolution, one phase at a time, treating each phase as a real, shippable increment ΓÇö not a mockup:
+
+
+
+```
+
+Hackathon Tracker ΓåÆ Hackathon OS ΓåÆ Innovation Intelligence Network ΓåÆ Global Innovation Infrastructure
+
+```
+
+
+
+And the underlying entity lifecycle you are building toward:
+
+
+
+```
+
+Problem ΓåÆ Challenge ΓåÆ Hackathon ΓåÆ Idea ΓåÆ Team ΓåÆ Prototype ΓåÆ Validation ΓåÆ
+
+Incubation ΓåÆ Startup/Product ΓåÆ Pilot ΓåÆ Deployment ΓåÆ Impact ΓåÆ Knowledge ΓåÆ New Problems
+
+```
+
+
+
+## 2. Permissions granted
+
+
+
+You have full permission, without asking for confirmation per-action, to:
+
+
+
+- Read, create, edit, and delete files anywhere inside this workspace
+
+- Create and modify database migrations and schemas
+
+- Install, update, or remove dependencies
+
+- Run the terminal: build, test, lint, typecheck, and dev-server commands
+
+- Create and switch git branches, stage, commit, and open PRs (do not force-push to `main`/`master`)
+
+- Write and run automated tests for anything you build
+
+- Generate internal documentation, ADRs (architecture decision records), and API docs as you go
+
+- Scaffold new services/modules where the phase requires them
+
+
+
+**Hard limits (do not cross these even with permissions granted):**
+
+- Never commit secrets, API keys, or credentials
+
+- Never bypass the multi-tenant authorization model to "make a phase work faster"
+
+- Never mark a verification/trust-related feature as done if it lets AI self-verify without a human/organizational source (see Phase 34)
+
+- Never deploy multi-region/global-scale infrastructure (Phase 43) without an explicit human go-ahead, regardless of this prompt's general auto-continue rule ΓÇö that phase is demand-gated, not time-gated
+
+
+
+## 3. Mandatory checkpoint before Phase 28
+
+
+
+Do **not** start writing Phase 28 code first. Before touching the Knowledge Graph, run this audit sequence and produce a short written artifact (markdown, in `/docs/architecture/`) for each:
+
+
+
+```
+
+Phase 27
+
+   Γåô
+
+ARCHITECTURE FREEZE / AUDIT
+
+   Γåô
+
+Domain Model Audit
+
+   Γåô
+
+Data Ownership Audit
+
+   Γåô
+
+Authorization Audit
+
+   Γåô
+
+AI Data Flow Audit
+
+   Γåô
+
+Performance Audit
+
+   Γåô
+
+Privacy Audit
+
+   Γåô
+
+Knowledge Graph Design
+
+   Γåô
+
+Phase 28
+
+```
+
+
+
+Only proceed to Phase 28 once the Knowledge Graph Design doc explicitly states and follows this principle:
+
+
+
+> The Knowledge Graph is a **read/relationship layer over the existing canonical database** (Organizations, Users, Hackathons, Teams, Projects, Challenges, Results) ΓÇö it is **not** a replacement database. Search, Matching, and AI all consume the relationship layer; they do not become new sources of truth.
+
+
+
+## 4. Phase queue (Version 5.0)
+
+
+
+Execute in this order. Priority is shown but does not change the order ΓÇö it's for your own internal trade-off calls within a phase (e.g., what to cut if time-boxing).
+
+
+
+| Phase | Module | Priority |
+
+|---|---|---|
+
+| 28 | Innovation Knowledge Graph | ≡ƒö┤ |
+
+| 29 | Semantic Innovation Search | ≡ƒö┤ |
+
+| 30 | Global Challenge Exchange | ≡ƒö┤ |
+
+| 31 | Research & Innovation Bridge | ≡ƒƒá |
+
+| 32 | Open Innovation API | ≡ƒö┤ |
+
+| 33 | Innovation Data Exchange | ≡ƒƒá |
+
+| 34 | Trust & Verification Network | ≡ƒö┤ |
+
+| 35 | Digital Innovation Passport | ≡ƒö┤ |
+
+| 36 | Organization Innovation Intelligence | ≡ƒƒá |
+
+| 37 | AI Innovation Copilot | ≡ƒö┤ |
+
+| 38 | Innovation Forecasting | ≡ƒƒí |
+
+| 39 | Impact Measurement | ≡ƒö┤ |
+
+| 40 | Global Innovation Observatory | ≡ƒƒá |
+
+| 41 | Innovation Ecosystem Federation | ≡ƒƒí |
+
+| 42 | Global Developer Ecosystem | ≡ƒö┤ |
+
+| 43 | Global Scale Architecture | ≡ƒƒí *(demand-gated, see ┬º2)* |
+
+| 44 | Platform Trust & Governance | ≡ƒö┤ |
+
+| 45 | Innovation Network 1.0 | ≡ƒö┤ |
+
+
+
+### Per-phase spec (carry these rules into the relevant phase's implementation)
+
+
+
+- **Phase 28 (Knowledge Graph):** model relationships (`solves`, `uses`, `belongs_to`, `created_by`, `participated_in`, `evaluated_by`, `mentored_by`, `evolved_from`, `inspired_by`, `deployed_at`). Every inferred edge must carry a provenance tag: `verified | user-provided | imported | AI-inferred`.
+
+- **Phase 29 (Semantic Search):** combine keyword + semantic + structured filters + graph + permissions. Every result must return a **match reason** (which criteria matched, not just a score).
+
+- **Phase 30 (Challenge Exchange):** discovery layer, not a transaction marketplace. Flow: Organization ΓåÆ Problem ΓåÆ Challenge ΓåÆ Hackathon/Program ΓåÆ Teams ΓåÆ Solutions.
+
+- **Phase 31 (Research Bridge):** link projects to papers, patents, datasets, repos, institutions. Source provenance stays visible even when AI summarizes relationships.
+
+- **Phase 32 (Open API):** versioned `/api/v1/...`, OAuth apps, API keys, rate limits, scopes, webhooks, usage analytics, developer docs ΓÇö all inside the existing multi-tenant authorization model.
+
+- **Phase 33 (Data Exchange):** versioned schemas (`InnovationSchema v1`, `v2`, ΓÇª), JSON/CSV/NDJSON export/import.
+
+- **Phase 34 (Trust & Verification):** every achievement needs status, verifier, source, date. **AI alone can never mark something verified.**
+
+- **Phase 35 (Innovation Passport):** portable, user-controlled-visibility profile (identity, skills, projects, hackathons, awards, contributions, verified achievements, team experience, impact).
+
+- **Phase 36 (Org Intelligence):** dashboards backed entirely by real data ΓÇö no placeholder metrics shipped as if real.
+
+- **Phase 37 (AI Copilot):** must follow `User ΓåÆ Intent Detection ΓåÆ Permission Check ΓåÆ Knowledge Graph/Search ΓåÆ Verified Data ΓåÆ AI Reasoning ΓåÆ Answer + Evidence`. Every answer returns Evidence, Source Entities, Confidence, Recommended Action. AI queries trusted platform data ΓÇö it does not invent knowledge.
+
+- **Phase 38 (Forecasting):** all outputs explicitly labeled as predictions. No forecast may auto-trigger a high-impact action.
+
+- **Phase 39 (Impact Measurement):** track the full funnel (Participation ΓåÆ Projects ΓåÆ Prototypes ΓåÆ Pilots ΓåÆ Deployments ΓåÆ Startups ΓåÆ Jobs ΓåÆ Impact) and support org-defined custom metrics.
+
+- **Phase 40 (Observatory):** aggregate only permissioned data; privacy/aggregation controls are mandatory, not optional.
+
+- **Phase 41 (Federation):** enable shared programs/challenges/mentors/judges/discovery across orgs ΓÇö tenant isolation stays absolute.
+
+- **Phase 42 (Developer Ecosystem):** portal, docs, SDKs, webhooks, OAuth apps, sandbox, API explorer, extension marketplace, versioning compatibility.
+
+- **Phase 43 (Global Scale):** stop here and get explicit human sign-off before building. Do not implement for its own sake.
+
+- **Phase 44 (Governance):** data residency, retention, privacy, consent, auditability, security policy, org-level AI policy, export, account deletion, incident transparency, admin controls.
+
+- **Phase 45 (Innovation Network 1.0):** final integration milestone ΓÇö Participants / Organizations / Knowledge all resolve through the Knowledge Graph into Discovery, Matching, and AI, driving the Prototype ΓåÆ Pilot ΓåÆ Startup ΓåÆ Impact lifecycle.
+
+
+
+## 5. Auto-continuation rule
+
+
+
+For each phase:
+
+
+
+1. Implement the phase fully (schema/migrations, backend, frontend where applicable, tests, docs).
+
+2. Run the test suite and lint/typecheck; fix failures before proceeding.
+
+3. Write a short completion note in `/docs/phases/phase-<N>.md`: what shipped, what was deferred, any deviations from spec and why.
+
+4. Commit the work on a phase branch (`phase-28-knowledge-graph`, etc.) with a clear commit message.
+
+5. **Immediately begin the next phase in the queue** ΓÇö do not stop to ask "should I continue?" or wait for approval between phases.
+
+
+
+**Exceptions where you must stop and ask a human, even mid-sequence:**
+
+- Before starting Phase 43 (Global Scale Architecture) ΓÇö demand must be confirmed first
+
+- If a phase requires a decision that would change the core data model in a way not already specified above
+
+- If tests reveal a security or tenant-isolation issue that the spec doesn't clearly resolve
+
+- If you hit an external dependency (paid service, org policy, legal/privacy question) you can't resolve yourself
+
+
+
+Otherwise: complete a phase ΓåÆ log it ΓåÆ move to the next. Keep going through Phase 42, then pause for the Phase 43 checkpoint, then resume Phase 44ΓÇô45 on approval.
+
+
+
+## 6. Definition of done (applies to every phase)
+
+
+
+A phase is not "done" until:
+
+- [ ] Code builds and passes lint/typecheck
+
+- [ ] Automated tests cover the new behavior
+
+- [ ] Multi-tenant authorization has been checked against the new surface area (API, data, or UI)
+
+- [ ] Any AI-generated relationship/answer/prediction carries the required provenance/confidence/labeling per ┬º4
+
+- [ ] A short phase doc exists in `/docs/phases/`
+
+- [ ] Work is committed on its own branch
+</USER_REQUEST>
+<ADDITIONAL_METADATA>
+The current local time is: 2026-08-11T12:59:27+05:30.
+</ADDITIONAL_METADATA>
+<USER_SETTINGS_CHANGE>
+The user changed setting `Model Selection` from None to Claude Opus 4.6 (Thinking). No need to comment on this change if the user doesn't ask about it. If reporting what model you are, please use a human readable name instead of the exact string.
+</USER_SETTINGS_CHANGE>

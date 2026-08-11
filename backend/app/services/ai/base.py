@@ -30,3 +30,13 @@ class AIProviderAdapter(ABC):
     async def generate_embedding(self, text: str) -> List[float]:
         """Generates a semantic embedding vector for the given text."""
         pass
+
+    @abstractmethod
+    async def generate_copilot_response(self, query: str, context: str) -> Dict[str, Any]:
+        """Generates an answer based on verified context."""
+        pass
+
+    @abstractmethod
+    async def generate_forecast(self, target_type: str, target_data: Dict[str, Any], historical_data: List[Dict[str, Any]]) -> Dict[str, Any]:
+        """Generates a prediction/forecast based on historical and target data."""
+        pass
