@@ -31,6 +31,7 @@ from app.models.challenge import Challenge
 from app.models.startup import Startup
 from app.models.sponsor import Sponsor
 from app.models.incubation import ProjectUpdate, ProjectDocument, ProjectFunding
+from app.models.search import ContentEmbedding
 
 __all__ = [
     "Base", 
@@ -88,5 +89,6 @@ __all__ = [
     "Sponsor",
     "ProjectUpdate",
     "ProjectDocument",
-    "ProjectFunding"
+    "ProjectFunding",
+    "ContentEmbedding"
 ]

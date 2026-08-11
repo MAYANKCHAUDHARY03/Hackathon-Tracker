@@ -1,7 +1,7 @@
 import uuid
 from typing import List, Dict, Any, Set
 from datetime import datetime, timezone
-from sqlalchemy import select, or_, func, in_
+from sqlalchemy import select, or_, func
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import class_mapper
 

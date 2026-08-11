@@ -25,3 +25,31 @@ async def search_workspace(
     
     search_service = SearchService(db)
     return await search_service.search(workspace_id, q)
+
+from pydantic import BaseModel
+
+class IndexRequest(BaseModel):
+    entity_type: str
+    entity_id: UUID
+    content: str
+
+@router.post(
+    "/workspaces/{workspace_id}/search/index",
+    status_code=201
+)
+async def index_content_for_search(
+    workspace_id: UUID,
+    request: IndexRequest,
+    db: AsyncSession = Depends(get_db),
+    current_user = Depends(get_current_user)
+):
+    await verify_workspace_access(workspace_id=workspace_id, current_user=current_user, db=db)
+    
+    search_service = SearchService(db)
+    await search_service.index_entity(
+        workspace_id=workspace_id,
+        entity_type=request.entity_type,
+        entity_id=request.entity_id,
+        text_content=request.content
+    )
+    return {"status": "indexed"}

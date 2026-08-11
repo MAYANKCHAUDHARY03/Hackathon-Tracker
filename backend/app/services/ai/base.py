@@ -25,3 +25,8 @@ class AIProviderAdapter(ABC):
     async def extract_search_intent(self, query: str) -> Dict[str, Any]:
         """Extracts intent and entities from a natural language search query."""
         pass
+
+    @abstractmethod
+    async def generate_embedding(self, text: str) -> List[float]:
+        """Generates a semantic embedding vector for the given text."""
+        pass

@@ -57,6 +57,10 @@ class MockAIProvider(AIProviderAdapter):
             "raw_query": query
         }
 
+    async def generate_embedding(self, text: str) -> List[float]:
+        # Return a mock vector of length 768 filled with 0.1s
+        return [0.1] * 768
+
 class GeminiAIProvider(AIProviderAdapter):
     def __init__(self, api_key: str):
         super().__init__(api_key)
@@ -137,6 +141,20 @@ class GeminiAIProvider(AIProviderAdapter):
         except Exception as e:
             # Fallback to simple split
             return {"entities": ["project", "hackathon", "team", "task"], "keywords": query.split(), "raw_query": query}
+
+    async def generate_embedding(self, text: str) -> List[float]:
+        if not self.client:
+            return [0.1] * 768
+            
+        try:
+            # Note: actual Gemini embedding model
+            response = self.client.models.embed_content(
+                model='text-embedding-004',
+                contents=text
+            )
+            return response.embeddings[0].values
+        except Exception as e:
+            return [0.1] * 768
 
 class AIProviderFactory:
     @staticmethod
