@@ -1,108 +1,108 @@
-import React, { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
-import { projectsApi } from '@/api/projectsApi';
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useWorkspaceStore } from '@/store/workspaceStore';
-import { FolderGit2, Search, Link as LinkIcon, GitBranch, ChevronRight, Loader2 } from 'lucide-react';
+import { projectsApi } from '@/api/projectsApi';
+import type { Project } from '@/types';
 import { GlassPanel } from '@/components/ui/glass-panel';
-import { Input } from '@/components/ui/input';
-import { Link } from 'react-router-dom';
+import { FolderGit2, Calendar, GitBranch, ArrowRight } from 'lucide-react';
+import { format } from 'date-fns';
 
 export default function Projects() {
+  const navigate = useNavigate();
   const { activeWorkspaceId } = useWorkspaceStore();
-  const [searchTerm, setSearchTerm] = useState('');
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<Error | null>(null);
 
-  const { data: projects, isLoading } = useQuery({
-    queryKey: ['projects', activeWorkspaceId],
-    queryFn: () => projectsApi.getProjects(activeWorkspaceId!),
-    enabled: !!activeWorkspaceId
-  });
-
-  const filteredProjects = projects?.filter(p => 
-    p.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-    p.description?.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  useEffect(() => {
+    async function fetchProjects() {
+      if (!activeWorkspaceId) return;
+      setIsLoading(true);
+      setError(null);
+      try {
+        const data = await projectsApi.getProjects(activeWorkspaceId);
+        setProjects(data);
+      } catch (err: any) {
+        setError(err instanceof Error ? err : new Error('Failed to load projects'));
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    fetchProjects();
+  }, [activeWorkspaceId]);
 
   if (!activeWorkspaceId) {
-    return (
-      <div className="flex h-[50vh] items-center justify-center text-muted-foreground">
-        Please select a workspace to view projects.
-      </div>
-    );
+    return <div className="p-8">Please select a workspace first.</div>;
   }
 
   return (
-    <div className="space-y-8 animate-fade-in max-w-7xl mx-auto p-4 md:p-8">
-      <div className="flex flex-col md:flex-row gap-4 md:items-center justify-between">
+    <div className="p-8 space-y-6">
+      <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight flex items-center gap-3">
-            <FolderGit2 className="w-8 h-8 text-primary" />
-            Project Database
-          </h1>
-          <p className="text-muted-foreground text-lg mt-1">
-            Explore and track all hackathon projects in your workspace.
-          </p>
+          <h1 className="text-3xl font-bold tracking-tight">Project Database</h1>
+          <p className="text-muted-foreground mt-1">Explore projects submitted across the workspace.</p>
         </div>
-      </div>
-
-      <div className="relative max-w-md">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-        <Input 
-          placeholder="Search projects..." 
-          className="pl-9"
-          value={searchTerm}
-          onChange={e => setSearchTerm(e.target.value)}
-        />
       </div>
 
       {isLoading ? (
-        <div className="flex justify-center py-12">
-          <Loader2 className="w-8 h-8 animate-spin text-primary" />
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {[1, 2, 3].map(i => (
+            <GlassPanel key={i} className="h-48 animate-pulse bg-secondary/20" />
+          ))}
         </div>
-      ) : filteredProjects?.length === 0 ? (
-        <GlassPanel className="p-12 text-center flex flex-col items-center">
-          <FolderGit2 className="w-12 h-12 text-muted-foreground/50 mb-4" />
-          <h3 className="text-lg font-medium">No Projects Found</h3>
-          <p className="text-muted-foreground mt-2">
-            Try adjusting your search query.
+      ) : error ? (
+        <div className="text-center p-8 bg-destructive/10 text-destructive rounded-lg border border-destructive/20">
+          <p>{error.message}</p>
+        </div>
+      ) : projects.length === 0 ? (
+        <div className="text-center py-12">
+          <div className="p-4 bg-primary/10 text-primary rounded-full w-16 h-16 mx-auto flex items-center justify-center mb-4">
+            <FolderGit2 className="h-8 w-8" />
+          </div>
+          <h2 className="text-xl font-semibold mb-2">No projects found</h2>
+          <p className="text-muted-foreground max-w-md mx-auto">
+            Projects will appear here once teams create submissions.
           </p>
-        </GlassPanel>
+        </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-          {filteredProjects?.map(project => (
-            <Link key={project.id} to={`/projects/${project.id}`} className="group block">
-              <GlassPanel className="p-6 flex flex-col h-full hover:bg-secondary/20 transition-all border border-border/50 hover:border-primary/50 relative overflow-hidden">
-                <div className="flex justify-between items-start mb-4">
-                  <h3 className="font-bold text-xl group-hover:text-primary transition-colors pr-8">
-                    {project.name}
-                  </h3>
-                  <ChevronRight className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors absolute right-6 top-6" />
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {projects.map(project => (
+            <GlassPanel 
+              key={project.id} 
+              className="p-6 flex flex-col hover:border-primary/50 transition-all cursor-pointer group hover:shadow-md"
+              onClick={() => navigate(`/projects/${project.id}`)}
+            >
+              <div className="flex justify-between items-start mb-4">
+                <h3 className="text-lg font-semibold truncate pr-4 group-hover:text-primary transition-colors">
+                  {project.name}
+                </h3>
+                <span className="text-[10px] font-bold uppercase tracking-wider bg-secondary text-secondary-foreground px-2 py-1 rounded">
+                  {project.status || 'Active'}
+                </span>
+              </div>
+              
+              <p className="text-sm text-muted-foreground line-clamp-3 mb-6 flex-1">
+                {project.description || 'No description provided.'}
+              </p>
+              
+              <div className="space-y-2 mb-4">
+                {project.repo_url && (
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <GitBranch className="h-4 w-4" />
+                    <span className="truncate">{new URL(project.repo_url).hostname}</span>
+                  </div>
+                )}
+                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                  <Calendar className="h-4 w-4" />
+                  <span>Updated {format(new Date(project.updated_at), 'MMM d, yyyy')}</span>
                 </div>
-                
-                <p className="text-sm text-muted-foreground line-clamp-3 mb-6 flex-1">
-                  {project.description || 'No description provided.'}
-                </p>
-
-                <div className="flex flex-wrap gap-3 pt-4 border-t border-border/50 mt-auto">
-                  {project.github_repo_url && (
-                    <div className="flex items-center text-xs text-muted-foreground bg-secondary/50 px-2 py-1 rounded">
-                      <GitBranch className="w-3 h-3 mr-1" />
-                      Repo Link
-                    </div>
-                  )}
-                  {project.demo_url && (
-                    <div className="flex items-center text-xs text-muted-foreground bg-secondary/50 px-2 py-1 rounded">
-                      <LinkIcon className="w-3 h-3 mr-1" />
-                      Demo Link
-                    </div>
-                  )}
-                  {!project.github_repo_url && !project.demo_url && (
-                    <div className="text-xs text-muted-foreground italic">
-                      No links provided
-                    </div>
-                  )}
-                </div>
-              </GlassPanel>
-            </Link>
+              </div>
+              
+              <div className="mt-auto pt-4 border-t border-border/50 flex items-center justify-between text-sm font-medium text-primary opacity-0 group-hover:opacity-100 transition-opacity">
+                <span>View Details</span>
+                <ArrowRight className="h-4 w-4" />
+              </div>
+            </GlassPanel>
           ))}
         </div>
       )}

@@ -1,4 +1,4 @@
-import { useWorkspaceStore } from '@/store/workspaceStore';
+import { apiClient as api } from '@/lib/api-client';
 
 export interface Team {
   id: string;
@@ -20,63 +20,22 @@ export interface TalentMatch {
   match_score: number;
 }
 
-const getHeaders = () => ({
-  'Content-Type': 'application/json',
-  'Authorization': `Bearer ${localStorage.getItem('token')}`
-});
-
 export const teamApi = {
-  getTeams: async (workspaceId: string): Promise<Team[]> => {
-    const res = await fetch(`/api/v1/workspaces/${workspaceId}/teams`, {
-      headers: getHeaders()
-    });
-    if (!res.ok) throw new Error('Failed to fetch teams');
-    return res.json();
-  },
+  getTeams: (workspaceId: string) =>
+    api.get<Team[]>(`/workspaces/${workspaceId}/teams`),
 
-  createTeam: async (workspaceId: string, data: Partial<Team>): Promise<Team> => {
-    const res = await fetch(`/api/v1/workspaces/${workspaceId}/teams`, {
-      method: 'POST',
-      headers: getHeaders(),
-      body: JSON.stringify(data)
-    });
-    if (!res.ok) throw new Error('Failed to create team');
-    return res.json();
-  },
+  createTeam: (workspaceId: string, data: Partial<Team>) =>
+    api.post<Team>(`/workspaces/${workspaceId}/teams`, data),
 
-  updateTeam: async (workspaceId: string, teamId: string, data: Partial<Team>): Promise<Team> => {
-    const res = await fetch(`/api/v1/workspaces/${workspaceId}/teams/${teamId}`, {
-      method: 'PATCH',
-      headers: getHeaders(),
-      body: JSON.stringify(data)
-    });
-    if (!res.ok) throw new Error('Failed to update team');
-    return res.json();
-  },
+  updateTeam: (workspaceId: string, teamId: string, data: Partial<Team>) =>
+    api.patch<Team>(`/workspaces/${workspaceId}/teams/${teamId}`, data),
 
-  getTalentMatches: async (workspaceId: string, teamId: string): Promise<TalentMatch[]> => {
-    const res = await fetch(`/api/v1/workspaces/${workspaceId}/teams/${teamId}/talent-matches`, {
-      headers: getHeaders()
-    });
-    if (!res.ok) throw new Error('Failed to fetch talent matches');
-    return res.json();
-  },
+  getTalentMatches: (workspaceId: string, teamId: string) =>
+    api.get<TalentMatch[]>(`/workspaces/${workspaceId}/teams/${teamId}/talent-matches`),
 
-  applyToTeam: async (workspaceId: string, teamId: string): Promise<{status: string, message: string}> => {
-    const res = await fetch(`/api/v1/workspaces/${workspaceId}/teams/${teamId}/apply`, {
-      method: 'POST',
-      headers: getHeaders()
-    });
-    if (!res.ok) throw new Error('Failed to apply to team');
-    return res.json();
-  },
+  applyToTeam: (workspaceId: string, teamId: string) =>
+    api.post<{status: string, message: string}>(`/workspaces/${workspaceId}/teams/${teamId}/apply`, {}),
 
-  inviteToTeam: async (workspaceId: string, teamId: string, personId: string): Promise<{status: string, message: string}> => {
-    const res = await fetch(`/api/v1/workspaces/${workspaceId}/teams/${teamId}/invite/${personId}`, {
-      method: 'POST',
-      headers: getHeaders()
-    });
-    if (!res.ok) throw new Error('Failed to invite to team');
-    return res.json();
-  }
+  inviteToTeam: (workspaceId: string, teamId: string, personId: string) =>
+    api.post<{status: string, message: string}>(`/workspaces/${workspaceId}/teams/${teamId}/invite/${personId}`, {})
 };
