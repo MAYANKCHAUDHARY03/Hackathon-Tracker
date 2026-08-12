@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { ReactFlow, MiniMap, Controls, Background, useNodesState, useEdgesState, MarkerType } from '@xyflow/react';
+import { ReactFlow, MiniMap, Controls, Background, useNodesState, useEdgesState, MarkerType, Position } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import { useWorkspaceStore } from '@/store/workspaceStore';
 import { networkApi, type NetworkNode, type NetworkEdge } from '@/api/networkApi';
@@ -21,8 +21,8 @@ const nodeTypeColors: Record<string, string> = {
 };
 
 export default function InnovationGraph() {
-  const { currentWorkspace } = useWorkspaceStore();
-  const workspaceId = currentWorkspace?.id;
+  const { activeWorkspaceId } = useWorkspaceStore();
+  const workspaceId = activeWorkspaceId;
   
   const [query, setQuery] = useState('');
   const [searchQuery, setSearchQuery] = useState('Ocean Clean');
@@ -51,6 +51,8 @@ export default function InnovationGraph() {
         return {
           id: node.id,
           position: { x, y },
+          sourcePosition: Position.Right,
+          targetPosition: Position.Left,
           data: { 
             label: (
               <div className="flex flex-col items-center p-2 text-center w-32">
@@ -137,6 +139,7 @@ export default function InnovationGraph() {
               onNodesChange={onNodesChange}
               onEdgesChange={onEdgesChange}
               fitView
+              colorMode="dark"
             >
               <Controls />
               <MiniMap />

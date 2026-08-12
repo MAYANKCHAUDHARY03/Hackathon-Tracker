@@ -27,7 +27,7 @@ export interface NetworkResolveResponse {
 
 export const networkApi = {
   resolveNetwork: async (workspaceId: string, request: NetworkResolveRequest): Promise<NetworkResolveResponse> => {
-    const response = await apiClient.post(`/workspaces/${workspaceId}/network/resolve`, request);
-    return response.data;
+    const response = await apiClient.post<NetworkResolveResponse>(`/workspaces/${workspaceId}/network/resolve`, request);
+    return response;
   },
 };

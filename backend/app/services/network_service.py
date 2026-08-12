@@ -21,14 +21,14 @@ class NetworkService:
         ]
         
         edges = [
-            NetworkEdge(source="node_2", target="node_1", relation="solves_challenge"),
-            NetworkEdge(source="node_3", target="node_2", relation="generated_by"),
+            NetworkEdge(source="node_1", target="node_2", relation="solved_by"),
+            NetworkEdge(source="node_2", target="node_3", relation="generates"),
         ]
         
         ai_summary = None
         if request.include_impact_metrics:
             from app.services.ai.providers import MockAIProvider
-            ai_provider = MockAIProvider()
+            ai_provider = MockAIProvider("mock")
             prompt = f"Summarize the impact lifecycle for query: {request.query}"
             ai_summary = await ai_provider.generate_project_summary({"query": prompt})
             
