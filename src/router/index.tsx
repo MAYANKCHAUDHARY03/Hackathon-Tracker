@@ -37,6 +37,8 @@ const Automation = lazy(() => import('@/pages/Automation'))
 const Incubation = lazy(() => import('@/pages/Incubation'))
 const DeveloperPortal = lazy(() => import('@/pages/DeveloperPortal'))
 const HubIntegration = lazy(() => import('@/pages/HubIntegration'))
+const Teams = lazy(() => import('@/pages/Teams'))
+const Projects = lazy(() => import('@/pages/Projects'))
 
 // Loading fallback
 const PageLoader = () => (
@@ -203,7 +205,7 @@ const router = createBrowserRouter([
         path: 'teams',
         element: (
           <Suspense fallback={<PageLoader />}>
-            <Placeholder title="Team Database" />
+            <Teams />
           </Suspense>
         ),
       },
@@ -211,7 +213,7 @@ const router = createBrowserRouter([
         path: 'projects',
         element: (
           <Suspense fallback={<PageLoader />}>
-            <Placeholder title="Project Database" />
+            <Projects />
           </Suspense>
         ),
       },
