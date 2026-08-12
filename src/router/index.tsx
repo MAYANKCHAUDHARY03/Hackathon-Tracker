@@ -29,6 +29,7 @@ const Forecasting = lazy(() => import('@/pages/Forecasting'))
 const ImpactMeasurement = lazy(() => import('@/pages/ImpactMeasurement'))
 const Observatory = lazy(() => import('@/pages/Observatory'))
 const Federation = lazy(() => import('@/pages/Federation'))
+const Vault = lazy(() => import('@/pages/Vault'))
 
 // Loading fallback
 const PageLoader = () => (
@@ -211,7 +212,7 @@ const router = createBrowserRouter([
         path: 'vault',
         element: (
           <Suspense fallback={<PageLoader />}>
-            <Placeholder title="API Vault" />
+            <Vault />
           </Suspense>
         ),
       },

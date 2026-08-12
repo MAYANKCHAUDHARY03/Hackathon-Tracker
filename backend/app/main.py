@@ -131,6 +131,9 @@ from app.routers import matching
 app.include_router(matching.router, prefix=f"{settings.API_V1_STR}", tags=["matching"])
 app.include_router(audit.router, prefix=f"{settings.API_V1_STR}", tags=["audit"])
 app.include_router(webhook.router, prefix=f"{settings.API_V1_STR}", tags=["webhook"])
+
+from app.routers import api_keys
+app.include_router(api_keys.router, prefix=f"{settings.API_V1_STR}", tags=["api_keys"])
 app.include_router(graph.router, prefix=f"{settings.API_V1_STR}", tags=["graph"])
 
 from app.routers import feedback, application
