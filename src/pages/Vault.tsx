@@ -3,9 +3,10 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useWorkspaceStore } from '@/store/workspaceStore';
 import { apiKeyApi, type APIKey, type APIKeyCreate } from '@/api/apiKeyApi';
 import { webhookApi, type WebhookSubscription, type WebhookSubscriptionCreate, type WebhookDelivery } from '@/api/webhookApi';
+import { developerApi, type DeveloperApp, type DeveloperAppCreate } from '@/api/developerApi';
 import { 
   Key, Webhook, Plus, Trash2, Copy, CheckCircle2, 
-  AlertCircle, Activity, Settings2, Clock, Globe
+  AlertCircle, Activity, Settings2, Clock, Globe, AppWindow
 } from 'lucide-react';
 import { format } from 'date-fns';
 
@@ -19,8 +20,7 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 
 export default function Vault() {
-  const { currentWorkspace } = useWorkspaceStore();
-  const workspaceId = currentWorkspace?.id;
+  const { activeWorkspaceId: workspaceId } = useWorkspaceStore();
   const queryClient = useQueryClient();
 
   const [activeTab, setActiveTab] = useState('api-keys');
@@ -39,6 +39,14 @@ export default function Vault() {
   
   const [selectedSubscriptionId, setSelectedSubscriptionId] = useState<string | null>(null);
 
+  // Developer Apps state
+  const [isCreateAppOpen, setIsCreateAppOpen] = useState(false);
+  const [newAppName, setNewAppName] = useState('');
+  const [newAppRedirectUris, setNewAppRedirectUris] = useState('');
+  const [generatedAppCreds, setGeneratedAppCreds] = useState<{client_id: string, client_secret: string} | null>(null);
+  const [copiedAppId, setCopiedAppId] = useState(false);
+  const [copiedAppSecret, setCopiedAppSecret] = useState(false);
+
   // Queries
   const { data: apiKeys = [], isLoading: isLoadingKeys } = useQuery({
     queryKey: ['api-keys', workspaceId],
@@ -56,6 +64,12 @@ export default function Vault() {
     queryKey: ['webhook-deliveries', workspaceId, selectedSubscriptionId],
     queryFn: () => webhookApi.listDeliveries(workspaceId!, selectedSubscriptionId!),
     enabled: !!workspaceId && !!selectedSubscriptionId,
+  });
+
+  const { data: developerApps = [], isLoading: isLoadingApps } = useQuery({
+    queryKey: ['developer-apps', workspaceId],
+    queryFn: () => developerApi.getApps(workspaceId!),
+    enabled: !!workspaceId,
   });
 
   // Mutations - API Keys
@@ -86,6 +100,16 @@ export default function Vault() {
     }
   });
 
+  const createAppMutation = useMutation({
+    mutationFn: (data: DeveloperAppCreate) => developerApi.createApp(workspaceId!, data),
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ['developer-apps', workspaceId] });
+      setGeneratedAppCreds({ client_id: data.client_id, client_secret: data.client_secret });
+      setNewAppName('');
+      setNewAppRedirectUris('');
+    }
+  });
+
   const handleCopyKey = () => {
     if (generatedKey) {
       navigator.clipboard.writeText(generatedKey);
@@ -108,9 +132,22 @@ export default function Vault() {
     });
   };
 
+  const handleCreateApp = (e: React.FormEvent) => {
+    e.preventDefault();
+    createAppMutation.mutate({
+      name: newAppName,
+      redirect_uris: newAppRedirectUris.split(',').map(s => s.trim()).filter(Boolean)
+    });
+  };
+
   const closeKeyModal = () => {
     setIsCreateKeyOpen(false);
     setGeneratedKey(null);
+  };
+
+  const closeAppModal = () => {
+    setIsCreateAppOpen(false);
+    setGeneratedAppCreds(null);
   };
 
   if (!workspaceId) return <div className="p-8">Select a workspace first.</div>;
@@ -125,7 +162,7 @@ export default function Vault() {
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-2 max-w-[400px]">
+        <TabsList className="grid w-full grid-cols-3 max-w-[600px]">
           <TabsTrigger value="api-keys" className="flex items-center gap-2">
             <Key className="w-4 h-4" />
             API Keys
@@ -133,6 +170,10 @@ export default function Vault() {
           <TabsTrigger value="webhooks" className="flex items-center gap-2">
             <Webhook className="w-4 h-4" />
             Webhooks
+          </TabsTrigger>
+          <TabsTrigger value="developer-apps" className="flex items-center gap-2">
+            <AppWindow className="w-4 h-4" />
+            OAuth Apps
           </TabsTrigger>
         </TabsList>
 
@@ -389,6 +430,147 @@ export default function Vault() {
                           )}
                         </div>
                       )}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="developer-apps" className="space-y-6 mt-6">
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between">
+              <div>
+                <CardTitle>OAuth & Developer Apps</CardTitle>
+                <CardDescription>
+                  Register applications to access this workspace via OAuth 2.0.
+                </CardDescription>
+              </div>
+              <Dialog open={isCreateAppOpen} onOpenChange={setIsCreateAppOpen}>
+                <DialogTrigger asChild>
+                  <Button className="flex items-center gap-2">
+                    <Plus className="w-4 h-4" /> Create App
+                  </Button>
+                </DialogTrigger>
+                <DialogContent>
+                  {!generatedAppCreds ? (
+                    <form onSubmit={handleCreateApp}>
+                      <DialogHeader>
+                        <DialogTitle>Register Developer App</DialogTitle>
+                        <DialogDescription>
+                          Provide app details to get a Client ID and Secret.
+                        </DialogDescription>
+                      </DialogHeader>
+                      <div className="grid gap-4 py-4">
+                        <div className="grid gap-2">
+                          <Label htmlFor="app-name">App Name</Label>
+                          <Input
+                            id="app-name"
+                            value={newAppName}
+                            onChange={(e) => setNewAppName(e.target.value)}
+                            placeholder="e.g. My Integration"
+                            required
+                          />
+                        </div>
+                        <div className="grid gap-2">
+                          <Label htmlFor="redirect-uris">Redirect URIs (comma-separated)</Label>
+                          <Input
+                            id="redirect-uris"
+                            value={newAppRedirectUris}
+                            onChange={(e) => setNewAppRedirectUris(e.target.value)}
+                            placeholder="http://localhost:3000/callback"
+                            required
+                          />
+                        </div>
+                      </div>
+                      <DialogFooter>
+                        <Button type="button" variant="outline" onClick={() => setIsCreateAppOpen(false)}>
+                          Cancel
+                        </Button>
+                        <Button type="submit" disabled={createAppMutation.isPending || !newAppName || !newAppRedirectUris}>
+                          {createAppMutation.isPending ? 'Registering...' : 'Register App'}
+                        </Button>
+                      </DialogFooter>
+                    </form>
+                  ) : (
+                    <div>
+                      <DialogHeader>
+                        <DialogTitle className="flex items-center gap-2 text-green-600">
+                          <CheckCircle2 className="w-5 h-5" /> App Registered Successfully
+                        </DialogTitle>
+                        <DialogDescription className="text-amber-600 dark:text-amber-500 font-medium pt-2">
+                          Please copy this Client Secret now. You will not be able to see it again!
+                        </DialogDescription>
+                      </DialogHeader>
+                      <div className="py-6 space-y-4">
+                        <div className="space-y-1">
+                          <Label>Client ID</Label>
+                          <div className="flex items-center space-x-2">
+                            <Input value={generatedAppCreds.client_id} readOnly className="font-mono bg-muted" />
+                            <Button size="icon" variant="outline" onClick={() => {
+                              navigator.clipboard.writeText(generatedAppCreds.client_id);
+                              setCopiedAppId(true);
+                              setTimeout(() => setCopiedAppId(false), 2000);
+                            }}>
+                              {copiedAppId ? <CheckCircle2 className="h-4 w-4 text-green-500" /> : <Copy className="h-4 w-4" />}
+                            </Button>
+                          </div>
+                        </div>
+                        <div className="space-y-1">
+                          <Label>Client Secret</Label>
+                          <div className="flex items-center space-x-2">
+                            <Input value={generatedAppCreds.client_secret} readOnly className="font-mono bg-muted" />
+                            <Button size="icon" variant="outline" onClick={() => {
+                              navigator.clipboard.writeText(generatedAppCreds.client_secret);
+                              setCopiedAppSecret(true);
+                              setTimeout(() => setCopiedAppSecret(false), 2000);
+                            }}>
+                              {copiedAppSecret ? <CheckCircle2 className="h-4 w-4 text-green-500" /> : <Copy className="h-4 w-4" />}
+                            </Button>
+                          </div>
+                        </div>
+                      </div>
+                      <DialogFooter>
+                        <Button type="button" onClick={closeAppModal}>
+                          I have copied the credentials
+                        </Button>
+                      </DialogFooter>
+                    </div>
+                  )}
+                </DialogContent>
+              </Dialog>
+            </CardHeader>
+            <CardContent>
+              {isLoadingApps ? (
+                <div className="text-center py-8 text-muted-foreground">Loading Developer Apps...</div>
+              ) : developerApps.length === 0 ? (
+                <div className="text-center py-12 border-2 border-dashed rounded-lg bg-muted/20">
+                  <AppWindow className="w-8 h-8 mx-auto text-muted-foreground mb-3" />
+                  <h3 className="text-lg font-medium">No Developer Apps</h3>
+                  <p className="text-sm text-muted-foreground mt-1">Register an app to build OAuth integrations.</p>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {developerApps.map((app) => (
+                    <div key={app.id} className="p-4 border rounded-lg bg-card">
+                      <div className="flex flex-col gap-2">
+                        <div className="flex items-center gap-2">
+                          <span className="font-semibold">{app.name}</span>
+                        </div>
+                        <div className="text-sm">
+                          <span className="text-muted-foreground">Client ID: </span>
+                          <span className="font-mono">{app.client_id}</span>
+                        </div>
+                        <div className="text-xs text-muted-foreground mt-2">
+                          <p>Redirect URIs:</p>
+                          <ul className="list-disc list-inside">
+                            {app.redirect_uris.map(uri => (
+                              <li key={uri}>{uri}</li>
+                            ))}
+                          </ul>
+                        </div>
+                      </div>
                     </div>
                   ))}
                 </div>
