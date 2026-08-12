@@ -23,7 +23,8 @@ import {
   Telescope,
   Lightbulb,
   ShieldCheck,
-  Zap
+  Zap,
+  Terminal
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
@@ -50,6 +51,8 @@ const navItems = [
   { path: '/federation', label: 'Ecosystem Federation', icon: Network },
   { path: '/governance', label: 'Governance', icon: ShieldCheck },
   { path: '/automation', label: 'Workflow Automation', icon: Zap },
+  { path: '/integrations', label: 'Integrations', icon: Network },
+  { path: '/developer', label: 'Developer Portal', icon: Terminal },
   { path: '/settings', label: 'Settings', icon: Settings },
 ]
 

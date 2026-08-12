@@ -35,6 +35,8 @@ const Governance = lazy(() => import('@/pages/Governance'))
 const InnovationGraph = lazy(() => import('@/pages/InnovationGraph'))
 const Automation = lazy(() => import('@/pages/Automation'))
 const Incubation = lazy(() => import('@/pages/Incubation'))
+const DeveloperPortal = lazy(() => import('@/pages/DeveloperPortal'))
+const HubIntegration = lazy(() => import('@/pages/HubIntegration'))
 
 // Loading fallback
 const PageLoader = () => (
@@ -330,6 +332,22 @@ const router = createBrowserRouter([
         element: (
           <Suspense fallback={<PageLoader />}>
             <Automation />
+          </Suspense>
+        ),
+      },
+      {
+        path: 'developer',
+        element: (
+          <Suspense fallback={<PageLoader />}>
+            <DeveloperPortal />
+          </Suspense>
+        ),
+      },
+      {
+        path: 'integrations',
+        element: (
+          <Suspense fallback={<PageLoader />}>
+            <HubIntegration />
           </Suspense>
         ),
       },
