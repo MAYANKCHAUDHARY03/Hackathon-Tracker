@@ -18,6 +18,10 @@ class Settings(BaseSettings):
     
     # Database
     DATABASE_URL: str
+    DATABASE_URL_RO: Optional[str] = None
+    
+    # Cache / Redis
+    REDIS_URL: str = "redis://localhost:6379/0"
     
     # Auth
     SECRET_KEY: str

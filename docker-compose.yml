@@ -27,6 +27,8 @@ services:
       - ./backend:/app
     environment:
       - DATABASE_URL=postgresql+asyncpg://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@db:5432/${POSTGRES_DB:-hackathon_tracker}
+      - DATABASE_URL_RO=postgresql+asyncpg://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@db:5432/${POSTGRES_DB:-hackathon_tracker}
+      - REDIS_URL=redis://redis:6379/0
       - SECRET_KEY=${SECRET_KEY:-development_secret_key_change_in_production}
       - ENVIRONMENT=development
       - BACKEND_CORS_ORIGINS=["http://localhost:5173", "http://localhost", "http://localhost:8000"]
@@ -35,6 +37,14 @@ services:
     depends_on:
       db:
         condition: service_healthy
+      redis:
+        condition: service_started
+
+  redis:
+    image: redis:7-alpine
+    restart: always
+    ports:
+      - "6379:6379"
 
   frontend:
     build:
