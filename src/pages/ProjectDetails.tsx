@@ -5,6 +5,7 @@ import { GlassPanel } from "@/components/ui/glass-panel";
 import { ProjectLifecycle } from "@/components/projects/ProjectLifecycle";
 import { IncubationDashboardView } from "@/components/projects/IncubationDashboard";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { ResearchBridge } from "@/components/research/ResearchBridge";
 
 export default function ProjectDetails() {
   const { id } = useParams<{ id: string }>();
@@ -27,6 +28,7 @@ export default function ProjectDetails() {
       <Tabs defaultValue="overview" className="space-y-6">
         <TabsList>
           <TabsTrigger value="overview">Overview</TabsTrigger>
+          <TabsTrigger value="research">Research Bridge</TabsTrigger>
           {showIncubation && <TabsTrigger value="incubation">Incubation & Acceleration</TabsTrigger>}
         </TabsList>
 
@@ -46,6 +48,14 @@ export default function ProjectDetails() {
               Future: Kanban and Team View
             </GlassPanel>
           </div>
+        </TabsContent>
+
+        <TabsContent value="research" className="space-y-6">
+          <GlassPanel className="p-6">
+            <h2 className="text-xl font-semibold mb-6">Research Bridge</h2>
+            <p className="text-muted-foreground mb-6">Link this project to external research artifacts like papers, datasets, and patents.</p>
+            <ResearchBridge projectId={id} />
+          </GlassPanel>
         </TabsContent>
 
         {showIncubation && (
