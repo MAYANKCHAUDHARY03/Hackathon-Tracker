@@ -39,6 +39,7 @@ from app.models.search import ContentEmbedding
 from app.models.research import ResearchLink
 from app.models.api_auth import APIKey, OAuthApp
 from app.models.event import PlatformEvent
+from app.models.forecast import Forecast
 
 __all__ = [
     "Base", 
@@ -106,5 +107,6 @@ __all__ = [
     "ResearchLink",
     "APIKey",
     "OAuthApp",
-    "PlatformEvent"
+    "PlatformEvent",
+    "Forecast"
 ]

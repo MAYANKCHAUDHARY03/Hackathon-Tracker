@@ -17,7 +17,8 @@ import {
   Sparkles,
   Store,
   Globe,
-  Bot
+  Bot,
+  BrainCircuit
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
@@ -35,6 +36,7 @@ const navItems = [
   { path: '/portfolio', label: 'Portfolio', icon: Building },
   { path: '/marketplace', label: 'Marketplace', icon: Store },
   { path: '/copilot', label: 'AI Copilot', icon: Bot },
+  { path: '/forecasting', label: 'Forecasting', icon: BrainCircuit },
   { path: '/intelligence', label: 'Ecosystem Intelligence', icon: Globe },
   { path: '/settings', label: 'Settings', icon: Settings },
 ]
