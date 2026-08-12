@@ -9,6 +9,18 @@ from app.schemas.verification import VerificationCreate
 
 class VerificationService:
     @staticmethod
+    async def get_verifications(
+        db: AsyncSession,
+        workspace_id: uuid.UUID
+    ):
+        result = await db.execute(
+            select(TrustVerification)
+            .where(TrustVerification.workspace_id == workspace_id)
+            .order_by(TrustVerification.created_at.desc())
+        )
+        return result.scalars().all()
+
+    @staticmethod
     async def request_verification(
         db: AsyncSession,
         workspace_id: uuid.UUID,

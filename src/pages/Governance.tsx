@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useWorkspaceStore } from '@/store/workspaceStore';
 import { governanceApi, type WorkspacePolicy, type DSR, type AuditLog } from '@/api/governanceApi';
+import { verificationApi, type TrustVerification } from '@/api/verificationApi';
 import {
   Card,
   CardContent,
@@ -25,7 +26,11 @@ import {
   Save,
   UserX,
   FileDown,
-  Activity
+  Activity,
+  CheckCircle2,
+  XCircle,
+  BadgeCheck,
+  Globe
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
@@ -73,6 +78,30 @@ export default function Governance() {
     onError: () => toast.error('Failed to update DSR status.'),
   });
 
+  const { data: verifications, isLoading: isLoadingVerifications } = useQuery({
+    queryKey: ['governance-verifications', workspaceId],
+    queryFn: () => verificationApi.getVerifications(workspaceId!),
+    enabled: !!workspaceId,
+  });
+
+  const verifyAchievementMutation = useMutation({
+    mutationFn: (verificationId: string) => verificationApi.verifyAchievement(workspaceId!, verificationId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['governance-verifications', workspaceId] });
+      toast.success('Achievement verified.');
+    },
+    onError: () => toast.error('Failed to verify achievement.'),
+  });
+
+  const rejectAchievementMutation = useMutation({
+    mutationFn: (verificationId: string) => verificationApi.rejectAchievement(workspaceId!, verificationId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['governance-verifications', workspaceId] });
+      toast.success('Achievement verification rejected.');
+    },
+    onError: () => toast.error('Failed to reject achievement verification.'),
+  });
+
   if (!workspaceId) {
     return <div>Select a workspace to view governance settings.</div>;
   }
@@ -89,10 +118,11 @@ export default function Governance() {
       </div>
 
       <Tabs defaultValue="policy" className="w-full">
-        <TabsList className="grid w-full grid-cols-3">
+        <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="policy">Workspace Policy</TabsTrigger>
           <TabsTrigger value="dsr">Data Subject Requests</TabsTrigger>
           <TabsTrigger value="audit">Audit Logs</TabsTrigger>
+          <TabsTrigger value="verifications">Trust & Verifications</TabsTrigger>
         </TabsList>
 
         <TabsContent value="policy" className="mt-6 space-y-6">
@@ -114,6 +144,16 @@ export default function Governance() {
 
         <TabsContent value="audit" className="mt-6">
           <AuditLogTab logs={auditLogs || []} isLoading={isLoadingAudit} />
+        </TabsContent>
+
+        <TabsContent value="verifications" className="mt-6">
+          <VerificationTab 
+            verifications={verifications || []} 
+            isLoading={isLoadingVerifications}
+            onVerify={(id) => verifyAchievementMutation.mutate(id)}
+            onReject={(id) => rejectAchievementMutation.mutate(id)}
+            isActionPending={verifyAchievementMutation.isPending || rejectAchievementMutation.isPending}
+          />
         </TabsContent>
       </Tabs>
     </div>
@@ -308,6 +348,104 @@ function AuditLogTab({ logs, isLoading }: { logs: AuditLog[]; isLoading: boolean
                 ))}
               </tbody>
             </table>
+          </div>
+        )}
+      </CardContent>
+    </Card>
+  );
+}
+
+function VerificationTab({ 
+  verifications, 
+  isLoading, 
+  onVerify, 
+  onReject, 
+  isActionPending 
+}: { 
+  verifications: TrustVerification[]; 
+  isLoading: boolean; 
+  onVerify: (id: string) => void;
+  onReject: (id: string) => void;
+  isActionPending: boolean;
+}) {
+  if (isLoading) return <div>Loading verifications...</div>;
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2">
+          <BadgeCheck className="h-5 w-5 text-primary" />
+          Trust & Verifications
+        </CardTitle>
+        <CardDescription>
+          Review and approve verification requests for projects and achievements submitted by workspace members. Only human/organizational admins can verify these claims.
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        {verifications.length === 0 ? (
+          <div className="text-center py-12 border-2 border-dashed rounded-lg bg-muted/20">
+            <BadgeCheck className="w-8 h-8 mx-auto text-muted-foreground mb-3" />
+            <h3 className="text-lg font-medium">No Verification Requests</h3>
+            <p className="text-sm text-muted-foreground mt-1">There are no pending achievements to verify.</p>
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {verifications.map((ver) => (
+              <div key={ver.id} className="border rounded-lg p-4 bg-card">
+                <div className="flex flex-col md:flex-row justify-between md:items-start gap-4">
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2">
+                      <span className="font-semibold text-lg">{ver.achievement_type}</span>
+                      <Badge 
+                        variant={ver.status === 'verified' ? 'default' : ver.status === 'rejected' ? 'destructive' : 'secondary'}
+                        className="uppercase"
+                      >
+                        {ver.status}
+                      </Badge>
+                    </div>
+                    <div className="text-sm">
+                      <span className="text-muted-foreground">Entity: </span>
+                      <span className="font-medium capitalize">{ver.entity_type}</span>
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium">Achievement Detail</p>
+                      <p className="text-sm text-muted-foreground mt-1">{ver.achievement_detail}</p>
+                    </div>
+                    {ver.source && (
+                      <div className="text-xs text-muted-foreground pt-1 flex items-center gap-1">
+                        <Globe className="h-3 w-3" /> Source: <a href={ver.source} target="_blank" rel="noreferrer" className="underline">{ver.source}</a>
+                      </div>
+                    )}
+                    <div className="text-xs text-muted-foreground pt-2">
+                      Requested on: {format(new Date(ver.created_at), 'PPP')}
+                    </div>
+                  </div>
+
+                  <div className="flex flex-col sm:flex-row gap-2 shrink-0">
+                    {ver.status === 'pending' && (
+                      <>
+                        <Button 
+                          onClick={() => onVerify(ver.id)} 
+                          disabled={isActionPending}
+                          size="sm"
+                          className="bg-green-600 hover:bg-green-700 text-white"
+                        >
+                          <CheckCircle2 className="w-4 h-4 mr-1" /> Approve
+                        </Button>
+                        <Button 
+                          onClick={() => onReject(ver.id)} 
+                          disabled={isActionPending}
+                          variant="destructive"
+                          size="sm"
+                        >
+                          <XCircle className="w-4 h-4 mr-1" /> Reject
+                        </Button>
+                      </>
+                    )}
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
         )}
       </CardContent>

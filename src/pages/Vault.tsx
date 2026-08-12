@@ -6,7 +6,7 @@ import { webhookApi, type WebhookSubscription, type WebhookSubscriptionCreate, t
 import { developerApi, type DeveloperApp, type DeveloperAppCreate } from '@/api/developerApi';
 import { 
   Key, Webhook, Plus, Trash2, Copy, CheckCircle2, 
-  AlertCircle, Activity, Settings2, Clock, Globe, AppWindow
+  AlertCircle, Activity, Settings2, Clock, Globe, AppWindow, Database
 } from 'lucide-react';
 import { format } from 'date-fns';
 
@@ -162,7 +162,7 @@ export default function Vault() {
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-3 max-w-[600px]">
+        <TabsList className="grid w-full grid-cols-4 max-w-[800px]">
           <TabsTrigger value="api-keys" className="flex items-center gap-2">
             <Key className="w-4 h-4" />
             API Keys
@@ -174,6 +174,10 @@ export default function Vault() {
           <TabsTrigger value="developer-apps" className="flex items-center gap-2">
             <AppWindow className="w-4 h-4" />
             OAuth Apps
+          </TabsTrigger>
+          <TabsTrigger value="data-exchange" className="flex items-center gap-2">
+            <Database className="w-4 h-4" />
+            Data Exchange
           </TabsTrigger>
         </TabsList>
 
@@ -442,7 +446,7 @@ export default function Vault() {
           <Card>
             <CardHeader className="flex flex-row items-center justify-between">
               <div>
-                <CardTitle>OAuth & Developer Apps</CardTitle>
+                <CardTitle>OAuth Developer Apps</CardTitle>
                 <CardDescription>
                   Register applications to access this workspace via OAuth 2.0.
                 </CardDescription>
@@ -457,9 +461,9 @@ export default function Vault() {
                   {!generatedAppCreds ? (
                     <form onSubmit={handleCreateApp}>
                       <DialogHeader>
-                        <DialogTitle>Register Developer App</DialogTitle>
+                        <DialogTitle>Register new OAuth App</DialogTitle>
                         <DialogDescription>
-                          Provide app details to get a Client ID and Secret.
+                          Create a new application to obtain a Client ID and Client Secret.
                         </DialogDescription>
                       </DialogHeader>
                       <div className="grid gap-4 py-4">
@@ -469,19 +473,20 @@ export default function Vault() {
                             id="app-name"
                             value={newAppName}
                             onChange={(e) => setNewAppName(e.target.value)}
-                            placeholder="e.g. My Integration"
+                            placeholder="e.g. Acme Analytics Integration"
                             required
                           />
                         </div>
                         <div className="grid gap-2">
-                          <Label htmlFor="redirect-uris">Redirect URIs (comma-separated)</Label>
+                          <Label htmlFor="app-uris">Redirect URIs</Label>
                           <Input
-                            id="redirect-uris"
+                            id="app-uris"
                             value={newAppRedirectUris}
                             onChange={(e) => setNewAppRedirectUris(e.target.value)}
-                            placeholder="http://localhost:3000/callback"
+                            placeholder="https://app.acme.com/oauth/callback (comma separated)"
                             required
                           />
+                          <p className="text-xs text-muted-foreground">Multiple URIs can be separated by commas.</p>
                         </div>
                       </div>
                       <DialogFooter>
@@ -575,6 +580,49 @@ export default function Vault() {
                   ))}
                 </div>
               )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="data-exchange" className="space-y-6 mt-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>Data Exchange API</CardTitle>
+              <CardDescription>
+                Export and import core Hackathon Tracker entities (Hackathons, Projects, Organizations) using the versioned InnovationSchema (V1) in JSON, NDJSON, and CSV formats.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-8">
+              <div className="space-y-4">
+                <h3 className="text-lg font-medium border-b pb-2">Export Data</h3>
+                <p className="text-sm text-muted-foreground">
+                  Use your generated API keys to fetch workspace data. The export includes all hackathons, projects, and organizations the API key has scopes for.
+                </p>
+                <div className="bg-secondary/30 p-4 rounded-md border font-mono text-sm overflow-x-auto whitespace-pre">
+                  <span className="text-blue-500 font-bold">curl</span> -X GET \<br/>
+                  &nbsp;&nbsp;<span>"https://api.hackathontracker.com/api/v1/exchange/export?format=json&amp;include_hackathons=true"</span> \<br/>
+                  &nbsp;&nbsp;-H <span className="text-green-500">"X-API-Key: YOUR_API_KEY_HERE"</span>
+                </div>
+                <div className="flex gap-2 pt-2">
+                  <Badge variant="outline">format: json | csv | ndjson</Badge>
+                  <Badge variant="outline">include_hackathons: boolean</Badge>
+                  <Badge variant="outline">include_projects: boolean</Badge>
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                <h3 className="text-lg font-medium border-b pb-2">Import Data</h3>
+                <p className="text-sm text-muted-foreground">
+                  Import entities into your workspace using the standardized InnovationSchemaV1 format.
+                </p>
+                <div className="bg-secondary/30 p-4 rounded-md border font-mono text-sm overflow-x-auto whitespace-pre">
+                  <span className="text-blue-500 font-bold">curl</span> -X POST \<br/>
+                  &nbsp;&nbsp;<span>"https://api.hackathontracker.com/api/v1/exchange/import"</span> \<br/>
+                  &nbsp;&nbsp;-H <span className="text-green-500">"X-API-Key: YOUR_API_KEY_HERE"</span> \<br/>
+                  &nbsp;&nbsp;-H <span className="text-green-500">"Content-Type: application/json"</span> \<br/>
+                  &nbsp;&nbsp;-d <span className="text-amber-500">'{'{"version":"1.0","hackathons":[]}'}'</span>
+                </div>
+              </div>
             </CardContent>
           </Card>
         </TabsContent>

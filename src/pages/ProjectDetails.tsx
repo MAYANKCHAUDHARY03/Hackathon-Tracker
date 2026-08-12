@@ -6,6 +6,7 @@ import { ProjectLifecycle } from "@/components/projects/ProjectLifecycle";
 import { IncubationDashboardView } from "@/components/projects/IncubationDashboard";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ResearchBridge } from "@/components/research/ResearchBridge";
+import { RequestVerificationModal } from "@/components/projects/RequestVerificationModal";
 
 export default function ProjectDetails() {
   const { id } = useParams<{ id: string }>();
@@ -20,9 +21,12 @@ export default function ProjectDetails() {
 
   return (
     <div className="p-8 space-y-6 max-w-7xl mx-auto">
-      <div>
-        <h1 className="text-3xl font-bold">Project Workspace</h1>
-        <p className="text-muted-foreground mt-2">Manage your project's lifecycle, kanban, and settings.</p>
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-3xl font-bold">Project Workspace</h1>
+          <p className="text-muted-foreground mt-2">Manage your project's lifecycle, kanban, and settings.</p>
+        </div>
+        <RequestVerificationModal workspaceId={workspaceId} projectId={id} />
       </div>
 
       <Tabs defaultValue="overview" className="space-y-6">

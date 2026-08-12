@@ -9,6 +9,17 @@ from app.schemas.verification import VerificationCreate, VerificationResponse
 
 router = APIRouter(prefix="/workspaces/{workspace_id}/verifications", tags=["Verification"])
 
+@router.get("", response_model=list[VerificationResponse])
+async def get_verifications(
+    workspace_id: uuid.UUID,
+    db: AsyncSession = Depends(get_db),
+    current_user = Depends(get_current_user)
+):
+    """
+    Get all verifications for a workspace.
+    """
+    return await VerificationService.get_verifications(db, workspace_id)
+
 @router.post("", response_model=VerificationResponse, status_code=201)
 async def request_verification(
     workspace_id: uuid.UUID,
