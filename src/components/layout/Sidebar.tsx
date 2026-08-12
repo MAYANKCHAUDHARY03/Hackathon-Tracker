@@ -20,7 +20,8 @@ import {
   Bot,
   BrainCircuit,
   Target,
-  Telescope
+  Telescope,
+  Lightbulb
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
@@ -40,8 +41,9 @@ const navItems = [
   { path: '/copilot', label: 'AI Copilot', icon: Bot },
   { path: '/forecasting', label: 'Forecasting', icon: BrainCircuit },
   { path: '/impact', label: 'Impact Measurement', icon: Target },
-  { path: '/observatory', label: 'Innovation Observatory', icon: Telescope },
-  { path: '/intelligence', label: 'Ecosystem Intelligence', icon: Globe },
+  { path: '/incubation', label: 'Incubation', icon: Lightbulb },
+  { path: '/observatory', label: 'Global Observatory', icon: Globe },
+  { path: '/federation', label: 'Ecosystem Federation', icon: Network },
   { path: '/settings', label: 'Settings', icon: Settings },
 ]
 

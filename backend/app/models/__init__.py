@@ -41,6 +41,7 @@ from app.models.api_auth import APIKey, OAuthApp
 from app.models.event import PlatformEvent
 from app.models.forecast import Forecast
 from app.models.impact import CustomMetric, ProjectImpact
+from app.models.federation import WorkspaceFederation, FederationStatus
 
 __all__ = [
     "Base", 
