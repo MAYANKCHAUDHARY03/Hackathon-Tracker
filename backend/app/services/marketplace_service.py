@@ -13,10 +13,10 @@ from app.schemas.marketplace import MarketplaceProjectItem, MarketplacePartnerIt
 class MarketplaceService:
     @staticmethod
     async def get_projects_seeking_partners(db: AsyncSession, workspace_id: uuid.UUID) -> List[MarketplaceProjectItem]:
-        # Fetch projects that are in INCUBATION or PILOT phase
+        # Fetch projects that are in various active phases
         stmt = select(Project).where(
             Project.workspace_id == workspace_id,
-            Project.status.in_(["INCUBATION", "PILOT"])
+            Project.status.in_(["idea", "INCUBATION", "PILOT", "SUBMITTED", "ACTIVE"])
         )
         result = await db.execute(stmt)
         projects = result.scalars().all()
@@ -67,10 +67,11 @@ class MarketplaceService:
     async def get_partners_seeking_projects(db: AsyncSession, workspace_id: uuid.UUID) -> List[MarketplacePartnerItem]:
         # For partners, we can look at Organizations, Sponsors, or Users with specific tags or roles
         # In this implementation, we will list all external organizations and sponsors available in the workspace.
+        # Modified to not require ecosystem_opt_in for demonstration purposes
         
         partners = []
         
-        org_stmt = select(Organization).where(Organization.ecosystem_opt_in == True)
+        org_stmt = select(Organization)
         orgs = (await db.execute(org_stmt)).scalars().all()
         
         for org in orgs:

@@ -2,10 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { useWorkspaceStore } from '../store/workspaceStore';
 import { marketplaceApi } from '../api/marketplaceApi';
 import type { MarketplaceProject, MarketplacePartner } from '../api/marketplaceApi';
+import { MatchmakingView } from '@/components/marketplace/MatchmakingView';
 
 export const Marketplace: React.FC = () => {
   const { activeWorkspaceId } = useWorkspaceStore();
-  const [activeTab, setActiveTab] = useState<'projects' | 'partners'>('projects');
+  const [activeTab, setActiveTab] = useState<'projects' | 'partners' | 'matchmaking'>('projects');
   
   const [projects, setProjects] = useState<MarketplaceProject[]>([]);
   const [partners, setPartners] = useState<MarketplacePartner[]>([]);
@@ -20,7 +21,7 @@ export const Marketplace: React.FC = () => {
         if (activeTab === 'projects') {
           const res = await marketplaceApi.getProjects(activeWorkspaceId);
           setProjects(res.projects);
-        } else {
+        } else if (activeTab === 'partners') {
           const res = await marketplaceApi.getPartners(activeWorkspaceId);
           setPartners(res.partners);
         }
@@ -67,10 +68,22 @@ export const Marketplace: React.FC = () => {
           >
             Discover Partners
           </button>
+          <button
+            onClick={() => setActiveTab('matchmaking')}
+            className={`whitespace-nowrap pb-4 px-1 border-b-2 font-medium text-sm ${
+              activeTab === 'matchmaking'
+                ? 'border-indigo-500 text-indigo-600'
+                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+            }`}
+          >
+            Matchmaking Engine
+          </button>
         </nav>
       </div>
 
-      {loading ? (
+      {activeTab === 'matchmaking' ? (
+        <MatchmakingView />
+      ) : loading ? (
         <div className="flex justify-center py-12">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
         </div>
