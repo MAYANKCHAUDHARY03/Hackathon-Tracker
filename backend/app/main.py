@@ -151,6 +151,9 @@ app.include_router(intelligence.router, prefix=f"{settings.API_V1_STR}/intellige
 
 app.include_router(marketplace.router, prefix=f"{settings.API_V1_STR}", tags=["marketplace"])
 
+from app.routers import challenge_exchange
+app.include_router(challenge_exchange.router, prefix=f"{settings.API_V1_STR}", tags=["challenge_exchange"])
+
 from app.routers import federation
 app.include_router(federation.router, prefix=f"{settings.API_V1_STR}", tags=["federation"])
 from app.routers import research

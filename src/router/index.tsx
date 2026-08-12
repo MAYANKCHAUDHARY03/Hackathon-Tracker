@@ -22,7 +22,8 @@ const WorkspacePortfolio = lazy(() => import('@/pages/WorkspacePortfolio'))
 const ApplyPage = lazy(() => import('@/pages/ApplyPage'))
 const GraphExplorer = lazy(() => import('@/pages/GraphExplorer'))
 const Opportunities = lazy(() => import('@/pages/Opportunities'))
-const Marketplace = lazy(() => import('@/pages/Marketplace'))
+const Marketplace = lazy(() => import('../pages/Marketplace'))
+const ChallengeExchange = lazy(() => import('../pages/ChallengeExchange'))
 const Intelligence = lazy(() => import('@/pages/Intelligence'))
 const Copilot = lazy(() => import('@/pages/Copilot'))
 const Forecasting = lazy(() => import('@/pages/Forecasting'))
@@ -143,6 +144,14 @@ const router = createBrowserRouter([
         element: (
           <Suspense fallback={<PageLoader />}>
             <Analytics />
+          </Suspense>
+        ),
+      },
+      {
+        path: 'challenge-exchange',
+        element: (
+          <Suspense fallback={<PageLoader />}>
+            <ChallengeExchange />
           </Suspense>
         ),
       },

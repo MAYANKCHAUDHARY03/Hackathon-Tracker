@@ -36,6 +36,7 @@ const navItems = [
   { path: '/projects', label: 'Project Database', icon: FolderGit2 },
   { path: '/graph', label: 'Innovation Graph', icon: Network },
   { path: '/knowledge-graph', label: 'Knowledge Graph', icon: Network },
+  { path: '/challenge-exchange', label: 'Challenge Exchange', icon: Sparkles },
   { path: '/opportunities', label: 'Opportunities', icon: Sparkles },
   { path: '/vault', label: 'API Vault', icon: KeyRound },
   { path: '/portfolio', label: 'Portfolio', icon: Building },
