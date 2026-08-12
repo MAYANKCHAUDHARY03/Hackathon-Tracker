@@ -1,4 +1,5 @@
 import { apiClient as api } from "@/lib/api-client";
+import type { Project } from "@/types";
 
 export interface ProjectTransition {
   state: string;
@@ -14,6 +15,9 @@ export interface ProjectTransitionCreate {
 }
 
 export const projectsApi = {
+  getProjects: (workspaceId: string) =>
+    api.get<Project[]>(`/workspaces/${workspaceId}/projects`),
+
   transitionState: (workspaceId: string, projectId: string, transition: ProjectTransitionCreate) =>
     api.post<any>(`/workspaces/${workspaceId}/projects/${projectId}/transitions`, transition),
     

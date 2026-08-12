@@ -36,6 +36,16 @@ class ImpactService:
         return [CustomMetricResponse.model_validate(m) for m in metrics]
 
     @staticmethod
+    async def list_project_impacts(
+        workspace_id: UUID,
+        db: AsyncSession
+    ) -> List[ProjectImpactResponse]:
+        query = select(ProjectImpact).where(ProjectImpact.workspace_id == workspace_id)
+        result = await db.execute(query)
+        impacts = result.scalars().all()
+        return [ProjectImpactResponse.model_validate(m) for m in impacts]
+
+    @staticmethod
     async def update_project_impact(
         workspace_id: UUID,
         project_id: UUID,
@@ -84,3 +94,52 @@ class ImpactService:
         await db.commit()
         await db.refresh(impact)
         return ProjectImpactResponse.model_validate(impact)
+
+    @staticmethod
+    async def get_funnel_metrics(
+        workspace_id: UUID,
+        db: AsyncSession
+    ) -> dict:
+        from sqlalchemy import func
+        from app.models.user import WorkspaceMembership
+        
+        # 1. Participation = Total Workspace Members
+        part_query = select(func.count(WorkspaceMembership.id)).where(WorkspaceMembership.workspace_id == workspace_id)
+        part_result = await db.execute(part_query)
+        participation = part_result.scalar() or 0
+        
+        # 2. Projects = Total Projects
+        proj_query = select(func.count(Project.id)).where(Project.workspace_id == workspace_id)
+        proj_result = await db.execute(proj_query)
+        projects = proj_result.scalar() or 0
+        
+        # Now use ProjectImpact for other stages
+        # "Participation", "Project", "Prototype", "Pilot", "Deployment", "Startup", "Impact"
+        stmt = select(ProjectImpact.stage, func.count(ProjectImpact.id)).where(
+            ProjectImpact.workspace_id == workspace_id
+        ).group_by(ProjectImpact.stage)
+        
+        result = await db.execute(stmt)
+        stage_counts = {row[0].lower(): row[1] for row in result.all()}
+        
+        jobs_stmt = select(func.sum(ProjectImpact.jobs_created)).where(
+            ProjectImpact.workspace_id == workspace_id
+        )
+        jobs_result = await db.execute(jobs_stmt)
+        total_jobs = jobs_result.scalar() or 0
+        
+        # Calculate stages (cascade down)
+        startups = stage_counts.get("startup", 0)
+        deployments = stage_counts.get("deployment", 0) + startups
+        pilots = stage_counts.get("pilot", 0) + deployments
+        prototypes = stage_counts.get("prototype", 0) + pilots
+        
+        return {
+            "participation": participation,
+            "projects": projects,
+            "prototypes": prototypes,
+            "pilots": pilots,
+            "deployments": deployments,
+            "startups": startups,
+            "jobs": total_jobs
+        }

@@ -21,6 +21,6 @@ export interface CopilotResponse {
 export const copilotApi = {
   ask: async (workspaceId: string, query: string): Promise<CopilotResponse> => {
     const response = await apiClient.post(`/workspaces/${workspaceId}/copilot/ask`, { query });
-    return response.data;
+    return response as any as CopilotResponse;
   },
 };

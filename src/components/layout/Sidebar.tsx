@@ -18,7 +18,8 @@ import {
   Store,
   Globe,
   Bot,
-  BrainCircuit
+  BrainCircuit,
+  Target
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
@@ -37,6 +38,7 @@ const navItems = [
   { path: '/marketplace', label: 'Marketplace', icon: Store },
   { path: '/copilot', label: 'AI Copilot', icon: Bot },
   { path: '/forecasting', label: 'Forecasting', icon: BrainCircuit },
+  { path: '/impact', label: 'Impact Measurement', icon: Target },
   { path: '/intelligence', label: 'Ecosystem Intelligence', icon: Globe },
   { path: '/settings', label: 'Settings', icon: Settings },
 ]

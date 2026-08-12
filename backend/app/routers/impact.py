@@ -8,7 +8,8 @@ from app.models.user import WorkspaceMembership
 from app.dependencies import verify_workspace_access, require_workspace_admin
 from app.schemas.impact import (
     CustomMetricCreate, CustomMetricResponse,
-    ProjectImpactUpdate, ProjectImpactResponse
+    ProjectImpactUpdate, ProjectImpactResponse,
+    FunnelMetricsResponse
 )
 from app.services.impact_service import ImpactService
 
@@ -16,6 +17,15 @@ router = APIRouter(
     prefix="/workspaces/{workspace_id}/impact",
     tags=["impact"]
 )
+
+@router.get("/funnel", response_model=FunnelMetricsResponse)
+async def get_funnel_metrics(
+    workspace_id: UUID,
+    db: AsyncSession = Depends(get_db),
+    membership: WorkspaceMembership = Depends(verify_workspace_access)
+):
+    """Get aggregated funnel metrics for the workspace."""
+    return await ImpactService.get_funnel_metrics(workspace_id, db)
 
 @router.post("/metrics", response_model=CustomMetricResponse)
 async def create_custom_metric(
@@ -35,6 +45,15 @@ async def list_custom_metrics(
 ):
     """List all custom metrics defined in the workspace."""
     return await ImpactService.list_custom_metrics(workspace_id, db)
+
+@router.get("/projects", response_model=List[ProjectImpactResponse])
+async def list_project_impacts(
+    workspace_id: UUID,
+    db: AsyncSession = Depends(get_db),
+    membership: WorkspaceMembership = Depends(verify_workspace_access)
+):
+    """List all project impacts in the workspace."""
+    return await ImpactService.list_project_impacts(workspace_id, db)
 
 @router.put("/projects/{project_id}", response_model=ProjectImpactResponse)
 async def update_project_impact(

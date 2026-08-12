@@ -26,6 +26,7 @@ const Marketplace = lazy(() => import('@/pages/Marketplace'))
 const Intelligence = lazy(() => import('@/pages/Intelligence'))
 const Copilot = lazy(() => import('@/pages/Copilot'))
 const Forecasting = lazy(() => import('@/pages/Forecasting'))
+const ImpactMeasurement = lazy(() => import('@/pages/ImpactMeasurement'))
 
 // Loading fallback
 const PageLoader = () => (
@@ -161,6 +162,14 @@ const router = createBrowserRouter([
         element: (
           <Suspense fallback={<PageLoader />}>
             <Forecasting />
+          </Suspense>
+        ),
+      },
+      {
+        path: 'impact',
+        element: (
+          <Suspense fallback={<PageLoader />}>
+            <ImpactMeasurement />
           </Suspense>
         ),
       },

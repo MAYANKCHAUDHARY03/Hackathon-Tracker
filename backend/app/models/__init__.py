@@ -40,6 +40,7 @@ from app.models.research import ResearchLink
 from app.models.api_auth import APIKey, OAuthApp
 from app.models.event import PlatformEvent
 from app.models.forecast import Forecast
+from app.models.impact import CustomMetric, ProjectImpact
 
 __all__ = [
     "Base", 
@@ -108,5 +109,7 @@ __all__ = [
     "APIKey",
     "OAuthApp",
     "PlatformEvent",
-    "Forecast"
+    "Forecast",
+    "CustomMetric",
+    "ProjectImpact"
 ]

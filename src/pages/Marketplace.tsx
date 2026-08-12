@@ -4,7 +4,7 @@ import { marketplaceApi } from '../api/marketplaceApi';
 import type { MarketplaceProject, MarketplacePartner } from '../api/marketplaceApi';
 
 export const Marketplace: React.FC = () => {
-  const { currentWorkspace } = useWorkspaceStore();
+  const { activeWorkspaceId } = useWorkspaceStore();
   const [activeTab, setActiveTab] = useState<'projects' | 'partners'>('projects');
   
   const [projects, setProjects] = useState<MarketplaceProject[]>([]);
@@ -12,16 +12,16 @@ export const Marketplace: React.FC = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!currentWorkspace) return;
+    if (!activeWorkspaceId) return;
 
     const fetchData = async () => {
       setLoading(true);
       try {
         if (activeTab === 'projects') {
-          const res = await marketplaceApi.getProjects(currentWorkspace.id);
+          const res = await marketplaceApi.getProjects(activeWorkspaceId);
           setProjects(res.projects);
         } else {
-          const res = await marketplaceApi.getPartners(currentWorkspace.id);
+          const res = await marketplaceApi.getPartners(activeWorkspaceId);
           setPartners(res.partners);
         }
       } catch (err) {
@@ -32,7 +32,7 @@ export const Marketplace: React.FC = () => {
     };
 
     fetchData();
-  }, [currentWorkspace, activeTab]);
+  }, [activeWorkspaceId, activeTab]);
 
   return (
     <div className="p-6">

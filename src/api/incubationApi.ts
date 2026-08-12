@@ -51,27 +51,26 @@ export interface IncubationDashboard {
 export const incubationApi = {
   getDashboard: async (projectId: string): Promise<IncubationDashboard> => {
     const response = await api.get(`/projects/${projectId}/incubation/dashboard`);
-    return response.data;
+    return response as any as IncubationDashboard;
   },
 
   createUpdate: async (projectId: string, data: Partial<ProjectUpdate>): Promise<ProjectUpdate> => {
     const response = await api.post(`/projects/${projectId}/incubation/updates`, data);
-    return response.data;
+    return response as any as ProjectUpdate;
   },
 
   createDocument: async (projectId: string, data: Partial<ProjectDocument>): Promise<ProjectDocument> => {
     const response = await api.post(`/projects/${projectId}/incubation/documents`, data);
-    return response.data;
+    return response as any as ProjectDocument;
   },
 
   createFundingRound: async (projectId: string, data: Partial<ProjectFunding>): Promise<ProjectFunding> => {
     const response = await api.post(`/projects/${projectId}/incubation/funding`, data);
-    return response.data;
+    return response as any as ProjectFunding;
   },
 
   addStakeholder: async (projectId: string, userId: string, role: string): Promise<void> => {
-    await api.post(`/projects/${projectId}/incubation/stakeholders`, null, {
-      params: { user_id: userId, role }
-    });
+    const params = new URLSearchParams({ user_id: userId, role });
+    await api.post(`/projects/${projectId}/incubation/stakeholders?${params.toString()}`, null);
   }
 };

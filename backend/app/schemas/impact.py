@@ -43,3 +43,12 @@ class ProjectImpactResponse(ProjectImpactBase):
     
     class Config:
         from_attributes = True
+
+class FunnelMetricsResponse(BaseModel):
+    participation: int
+    projects: int
+    prototypes: int
+    pilots: int
+    deployments: int
+    startups: int
+    jobs: int

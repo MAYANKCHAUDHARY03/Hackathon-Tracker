@@ -7,21 +7,21 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 
 export default function Forecasting() {
-  const { currentWorkspace } = useWorkspaceStore();
+  const { activeWorkspaceId } = useWorkspaceStore();
   const [projectId, setProjectId] = useState('');
   const [forecast, setForecast] = useState<ForecastResponse | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const handleGenerateForecast = async () => {
-    if (!currentWorkspace || !projectId) return;
+    if (!activeWorkspaceId || !projectId) return;
 
     setLoading(true);
     setError(null);
     setForecast(null);
     
     try {
-      const result = await forecastingApi.generateProjectForecast(currentWorkspace.id, projectId);
+      const result = await forecastingApi.generateProjectForecast(activeWorkspaceId, projectId);
       setForecast(result);
     } catch (err: any) {
       setError(err.response?.data?.detail || err.message || 'Failed to generate forecast');

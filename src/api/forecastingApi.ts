@@ -15,6 +15,6 @@ export interface ForecastResponse {
 export const forecastingApi = {
   generateProjectForecast: async (workspaceId: string, projectId: string): Promise<ForecastResponse> => {
     const response = await apiClient.post(`/workspaces/${workspaceId}/forecasting/projects/${projectId}`);
-    return response.data;
+    return response as any as ForecastResponse;
   },
 };

@@ -27,6 +27,6 @@ export interface EcosystemAnalyticsResponse {
 export const intelligenceApi = {
   getEcosystemAnalytics: async (): Promise<EcosystemAnalyticsResponse> => {
     const response = await api.get('/intelligence/ecosystem');
-    return response.data;
+    return response as any as EcosystemAnalyticsResponse;
   }
 };
