@@ -33,6 +33,7 @@ const Federation = lazy(() => import('@/pages/Federation'))
 const Vault = lazy(() => import('@/pages/Vault'))
 const Governance = lazy(() => import('@/pages/Governance'))
 const InnovationGraph = lazy(() => import('@/pages/InnovationGraph'))
+const Automation = lazy(() => import('@/pages/Automation'))
 
 // Loading fallback
 const PageLoader = () => (
@@ -320,6 +321,14 @@ const router = createBrowserRouter([
         element: (
           <Suspense fallback={<PageLoader />}>
             <OrgPortfolio />
+          </Suspense>
+        ),
+      },
+      {
+        path: 'automation',
+        element: (
+          <Suspense fallback={<PageLoader />}>
+            <Automation />
           </Suspense>
         ),
       },
