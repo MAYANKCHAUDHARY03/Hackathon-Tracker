@@ -1,4 +1,4 @@
-import { apiClient } from './client'
+import { apiClient } from '@/lib/api-client'
 
 export interface ObservatoryStats {
   total_projects: number
@@ -11,7 +11,6 @@ export interface ObservatoryStats {
 
 export const observatoryApi = {
   getWorkspaceStats: async (workspaceId: string): Promise<ObservatoryStats> => {
-    const { data } = await apiClient.get<ObservatoryStats>(`/workspaces/${workspaceId}/observatory/stats`)
-    return data
+    return await apiClient.get<ObservatoryStats>(`/workspaces/${workspaceId}/observatory/stats`)
   }
 }
