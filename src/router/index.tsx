@@ -275,7 +275,7 @@ const router = createBrowserRouter([
         ),
       },
       {
-        path: 'graph',
+        path: 'knowledge-graph',
         element: (
           <Suspense fallback={<PageLoader />}>
             <GraphExplorer />
