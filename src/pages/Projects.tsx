@@ -20,8 +20,9 @@ export default function Projects() {
       setIsLoading(true);
       setError(null);
       try {
-        const data = await projectsApi.getProjects(activeWorkspaceId);
-        setProjects(data);
+        const raw: any = await projectsApi.getProjects(activeWorkspaceId);
+        const list = Array.isArray(raw) ? raw : Array.isArray(raw?.items) ? raw.items : Array.isArray(raw?.data) ? raw.data : [];
+        setProjects(list);
       } catch (err: any) {
         setError(err instanceof Error ? err : new Error('Failed to load projects'));
       } finally {
@@ -89,7 +90,7 @@ export default function Projects() {
                 {project.repo_url && (
                   <div className="flex items-center gap-2 text-sm text-muted-foreground">
                     <GitBranch className="h-4 w-4" />
-                    <span className="truncate">{new URL(project.repo_url).hostname}</span>
+                    <span className="truncate">{(() => { try { return new URL(project.repo_url).hostname; } catch { return project.repo_url; } })()}</span>
                   </div>
                 )}
                 <div className="flex items-center gap-2 text-sm text-muted-foreground">

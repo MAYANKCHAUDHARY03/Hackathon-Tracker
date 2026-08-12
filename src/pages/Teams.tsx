@@ -29,8 +29,9 @@ export default function Teams() {
       setIsLoading(true);
       setError(null);
       try {
-        const data = await teamApi.getTeams(activeWorkspaceId);
-        setTeams(data);
+        const raw: any = await teamApi.getTeams(activeWorkspaceId);
+        const list = Array.isArray(raw) ? raw : Array.isArray(raw?.items) ? raw.items : Array.isArray(raw?.data) ? raw.data : [];
+        setTeams(list);
       } catch (err: any) {
         setError(err instanceof Error ? err : new Error('Failed to load teams'));
       } finally {

@@ -10,6 +10,7 @@ const Placeholder = lazy(() => import('@/pages/Placeholder'))
 const AcceptInvitation = lazy(() => import('@/pages/AcceptInvitation'))
 const Settings = lazy(() => import('@/pages/Settings'))
 const Kanban = lazy(() => import('@/pages/Kanban'))
+const Hackathons = lazy(() => import('@/pages/Hackathons'))
 const HackathonDetails = lazy(() => import('@/pages/HackathonDetails'))
 const SubmissionWorkspace = lazy(() => import('@/pages/SubmissionWorkspace'))
 const Calendar = lazy(() => import('@/pages/Calendar'))
@@ -109,7 +110,7 @@ const router = createBrowserRouter([
         path: 'hackathons',
         element: (
           <Suspense fallback={<PageLoader />}>
-            <Placeholder title="Hackathons" />
+            <Hackathons />
           </Suspense>
         ),
       },
