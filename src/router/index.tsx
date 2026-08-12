@@ -31,6 +31,7 @@ const Observatory = lazy(() => import('@/pages/Observatory'))
 const Federation = lazy(() => import('@/pages/Federation'))
 const Vault = lazy(() => import('@/pages/Vault'))
 const Governance = lazy(() => import('@/pages/Governance'))
+const InnovationGraph = lazy(() => import('@/pages/InnovationGraph'))
 
 // Loading fallback
 const PageLoader = () => (
@@ -206,6 +207,14 @@ const router = createBrowserRouter([
         element: (
           <Suspense fallback={<PageLoader />}>
             <ProjectDetails />
+          </Suspense>
+        ),
+      },
+      {
+        path: 'graph',
+        element: (
+          <Suspense fallback={<PageLoader />}>
+            <InnovationGraph />
           </Suspense>
         ),
       },
