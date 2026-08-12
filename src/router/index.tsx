@@ -34,6 +34,7 @@ const Vault = lazy(() => import('@/pages/Vault'))
 const Governance = lazy(() => import('@/pages/Governance'))
 const InnovationGraph = lazy(() => import('@/pages/InnovationGraph'))
 const Automation = lazy(() => import('@/pages/Automation'))
+const Incubation = lazy(() => import('@/pages/Incubation'))
 
 // Loading fallback
 const PageLoader = () => (
@@ -256,7 +257,7 @@ const router = createBrowserRouter([
         path: 'incubation',
         element: (
           <Suspense fallback={<PageLoader />}>
-            <Placeholder title="Startup Incubation" />
+            <Incubation />
           </Suspense>
         ),
       },
