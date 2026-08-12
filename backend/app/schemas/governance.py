@@ -42,6 +42,15 @@ class ConsentResponse(ConsentBase):
 
     model_config = ConfigDict(from_attributes=True)
 
+# Policy Schemas
+class WorkspacePolicy(BaseModel):
+    data_residency: str = "US"
+    retention_days: int = 365
+    ai_consent: bool = False
+
+class WorkspacePolicyUpdate(WorkspacePolicy):
+    pass
+
 # Audit Log Schemas
 class AuditLogResponse(BaseModel):
     id: UUID

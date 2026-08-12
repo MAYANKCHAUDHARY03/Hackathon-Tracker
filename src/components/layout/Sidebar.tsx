@@ -21,7 +21,8 @@ import {
   BrainCircuit,
   Target,
   Telescope,
-  Lightbulb
+  Lightbulb,
+  ShieldCheck
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
@@ -44,6 +45,7 @@ const navItems = [
   { path: '/incubation', label: 'Incubation', icon: Lightbulb },
   { path: '/observatory', label: 'Global Observatory', icon: Globe },
   { path: '/federation', label: 'Ecosystem Federation', icon: Network },
+  { path: '/governance', label: 'Governance', icon: ShieldCheck },
   { path: '/settings', label: 'Settings', icon: Settings },
 ]
 

@@ -10,7 +10,7 @@ from app.dependencies import verify_workspace_access, require_workspace_admin
 from app.schemas.governance import (
     DSRCreate, DSRResponse,
     ConsentCreate, ConsentResponse,
-    AuditLogResponse
+    AuditLogResponse, WorkspacePolicy, WorkspacePolicyUpdate
 )
 from app.services.governance_service import GovernanceService
 from app.models.governance import DSRStatus
@@ -77,3 +77,62 @@ async def get_audit_logs(
 ):
     """Get audit logs for a workspace (Admin only)."""
     return await GovernanceService.get_audit_logs(workspace_id, db)
+
+@router.get("/policy", response_model=WorkspacePolicy)
+async def get_policy(
+    workspace_id: UUID,
+    db: AsyncSession = Depends(get_db),
+    membership: WorkspaceMembership = Depends(require_workspace_admin)
+):
+    """Get governance policies for a workspace."""
+    # Policies are stored in workspace.settings
+    from app.models.workspace import Workspace
+    from sqlalchemy import select
+    from fastapi import HTTPException
+
+    result = await db.execute(select(Workspace).where(Workspace.id == workspace_id))
+    workspace = result.scalar_one_or_none()
+    if not workspace:
+        raise HTTPException(status_code=404, detail="Workspace not found")
+    
+    # Return default policy if not set
+    policy_data = workspace.settings.get("governance_policy", {})
+    return WorkspacePolicy(**policy_data)
+
+@router.put("/policy", response_model=WorkspacePolicy)
+async def update_policy(
+    workspace_id: UUID,
+    data: WorkspacePolicyUpdate,
+    db: AsyncSession = Depends(get_db),
+    membership: WorkspaceMembership = Depends(require_workspace_admin)
+):
+    """Update governance policies for a workspace."""
+    from app.models.workspace import Workspace
+    from sqlalchemy import select
+    from fastapi import HTTPException
+    import copy
+
+    result = await db.execute(select(Workspace).where(Workspace.id == workspace_id))
+    workspace = result.scalar_one_or_none()
+    if not workspace:
+        raise HTTPException(status_code=404, detail="Workspace not found")
+    
+    settings = copy.deepcopy(workspace.settings)
+    settings["governance_policy"] = data.model_dump()
+    workspace.settings = settings
+    await db.commit()
+
+    # Log policy change
+    from app.models.governance import GovernanceAuditLog
+    audit_log = GovernanceAuditLog(
+        workspace_id=workspace_id,
+        actor_id=membership.user_id,
+        action="UPDATE_WORKSPACE_POLICY",
+        target_resource="WORKSPACE_SETTINGS",
+        target_id=str(workspace_id),
+        details={"new_policy": data.model_dump()}
+    )
+    db.add(audit_log)
+    await db.commit()
+
+    return data

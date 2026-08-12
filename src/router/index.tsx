@@ -30,6 +30,7 @@ const ImpactMeasurement = lazy(() => import('@/pages/ImpactMeasurement'))
 const Observatory = lazy(() => import('@/pages/Observatory'))
 const Federation = lazy(() => import('@/pages/Federation'))
 const Vault = lazy(() => import('@/pages/Vault'))
+const Governance = lazy(() => import('@/pages/Governance'))
 
 // Loading fallback
 const PageLoader = () => (
@@ -213,6 +214,14 @@ const router = createBrowserRouter([
         element: (
           <Suspense fallback={<PageLoader />}>
             <Vault />
+          </Suspense>
+        ),
+      },
+      {
+        path: 'governance',
+        element: (
+          <Suspense fallback={<PageLoader />}>
+            <Governance />
           </Suspense>
         ),
       },
