@@ -2,6 +2,7 @@ from uuid import UUID
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, func
 
+from app.core.cache import cache
 from app.models.project import Project
 from app.models.hackathon import Hackathon
 from app.models.user import WorkspaceMembership
@@ -10,6 +11,7 @@ from app.schemas.observatory import ObservatoryStats
 
 class ObservatoryService:
     @staticmethod
+    @cache(expire=300)
     async def get_workspace_stats(workspace_id: UUID, db: AsyncSession) -> ObservatoryStats:
         # 1. Total projects
         projects_query = select(func.count()).select_from(Project).where(Project.workspace_id == workspace_id)

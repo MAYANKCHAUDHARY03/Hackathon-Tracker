@@ -8,6 +8,7 @@ from app.core.event_bus import event_bus
 from app.database import AsyncSessionLocal
 from app.models.integration import WorkspaceIntegration
 from app.services.integration_adapter import IntegrationManager
+from app.core.queue import get_queue
 
 logger = logging.getLogger(__name__)
 
@@ -43,10 +44,13 @@ async def handle_graph_event(payload: Dict[str, Any]):
         
         for integration in integrations:
             try:
-                adapter = IntegrationManager.get_adapter(integration.connector_id, integration.config)
-                # Dispatch async so we don't block
-                asyncio.create_task(
-                    adapter.execute_action(action_type, {"text": message_text, "raw_event": payload})
+                # Dispatch async to arq queue so we don't block
+                queue = await get_queue()
+                await queue.enqueue_job(
+                    'process_webhook', 
+                    integration.id, 
+                    action_type, 
+                    {"text": message_text, "raw_event": payload}
                 )
             except Exception as e:
                 logger.error(f"Failed to dispatch to integration {integration.id}: {e}")

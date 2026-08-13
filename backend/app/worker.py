@@ -1,29 +1,38 @@
-import os
-from celery import Celery
+import asyncio
+import logging
+from arq.connections import RedisSettings
+from app.config import settings
 
-# Default redis url (assuming localhost for dev)
-REDIS_URL = os.environ.get("REDIS_URL", "redis://localhost:6379/0")
+logger = logging.getLogger(__name__)
 
-celery_app = Celery(
-    "hackathon_tracker_worker",
-    broker=REDIS_URL,
-    backend=REDIS_URL
-)
+async def process_webhook(ctx, integration_id: str, action_type: str, payload: dict):
+    logger.info(f"Processing webhook for integration {integration_id}")
+    from app.database import AsyncSessionLocal
+    from sqlalchemy import select
+    from app.models.integration import WorkspaceIntegration
+    from app.services.integration_adapter import IntegrationManager
+    
+    async with AsyncSessionLocal() as session:
+        result = await session.execute(
+            select(WorkspaceIntegration).where(WorkspaceIntegration.id == integration_id)
+        )
+        integration = result.scalar_one_or_none()
+        if integration:
+            adapter = IntegrationManager.get_adapter(integration.connector_id, integration.config)
+            await adapter.execute_action(action_type, payload)
+        else:
+            logger.warning(f"Integration {integration_id} not found")
 
-celery_app.conf.update(
-    task_serializer="json",
-    accept_content=["json"],
-    result_serializer="json",
-    timezone="UTC",
-    enable_utc=True,
-    task_track_started=True,
-    task_time_limit=3600, # Max 1 hour
-    worker_max_tasks_per_child=500
-)
+async def startup(ctx):
+    logger.info("Starting up Arq background worker...")
+    pass
 
-# Discover tasks from tasks modules
-celery_app.autodiscover_tasks(["app.tasks"])
+async def shutdown(ctx):
+    logger.info("Shutting down Arq background worker...")
+    pass
 
-@celery_app.task
-def health_check():
-    return {"status": "ok", "message": "Celery worker is running"}
+class WorkerSettings:
+    functions = [process_webhook]
+    redis_settings = RedisSettings.from_dsn(settings.REDIS_URL)
+    on_startup = startup
+    on_shutdown = shutdown

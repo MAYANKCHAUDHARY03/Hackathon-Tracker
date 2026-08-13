@@ -2,7 +2,7 @@ import uuid
 from typing import Dict, Any, Optional
 from fastapi import APIRouter, Depends, HTTPException, Path, status
 from sqlalchemy.ext.asyncio import AsyncSession
-from app.database import get_db
+from app.database import get_db, get_db_ro
 from app.dependencies import verify_workspace_access
 from app.models.user import WorkspaceMembership
 from app.schemas.graph import GraphEdgeCreate, GraphEdgeResponse, GraphTraversalResult
@@ -61,7 +61,7 @@ async def traverse_graph(
     workspace_id: uuid.UUID,
     node_id: uuid.UUID,
     depth: int = 2,
-    db: AsyncSession = Depends(get_db),
+    db: AsyncSession = Depends(get_db_ro),
     membership: WorkspaceMembership = Depends(verify_workspace_access)
 ):
     graph_service = KnowledgeGraphService(db)

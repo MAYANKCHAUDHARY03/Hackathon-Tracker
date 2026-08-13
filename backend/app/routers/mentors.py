@@ -12,6 +12,7 @@ from app.schemas.people import (
     CsvImportResult
 )
 from app.services import people_service
+from app.services.storage_service import get_storage, StorageBackend
 
 router = APIRouter(
     prefix="/workspaces/{workspace_id}",
@@ -69,6 +70,15 @@ async def import_people_csv(
     if not file.filename.endswith('.csv'):
         raise HTTPException(status_code=400, detail="Only CSV files are allowed")
     
+    # Store a backup using the storage abstraction
+    storage: StorageBackend = get_storage()
+    # Reset file pointer if it was read elsewhere
+    await file.seek(0)
+    backup_path = f"imports/hackathons/{hackathon_id}/{uuid.uuid4()}_{file.filename}"
+    await storage.upload_file(file, backup_path)
+    
+    # Re-read for processing
+    await file.seek(0)
     contents = await file.read()
     try:
         decoded = contents.decode('utf-8-sig')

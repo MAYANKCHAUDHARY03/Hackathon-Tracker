@@ -3,6 +3,7 @@ from sqlalchemy import select, func, and_
 from sqlalchemy.ext.asyncio import AsyncSession
 from datetime import datetime, timedelta, timezone
 
+from app.core.cache import cache
 from app.models.hackathon import Hackathon
 from app.models.project import Project
 from app.models.team import Team
@@ -17,6 +18,7 @@ class AnalyticsService:
     def __init__(self, session: AsyncSession):
         self.session = session
 
+    @cache(expire=300)
     async def get_workspace_summary(self, workspace_id: UUID) -> WorkspaceAnalyticsSummary:
         # Total Hackathons
         total_hackathons = await self.session.scalar(
@@ -81,6 +83,7 @@ class AnalyticsService:
             recent_activity_count=recent_activity_count or 0
         )
 
+    @cache(expire=300)
     async def get_overview(self, workspace_id: UUID) -> AnalyticsOverview:
         total_users = await self.session.scalar(
             select(func.count()).select_from(WorkspaceMembership).where(WorkspaceMembership.workspace_id == workspace_id)
@@ -99,6 +102,7 @@ class AnalyticsService:
             total_submissions=total_projects or 0
         )
 
+    @cache(expire=300)
     async def get_demographics(self, workspace_id: UUID) -> AnalyticsDemographics:
         # Mock demographics since user profiles are not fully fleshed out with skills in DB yet
         return AnalyticsDemographics(
@@ -106,6 +110,7 @@ class AnalyticsService:
             roles_distribution={"Frontend": 40, "Backend": 30, "Fullstack": 20, "Designer": 10}
         )
 
+    @cache(expire=300)
     async def get_evaluations(self, workspace_id: UUID) -> AnalyticsEvaluations:
         # Get all evaluation scores for the workspace
         stmt = (
@@ -132,6 +137,7 @@ class AnalyticsService:
             score_distribution=dist
         )
 
+    @cache(expire=3600)
     async def get_ecosystem_summary(self) -> dict:
         """
         Phase 27 - Platform Governance:

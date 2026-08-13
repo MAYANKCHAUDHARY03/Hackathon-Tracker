@@ -2,7 +2,7 @@ from uuid import UUID
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.database import get_db
+from app.database import get_db, get_db_ro
 from app.models.user import WorkspaceMembership
 from app.dependencies import verify_workspace_access
 from app.schemas.observatory import ObservatoryStats
@@ -16,7 +16,7 @@ router = APIRouter(
 @router.get("/stats", response_model=ObservatoryStats)
 async def get_workspace_stats(
     workspace_id: UUID,
-    db: AsyncSession = Depends(get_db),
+    db: AsyncSession = Depends(get_db_ro),
     membership: WorkspaceMembership = Depends(verify_workspace_access)
 ):
     """
