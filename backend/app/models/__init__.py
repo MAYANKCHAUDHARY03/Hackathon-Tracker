@@ -42,6 +42,7 @@ from app.models.event import PlatformEvent
 from app.models.forecast import Forecast
 from app.models.impact import CustomMetric, ProjectImpact
 from app.models.federation import WorkspaceFederation, FederationStatus
+from app.models.approval import AgentApprovalRequest
 
 __all__ = [
     "Base", 

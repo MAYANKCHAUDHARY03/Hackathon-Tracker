@@ -400,9 +400,10 @@ app.include_router(developer.router, prefix="/api/v1")
 app.include_router(governance.router, prefix="/api/v1")
 app.include_router(network.router, prefix="/api/v1")
 
-from app.routers import ontology, agents
+from app.routers import ontology, agents, approvals
 app.include_router(ontology.router, prefix="/api/v1")
 app.include_router(agents.router, prefix="/api/v1")
+app.include_router(approvals.router, prefix="/api/v1")
 
 # Include the Public API router
 app.include_router(public_hackathons.router, prefix="/api", tags=["public_api"])

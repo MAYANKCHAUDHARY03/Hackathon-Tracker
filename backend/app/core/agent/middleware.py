@@ -35,11 +35,26 @@ class AgentExecutionMiddleware:
                 error=f"NotFoundError: Tool '{tool_name}' is not registered globally."
             )
             
-        # 2. Risk Level Blocking (Phase 48 Rule: Block High/Critical until Phase 49)
-        if tool_def.risk_level in [RiskLevel.HIGH, RiskLevel.CRITICAL]:
+        # 2. Risk Level Blocking (Phase 49: Route >LOW to Approval Framework)
+        if tool_def.risk_level != RiskLevel.LOW:
+            from app.models.approval import AgentApprovalRequest, ApprovalStatus
+            approval_request = AgentApprovalRequest(
+                workspace_id=self.workspace_id,
+                agent_name=agent_name,
+                tool_name=tool_name,
+                parameters_json=parameters,
+                risk_level=tool_def.risk_level.value,
+                status=ApprovalStatus.PENDING,
+                justification=f"Requires human approval due to {tool_def.risk_level.value} risk level."
+            )
+            self.db.add(approval_request)
+            await self.db.commit()
+            await self.db.refresh(approval_request)
+            
             return AgentExecutionResult(
-                status="error",
-                error=f"Blocked: Tool '{tool_name}' is classified as {tool_def.risk_level.value} risk. Phase 49 Human Approval Framework is required."
+                status="pending_approval",
+                approval_id=str(approval_request.id),
+                error=f"Tool execution requires human approval. Request ID: {approval_request.id}"
             )
             
         # 3. Execution

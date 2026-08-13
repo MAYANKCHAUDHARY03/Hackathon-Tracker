@@ -31,4 +31,4 @@ async def drop_database(db_name: str) -> bool:
 class ResearchAgent(BaseAgent):
     name: str = "ResearchAgent"
     description: str = "An agent that researches topics across projects."
-    allowed_tools: List[str] = ["search_projects"]
+    allowed_tools: List[str] = ["search_projects", "drop_database"]
