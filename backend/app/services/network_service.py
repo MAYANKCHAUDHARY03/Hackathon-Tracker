@@ -10,30 +10,79 @@ class NetworkService:
         request: NetworkResolveRequest,
         db: AsyncSession
     ) -> NetworkResolveResponse:
-        # Phase 45: In a real system, this queries the Neo4j Knowledge Graph or advanced Postgres views.
-        # Here, we mock the resolution of the entity relationships across the lifecycle
-        # Problem -> Challenge -> Hackathon -> Idea -> Team -> Project -> Prototype -> Impact
+        from app.services.search_service import SearchService
+        from app.services.graph_service import KnowledgeGraphService
         
-        nodes = [
-            NetworkNode(id="node_1", type="challenge", name="Save the Oceans", metadata={"status": "active"}),
-            NetworkNode(id="node_2", type="project", name="OceanCleanBot", metadata={"stage": "prototype"}),
-            NetworkNode(id="node_3", type="impact", name="GHG Reduced", metadata={"value": "500kg"}),
-        ]
+        search_svc = SearchService(db)
+        graph_svc = KnowledgeGraphService(db)
         
-        edges = [
-            NetworkEdge(source="node_1", target="node_2", relation="solved_by"),
-            NetworkEdge(source="node_2", target="node_3", relation="generates"),
-        ]
+        # 1. Resolve seed nodes using semantic search
+        search_result = await search_svc.search(workspace_id, request.query)
+        
+        if request.target_type:
+            # Filter seeds by target_type
+            seed_entities = [r for r in search_result.results if r.type == request.target_type]
+        else:
+            seed_entities = search_result.results
+            
+        seed_entities = seed_entities[:3] # Use top 3 as seeds
+        
+        nodes_dict = {}
+        edges_list = []
+        visited_edges = set()
+        
+        # 2. Traverse graph from seeds
+        for seed in seed_entities:
+            graph_data = await graph_svc.traverse(start_id=seed.id, workspace_id=workspace_id, depth=2)
+            
+            # Map nodes
+            for n_id, n_info in graph_data.get("nodes", {}).items():
+                if n_id not in nodes_dict:
+                    data = n_info.get("data", {})
+                    name = data.get("title") or data.get("name") or data.get("first_name") or f"Unknown {n_info['type']}"
+                    nodes_dict[n_id] = NetworkNode(
+                        id=n_id,
+                        type=n_info["type"].lower(),
+                        name=name,
+                        metadata={"status": data.get("status"), "stage": data.get("stage")}
+                    )
+                    
+            # Map edges
+            for edge in graph_data.get("path", []):
+                e_id = edge["id"]
+                if e_id not in visited_edges:
+                    visited_edges.add(e_id)
+                    edges_list.append(NetworkEdge(
+                        source=str(edge["source_id"]),
+                        target=str(edge["target_id"]),
+                        relation=edge["relation_type"]
+                    ))
+                    
+        nodes = list(nodes_dict.values())
         
         ai_summary = None
         if request.include_impact_metrics:
-            from app.services.ai.providers import MockAIProvider
-            ai_provider = MockAIProvider("mock")
-            prompt = f"Summarize the impact lifecycle for query: {request.query}"
-            ai_summary = await ai_provider.generate_project_summary({"query": prompt})
+            from app.services.ai.providers import AIProviderFactory
+            from app.config import settings
+            import json
+            
+            ai_provider = AIProviderFactory.get_provider("gemini", settings.GEMINI_API_KEY)
+            
+            # Serialize graph context for the LLM
+            context = {
+                "nodes": [{"name": n.name, "type": n.type} for n in nodes],
+                "relationships": [{"source": e.source, "target": e.target, "relation": e.relation} for e in edges_list]
+            }
+            
+            prompt = f"Analyze this innovation network graph and summarize the impact lifecycle for query: '{request.query}'. Context: {json.dumps(context)}"
+            
+            try:
+                ai_summary = await ai_provider.generate_project_summary({"query": prompt})
+            except Exception as e:
+                ai_summary = f"Could not generate summary: {str(e)}"
             
         return NetworkResolveResponse(
             nodes=nodes,
-            edges=edges,
+            edges=edges_list,
             ai_summary=ai_summary
         )
