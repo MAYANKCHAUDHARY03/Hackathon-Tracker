@@ -5,6 +5,8 @@ from typing import Tuple, List
 
 from app.models.audit import AuditLog
 from app.schemas.audit import AuditLogCreate
+from app.services.event_service import EventService
+from app.schemas.event import EventCreate, EventType
 
 class AuditService:
     def __init__(self, session: AsyncSession):
@@ -15,6 +17,26 @@ class AuditService:
         self.session.add(db_log)
         await self.session.commit()
         await self.session.refresh(db_log)
+        
+        # Publish to Canonical Event Stream (Phase 47)
+        event_svc = EventService(self.session)
+        await event_svc.publish(EventCreate(
+            workspace_id=log_data.workspace_id,
+            actor_id=log_data.actor_id,
+            entity_type=log_data.resource_type,
+            entity_id=log_data.resource_id,
+            event_type=EventType.AUDIT_LOG,
+            source="audit_service",
+            metadata_json={
+                "action": log_data.action,
+                "ip_address": log_data.ip_address,
+                "user_agent": log_data.user_agent,
+                "status": log_data.status,
+                **(log_data.details or {})
+            }
+        ))
+        await self.session.commit()
+        
         return db_log
 
     async def get_logs(self, workspace_id: UUID, skip: int = 0, limit: int = 50) -> Tuple[List[AuditLog], int]:
