@@ -1,5 +1,5 @@
 from uuid import UUID
-from typing import List, Optional
+from typing import List, Optional, Dict, Any
 from fastapi import APIRouter, Depends, Request
 from sqlalchemy.ext.asyncio import AsyncSession
 from pydantic import BaseModel
@@ -136,3 +136,33 @@ async def update_policy(
     await db.commit()
 
     return data
+
+@router.get("/export", response_model=Dict[str, Any])
+async def export_workspace_data(
+    workspace_id: UUID,
+    db: AsyncSession = Depends(get_db),
+    membership: WorkspaceMembership = Depends(require_workspace_admin)
+):
+    """Export all governance data for a workspace (Admin only)."""
+    return await GovernanceService.export_workspace_data(workspace_id, db)
+
+from app.schemas.governance import SecurityIncidentCreate, SecurityIncidentResponse
+
+@router.post("/incidents", response_model=SecurityIncidentResponse)
+async def log_incident(
+    workspace_id: UUID,
+    data: SecurityIncidentCreate,
+    db: AsyncSession = Depends(get_db),
+    membership: WorkspaceMembership = Depends(require_workspace_admin)
+):
+    """Log a security or privacy incident (Admin only)."""
+    return await GovernanceService.log_incident(workspace_id, membership.user_id, data, db)
+
+@router.get("/incidents", response_model=List[SecurityIncidentResponse])
+async def get_incidents(
+    workspace_id: UUID,
+    db: AsyncSession = Depends(get_db),
+    membership: WorkspaceMembership = Depends(verify_workspace_access)
+):
+    """View logged incidents (All workspace members)."""
+    return await GovernanceService.get_incidents(workspace_id, db)

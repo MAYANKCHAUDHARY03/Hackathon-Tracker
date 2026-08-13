@@ -47,6 +47,7 @@ class WorkspacePolicy(BaseModel):
     data_residency: str = "US"
     retention_days: int = 365
     ai_consent: bool = False
+    org_level_ai_policy: Dict[str, Any] = {"allow_training": False, "strict_moderation": True}
 
 class WorkspacePolicyUpdate(WorkspacePolicy):
     pass
@@ -63,4 +64,27 @@ class AuditLogResponse(BaseModel):
     ip_address: Optional[str] = None
     created_at: datetime
     
+    model_config = ConfigDict(from_attributes=True)
+
+# Incident Schemas
+from app.models.governance import IncidentSeverity
+
+class SecurityIncidentCreate(BaseModel):
+    title: str
+    description: str
+    severity: IncidentSeverity
+
+class SecurityIncidentResponse(BaseModel):
+    id: UUID
+    workspace_id: UUID
+    reporter_id: Optional[UUID] = None
+    title: str
+    description: str
+    severity: IncidentSeverity
+    status: str
+    resolution_notes: Optional[str] = None
+    resolved_at: Optional[datetime] = None
+    created_at: datetime
+    updated_at: datetime
+
     model_config = ConfigDict(from_attributes=True)

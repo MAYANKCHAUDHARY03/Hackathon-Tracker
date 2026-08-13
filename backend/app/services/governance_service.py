@@ -100,3 +100,76 @@ class GovernanceService:
         query = select(GovernanceAuditLog).where(GovernanceAuditLog.workspace_id == workspace_id).order_by(GovernanceAuditLog.created_at.desc())
         result = await db.execute(query)
         return list(result.scalars().all())
+
+    @staticmethod
+    async def export_workspace_data(workspace_id: uuid.UUID, db: AsyncSession) -> dict:
+        from app.models.workspace import Workspace
+        # Fetch workspace details and policies
+        result = await db.execute(select(Workspace).where(Workspace.id == workspace_id))
+        workspace = result.scalar_one_or_none()
+        if not workspace:
+            raise HTTPException(status_code=404, detail="Workspace not found")
+
+        # Fetch Audit Logs
+        logs = await GovernanceService.get_audit_logs(workspace_id, db)
+        
+        # Fetch DSRs
+        dsrs = await GovernanceService.get_dsrs(workspace_id, None, db)
+
+        return {
+            "workspace": {
+                "id": str(workspace.id),
+                "name": workspace.name,
+                "settings": workspace.settings
+            },
+            "audit_logs": [
+                {
+                    "id": str(log.id),
+                    "action": log.action,
+                    "actor_id": str(log.actor_id) if log.actor_id else None,
+                    "details": log.details,
+                    "created_at": log.created_at.isoformat()
+                } for log in logs
+            ],
+            "dsrs": [
+                {
+                    "id": str(dsr.id),
+                    "type": dsr.request_type.value,
+                    "status": dsr.status.value,
+                    "created_at": dsr.created_at.isoformat()
+                } for dsr in dsrs
+            ]
+        }
+
+    @staticmethod
+    async def log_incident(workspace_id: uuid.UUID, reporter_id: uuid.UUID, data: dict, db: AsyncSession):
+        from app.models.governance import SecurityIncident
+        incident = SecurityIncident(
+            workspace_id=workspace_id,
+            reporter_id=reporter_id,
+            title=data.title,
+            description=data.description,
+            severity=data.severity,
+            status="open"
+        )
+        db.add(incident)
+        
+        audit_log = GovernanceAuditLog(
+            workspace_id=workspace_id,
+            actor_id=reporter_id,
+            action="incident_logged",
+            target_resource="SecurityIncident",
+            details={"title": data.title, "severity": data.severity.value}
+        )
+        db.add(audit_log)
+        
+        await db.commit()
+        await db.refresh(incident)
+        return incident
+
+    @staticmethod
+    async def get_incidents(workspace_id: uuid.UUID, db: AsyncSession):
+        from app.models.governance import SecurityIncident
+        query = select(SecurityIncident).where(SecurityIncident.workspace_id == workspace_id).order_by(SecurityIncident.created_at.desc())
+        result = await db.execute(query)
+        return list(result.scalars().all())
