@@ -68,3 +68,23 @@ async def update_evaluation(
     current_user: User = Depends(get_current_user)
 ):
     return await evaluation_service.update_evaluation(db, workspace_id, evaluation_id, current_user.id, evaluation_in)
+
+from pydantic import BaseModel
+
+class AgentEvaluationRequest(BaseModel):
+    project_id: uuid.UUID
+    template_id: uuid.UUID
+
+@router.post("/agent-evaluation", response_model=EvaluationResponse)
+async def generate_agent_evaluation(
+    workspace_id: uuid.UUID,
+    hackathon_id: uuid.UUID,
+    request: AgentEvaluationRequest,
+    db: AsyncSession = Depends(get_db),
+    membership: WorkspaceMembership = Depends(verify_workspace_access),
+    current_user: User = Depends(get_current_user)
+):
+    from app.services.agent_evaluation_service import AgentEvaluationService
+    service = AgentEvaluationService(db, current_user.id, workspace_id)
+    return await service.generate_preliminary_evaluation(hackathon_id, request.project_id, request.template_id)
+

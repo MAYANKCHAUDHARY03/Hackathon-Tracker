@@ -13,7 +13,10 @@ import {
   Menu,
   Trophy,
   Building,
+  Key,
+  Banknote,
   Network,
+  Activity,
   Sparkles,
   Store,
   Globe,
@@ -30,6 +33,7 @@ import { Button } from '@/components/ui/button'
 
 const navItems = [
   { path: '/', label: 'Dashboard', icon: LayoutDashboard },
+  { path: '/operations-center', label: 'Operations Center', icon: Activity },
   { path: '/hackathons', label: 'Programs', icon: Trophy },
   { path: '/calendar', label: 'Calendar', icon: CalendarDays },
   { path: '/kanban', label: 'Kanban', icon: KanbanSquare },
@@ -42,6 +46,8 @@ const navItems = [
   { path: '/opportunities', label: 'Opportunities', icon: Sparkles },
   { path: '/vault', label: 'API Vault', icon: KeyRound },
   { path: '/portfolio', label: 'Portfolio', icon: Building },
+  { path: '/portable-identity', label: 'Innovation Passport', icon: Key },
+  { path: '/financing-intelligence', label: 'Financing', icon: Banknote },
   { path: '/marketplace', label: 'Marketplace', icon: Store },
   { path: '/copilot', label: 'AI Copilot', icon: Bot },
   { path: '/forecasting', label: 'Forecasting', icon: BrainCircuit },

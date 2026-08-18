@@ -4,7 +4,7 @@ from fastapi import HTTPException
 from datetime import datetime
 import uuid
 
-from app.models.verification import TrustVerification
+from app.models.verification import WorkspaceVerification
 from app.schemas.verification import VerificationCreate
 
 class VerificationService:
@@ -14,9 +14,9 @@ class VerificationService:
         workspace_id: uuid.UUID
     ):
         result = await db.execute(
-            select(TrustVerification)
-            .where(TrustVerification.workspace_id == workspace_id)
-            .order_by(TrustVerification.created_at.desc())
+            select(WorkspaceVerification)
+            .where(WorkspaceVerification.workspace_id == workspace_id)
+            .order_by(WorkspaceVerification.created_at.desc())
         )
         return result.scalars().all()
 
@@ -25,9 +25,9 @@ class VerificationService:
         db: AsyncSession,
         workspace_id: uuid.UUID,
         data: VerificationCreate
-    ) -> TrustVerification:
+    ) -> WorkspaceVerification:
         # A verification always starts as pending.
-        verification = TrustVerification(
+        verification = WorkspaceVerification(
             workspace_id=workspace_id,
             entity_type=data.entity_type,
             entity_id=data.entity_id,
@@ -46,8 +46,8 @@ class VerificationService:
         db: AsyncSession,
         verification_id: uuid.UUID,
         verifier_id: uuid.UUID
-    ) -> TrustVerification:
-        result = await db.execute(select(TrustVerification).where(TrustVerification.id == verification_id))
+    ) -> WorkspaceVerification:
+        result = await db.execute(select(WorkspaceVerification).where(WorkspaceVerification.id == verification_id))
         verification = result.scalars().first()
         if not verification:
             raise HTTPException(status_code=404, detail="Verification request not found")
@@ -70,8 +70,8 @@ class VerificationService:
         db: AsyncSession,
         verification_id: uuid.UUID,
         verifier_id: uuid.UUID
-    ) -> TrustVerification:
-        result = await db.execute(select(TrustVerification).where(TrustVerification.id == verification_id))
+    ) -> WorkspaceVerification:
+        result = await db.execute(select(WorkspaceVerification).where(WorkspaceVerification.id == verification_id))
         verification = result.scalars().first()
         if not verification:
             raise HTTPException(status_code=404, detail="Verification request not found")

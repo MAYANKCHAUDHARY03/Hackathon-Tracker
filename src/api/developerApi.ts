@@ -18,12 +18,10 @@ export interface DeveloperAppCreate {
 
 export const developerApi = {
   createApp: async (workspaceId: string, data: DeveloperAppCreate): Promise<DeveloperApp> => {
-    const res = await apiClient.post(`/workspaces/${workspaceId}/developer/apps`, data);
-    return res.data;
+    return await apiClient.post<DeveloperApp>(`/workspaces/${workspaceId}/developer/apps`, data);
   },
   
   getApps: async (workspaceId: string): Promise<DeveloperApp[]> => {
-    const res = await apiClient.get(`/workspaces/${workspaceId}/developer/apps`);
-    return res.data;
+    return await apiClient.get<DeveloperApp[]>(`/workspaces/${workspaceId}/developer/apps`);
   }
 };

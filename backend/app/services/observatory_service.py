@@ -43,3 +43,40 @@ class ObservatoryService:
             total_funding_raised=funding or 0.0,
             total_revenue_generated=revenue or 0.0
         )
+
+    @staticmethod
+    async def get_drilldown(workspace_id: UUID, level: str, db: AsyncSession):
+        from app.schemas.observatory import DrillDownResponse, TrendNode, TimeSeriesPoint
+        import random
+        from datetime import datetime, timedelta
+        
+        # Mocking for Phase 64
+        nodes = []
+        if level == "technology":
+            items = ["React", "Python", "Web3", "AI", "Cloud"]
+        elif level == "geography":
+            items = ["North America", "Europe", "Asia", "South America", "Africa"]
+        elif level == "domain":
+            items = ["Healthcare", "Finance", "Education", "Sustainability", "Logistics"]
+        else:
+            items = ["Item A", "Item B", "Item C", "Item D", "Item E"]
+            
+        today = datetime.utcnow()
+        for item in items:
+            timeseries = []
+            for i in range(12):
+                dt = today - timedelta(days=30*(11-i))
+                timeseries.append(TimeSeriesPoint(
+                    date=dt.strftime("%Y-%m"),
+                    value=random.randint(10, 100)
+                ))
+                
+            nodes.append(TrendNode(
+                id=item.lower().replace(" ", "-"),
+                name=item,
+                value=random.randint(100, 1000),
+                trend_percentage=random.uniform(-10.0, 50.0),
+                time_series=timeseries
+            ))
+            
+        return DrillDownResponse(level=level, nodes=nodes)

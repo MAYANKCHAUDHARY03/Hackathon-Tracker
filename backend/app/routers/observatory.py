@@ -24,3 +24,15 @@ async def get_workspace_stats(
     Guarantees tenant isolation by only returning data strictly bounded to the workspace_id.
     """
     return await ObservatoryService.get_workspace_stats(workspace_id, db)
+
+@router.get("/drilldown/{level}", response_model=None)
+async def get_observatory_drilldown(
+    workspace_id: UUID,
+    level: str,
+    db: AsyncSession = Depends(get_db_ro),
+    membership: WorkspaceMembership = Depends(verify_workspace_access)
+):
+    """
+    Get detailed time-series and trend data for a specific level (technology, geography, domain, etc).
+    """
+    return await ObservatoryService.get_drilldown(workspace_id, level, db)

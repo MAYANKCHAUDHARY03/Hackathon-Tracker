@@ -11,6 +11,7 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from 'recharts';
+import { OrganizationalDigitalTwin } from '@/components/workspaces/OrganizationalDigitalTwin';
 
 export default function WorkspacePortfolio() {
   const { activeWorkspaceId } = useWorkspaceStore();
@@ -162,6 +163,12 @@ export default function WorkspacePortfolio() {
           </div>
         </div>
       </div>
+
+      {activeWorkspaceId && (
+        <div className="mt-12">
+          <OrganizationalDigitalTwin workspaceId={activeWorkspaceId} />
+        </div>
+      )}
     </div>
   );
 }

@@ -33,30 +33,25 @@ export interface AuditLog {
 
 export const governanceApi = {
   getPolicy: async (workspaceId: string): Promise<WorkspacePolicy> => {
-    const response = await apiClient.get(`/workspaces/${workspaceId}/governance/policy`);
-    return response.data;
+    return await apiClient.get<WorkspacePolicy>(`/workspaces/${workspaceId}/governance/policy`);
   },
 
   updatePolicy: async (workspaceId: string, data: WorkspacePolicy): Promise<WorkspacePolicy> => {
-    const response = await apiClient.put(`/workspaces/${workspaceId}/governance/policy`, data);
-    return response.data;
+    return await apiClient.put<WorkspacePolicy>(`/workspaces/${workspaceId}/governance/policy`, data);
   },
 
   getDSRs: async (workspaceId: string): Promise<DSR[]> => {
-    const response = await apiClient.get(`/workspaces/${workspaceId}/governance/dsr`);
-    return response.data;
+    return await apiClient.get<DSR[]>(`/workspaces/${workspaceId}/governance/dsr`);
   },
 
   updateDSRStatus: async (workspaceId: string, dsrId: string, status: string, resolution_notes: string): Promise<DSR> => {
-    const response = await apiClient.put(`/workspaces/${workspaceId}/governance/dsr/${dsrId}/status`, {
+    return await apiClient.put<DSR>(`/workspaces/${workspaceId}/governance/dsr/${dsrId}/status`, {
       status,
       resolution_notes,
     });
-    return response.data;
   },
 
   getAuditLogs: async (workspaceId: string): Promise<AuditLog[]> => {
-    const response = await apiClient.get(`/workspaces/${workspaceId}/governance/audit`);
-    return response.data;
+    return await apiClient.get<AuditLog[]>(`/workspaces/${workspaceId}/governance/audit`);
   },
 };

@@ -49,3 +49,62 @@ async def get_project_transitions(
 ):
     return await project_service.get_project_transitions(db, workspace_id, project_id)
 
+from app.schemas.project_copilot import ProjectCopilotStatus, CopilotActionRequest
+from app.services.project_copilot_service import ProjectCopilotService
+
+@router.get("/workspaces/{workspace_id}/projects/{project_id}/copilot", response_model=ProjectCopilotStatus)
+async def get_project_copilot_status(
+    workspace_id: uuid.UUID,
+    project_id: uuid.UUID,
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    service = ProjectCopilotService(db, current_user.id, workspace_id)
+    return await service.get_project_status(project_id)
+
+@router.post("/workspaces/{workspace_id}/projects/{project_id}/copilot/action")
+async def execute_project_copilot_action(
+    workspace_id: uuid.UUID,
+    project_id: uuid.UUID,
+    action_req: CopilotActionRequest,
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    service = ProjectCopilotService(db, current_user.id, workspace_id)
+    return await service.execute_action(project_id, action_req.action)
+
+from app.schemas.mentor_copilot import MentorCopilotBrief
+from app.services.mentor_copilot_service import MentorCopilotService
+
+@router.get("/workspaces/{workspace_id}/projects/{project_id}/mentor-copilot", response_model=MentorCopilotBrief)
+async def get_mentor_copilot_brief(
+    workspace_id: uuid.UUID,
+    project_id: uuid.UUID,
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    service = MentorCopilotService(db, current_user.id, workspace_id)
+    return await service.generate_brief(project_id)
+
+from app.schemas.repository_audit import RepositoryAuditResponse
+from app.services.repository_audit_service import RepositoryAuditService
+
+@router.post("/workspaces/{workspace_id}/projects/{project_id}/audit", response_model=RepositoryAuditResponse)
+async def generate_repository_audit(
+    workspace_id: uuid.UUID,
+    project_id: uuid.UUID,
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    service = RepositoryAuditService(db, current_user.id, workspace_id)
+    return await service.generate_audit(project_id)
+
+@router.get("/workspaces/{workspace_id}/projects/{project_id}/audits", response_model=list[RepositoryAuditResponse])
+async def get_repository_audits(
+    workspace_id: uuid.UUID,
+    project_id: uuid.UUID,
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    service = RepositoryAuditService(db, current_user.id, workspace_id)
+    return await service.get_audits_for_project(project_id)

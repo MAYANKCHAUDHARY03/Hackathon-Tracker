@@ -5,6 +5,7 @@ import type { MentorAssignment, JudgeAssignment } from "@/api/people";
 import { GlassPanel } from "@/components/ui/glass-panel";
 import { Button } from "@/components/ui/button";
 import { GraduationCap, Gavel } from "lucide-react";
+import { IntelligentResourceAllocation } from "@/components/hackathons/IntelligentResourceAllocation";
 
 interface MentorsJudgesTabProps {
   hackathonId: string;
@@ -92,6 +93,10 @@ export function MentorsJudgesTab({ hackathonId }: MentorsJudgesTabProps) {
           </div>
         )}
       </GlassPanel>
+
+      <div className="md:col-span-2 mt-6">
+        <IntelligentResourceAllocation hackathonId={hackathonId} />
+      </div>
     </div>
   );
 }

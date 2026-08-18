@@ -33,8 +33,8 @@ export default function InnovationGraph() {
     enabled: !!workspaceId && !!searchQuery,
   });
 
-  const [nodes, setNodes, onNodesChange] = useNodesState([]);
-  const [edges, setEdges, onEdgesChange] = useEdgesState([]);
+  const [nodes, setNodes, onNodesChange] = useNodesState<any>([]);
+  const [edges, setEdges, onEdgesChange] = useEdgesState<any>([]);
 
   useEffect(() => {
     if (data) {

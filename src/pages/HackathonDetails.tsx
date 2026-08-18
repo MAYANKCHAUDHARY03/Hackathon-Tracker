@@ -9,9 +9,10 @@ import { OutcomesTab } from '@/components/evaluations/OutcomesTab';
 import { FormsTab } from '@/components/forms/FormsTab';
 import { AnalyticsDashboard } from '@/components/analytics/AnalyticsDashboard';
 import { TalentMarketplaceTab } from '@/components/teams/TalentMarketplaceTab';
-import { Users, ClipboardList, Trophy, Calendar, BarChart, UserPlus } from 'lucide-react';
+import { Users, ClipboardList, Trophy, Calendar, BarChart, UserPlus, Bot } from 'lucide-react';
 import { useWorkspaceStore } from '@/store/workspaceStore';
 import { roundApi } from '@/api/roundApi';
+import { OrganizerCopilot } from '@/components/hackathons/OrganizerCopilot';
 import type { HackathonRound, Deadline } from '@/api/roundApi';
 
 export default function HackathonDetails() {
@@ -21,7 +22,7 @@ export default function HackathonDetails() {
   
   const [rounds, setRounds] = useState<HackathonRound[]>([]);
   const [deadlines, setDeadlines] = useState<Deadline[]>([]);
-  const [activeTab, setActiveTab] = useState<'overview' | 'personnel' | 'evaluations' | 'outcomes' | 'forms' | 'analytics' | 'talent'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'personnel' | 'evaluations' | 'outcomes' | 'forms' | 'analytics' | 'talent' | 'copilot'>('overview');
   
   const hackathon = hackathons.byId[id || ''];
 
@@ -105,6 +106,13 @@ export default function HackathonDetails() {
           <BarChart className="h-4 w-4" />
           Analytics
         </button>
+        <button 
+          onClick={() => setActiveTab('copilot')}
+          className={`pb-3 text-sm font-medium transition-colors border-b-2 flex items-center gap-2 ${activeTab === 'copilot' ? 'border-primary text-primary' : 'border-transparent text-muted-foreground hover:text-foreground'}`}
+        >
+          <Bot className="h-4 w-4" />
+          Copilot
+        </button>
       </div>
 
       <div className="mt-6">
@@ -156,6 +164,7 @@ export default function HackathonDetails() {
         {activeTab === 'outcomes' && id && <OutcomesTab hackathonId={id} />}
         {activeTab === 'forms' && id && <FormsTab hackathonId={id} />}
         {activeTab === 'analytics' && <AnalyticsDashboard />}
+        {activeTab === 'copilot' && id && currentWorkspaceId && <OrganizerCopilot hackathonId={id} workspaceId={currentWorkspaceId} />}
       </div>
     </div>
   );

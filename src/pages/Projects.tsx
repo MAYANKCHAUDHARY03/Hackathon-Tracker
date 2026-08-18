@@ -78,7 +78,7 @@ export default function Projects() {
                   {project.name}
                 </h3>
                 <span className="text-[10px] font-bold uppercase tracking-wider bg-secondary text-secondary-foreground px-2 py-1 rounded">
-                  {project.status || 'Active'}
+                  {(project as any).status || 'Active'}
                 </span>
               </div>
               
@@ -87,10 +87,10 @@ export default function Projects() {
               </p>
               
               <div className="space-y-2 mb-4">
-                {project.repo_url && (
+                {project.github_repo_url && (
                   <div className="flex items-center gap-2 text-sm text-muted-foreground">
                     <GitBranch className="h-4 w-4" />
-                    <span className="truncate">{(() => { try { return new URL(project.repo_url).hostname; } catch { return project.repo_url; } })()}</span>
+                    <span className="truncate">{(() => { try { return new URL(project.github_repo_url!).hostname; } catch { return project.github_repo_url; } })()}</span>
                   </div>
                 )}
                 <div className="flex items-center gap-2 text-sm text-muted-foreground">

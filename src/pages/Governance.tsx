@@ -34,10 +34,10 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
+import { ApprovalQueue } from '@/components/approvals/ApprovalQueue';
 
 export default function Governance() {
-  const { currentWorkspace } = useWorkspaceStore();
-  const workspaceId = currentWorkspace?.id;
+  const workspaceId = useWorkspaceStore(s => s.activeWorkspaceId);
   const queryClient = useQueryClient();
 
   const { data: policy, isLoading: isLoadingPolicy } = useQuery({
@@ -118,11 +118,12 @@ export default function Governance() {
       </div>
 
       <Tabs defaultValue="policy" className="w-full">
-        <TabsList className="grid w-full grid-cols-4">
+        <TabsList className="grid w-full grid-cols-5">
           <TabsTrigger value="policy">Workspace Policy</TabsTrigger>
           <TabsTrigger value="dsr">Data Subject Requests</TabsTrigger>
           <TabsTrigger value="audit">Audit Logs</TabsTrigger>
           <TabsTrigger value="verifications">Trust & Verifications</TabsTrigger>
+          <TabsTrigger value="approvals">Agent Approvals</TabsTrigger>
         </TabsList>
 
         <TabsContent value="policy" className="mt-6 space-y-6">
@@ -154,6 +155,10 @@ export default function Governance() {
             onReject={(id) => rejectAchievementMutation.mutate(id)}
             isActionPending={verifyAchievementMutation.isPending || rejectAchievementMutation.isPending}
           />
+        </TabsContent>
+
+        <TabsContent value="approvals" className="mt-6">
+          <ApprovalQueue />
         </TabsContent>
       </Tabs>
     </div>

@@ -7,6 +7,9 @@ import { IncubationDashboardView } from "@/components/projects/IncubationDashboa
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ResearchBridge } from "@/components/research/ResearchBridge";
 import { RequestVerificationModal } from "@/components/projects/RequestVerificationModal";
+import { ProjectCopilot } from "@/components/projects/ProjectCopilot";
+import { MentorCopilot } from "@/components/teams/MentorCopilot";
+import { ProjectAgentEvaluation } from "@/components/projects/ProjectAgentEvaluation";
 
 export default function ProjectDetails() {
   const { id } = useParams<{ id: string }>();
@@ -32,6 +35,9 @@ export default function ProjectDetails() {
       <Tabs defaultValue="overview" className="space-y-6">
         <TabsList>
           <TabsTrigger value="overview">Overview</TabsTrigger>
+          <TabsTrigger value="copilot">Project Copilot</TabsTrigger>
+          <TabsTrigger value="mentor-copilot">Mentor Brief</TabsTrigger>
+          <TabsTrigger value="evaluations">Evaluations (AI)</TabsTrigger>
           <TabsTrigger value="research">Research Bridge</TabsTrigger>
           {showIncubation && <TabsTrigger value="incubation">Incubation & Acceleration</TabsTrigger>}
         </TabsList>
@@ -54,12 +60,24 @@ export default function ProjectDetails() {
           </div>
         </TabsContent>
 
+        <TabsContent value="copilot" className="space-y-6">
+          <ProjectCopilot projectId={id} workspaceId={workspaceId} />
+        </TabsContent>
+
+        <TabsContent value="mentor-copilot" className="space-y-6">
+          <MentorCopilot projectId={id} workspaceId={workspaceId} />
+        </TabsContent>
+
         <TabsContent value="research" className="space-y-6">
           <GlassPanel className="p-6">
             <h2 className="text-xl font-semibold mb-6">Research Bridge</h2>
             <p className="text-muted-foreground mb-6">Link this project to external research artifacts like papers, datasets, and patents.</p>
             <ResearchBridge projectId={id} />
           </GlassPanel>
+        </TabsContent>
+
+        <TabsContent value="evaluations" className="space-y-6">
+          <ProjectAgentEvaluation projectId={id} workspaceId={workspaceId} />
         </TabsContent>
 
         {showIncubation && (

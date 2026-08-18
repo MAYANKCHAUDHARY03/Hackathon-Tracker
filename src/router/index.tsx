@@ -6,6 +6,7 @@ import { Login } from '@/pages/Login'
 import { Register } from '@/pages/Register'
 
 const Dashboard = lazy(() => import('@/pages/Dashboard'))
+const OperationsCenter = lazy(() => import('@/pages/OperationsCenter'))
 const Placeholder = lazy(() => import('@/pages/Placeholder'))
 const AcceptInvitation = lazy(() => import('@/pages/AcceptInvitation'))
 const Settings = lazy(() => import('@/pages/Settings'))
@@ -20,6 +21,8 @@ const Portfolio = lazy(() => import('@/pages/Portfolio'))
 const OrgPortfolio = lazy(() => import('@/pages/OrgPortfolio'))
 const ProjectDetails = lazy(() => import('@/pages/ProjectDetails'))
 const WorkspacePortfolio = lazy(() => import('@/pages/WorkspacePortfolio'))
+const PortableIdentity = lazy(() => import('@/pages/PortableIdentity'))
+const FinancingIntelligence = lazy(() => import('@/pages/FinancingIntelligence'))
 const ApplyPage = lazy(() => import('@/pages/ApplyPage'))
 const GraphExplorer = lazy(() => import('@/pages/GraphExplorer'))
 const Opportunities = lazy(() => import('@/pages/Opportunities'))
@@ -103,6 +106,14 @@ const router = createBrowserRouter([
         element: (
           <Suspense fallback={<PageLoader />}>
             <Dashboard />
+          </Suspense>
+        ),
+      },
+      {
+        path: 'operations-center',
+        element: (
+          <Suspense fallback={<PageLoader />}>
+            <OperationsCenter />
           </Suspense>
         ),
       },
@@ -303,6 +314,22 @@ const router = createBrowserRouter([
         element: (
           <Suspense fallback={<PageLoader />}>
             <Opportunities />
+          </Suspense>
+        ),
+      },
+      {
+        path: 'financing-intelligence',
+        element: (
+          <Suspense fallback={<PageLoader />}>
+            <FinancingIntelligence />
+          </Suspense>
+        ),
+      },
+      {
+        path: 'portable-identity',
+        element: (
+          <Suspense fallback={<PageLoader />}>
+            <PortableIdentity />
           </Suspense>
         ),
       },

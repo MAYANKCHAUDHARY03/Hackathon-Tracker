@@ -384,6 +384,10 @@ from app.routers import federation
 from app.routers import developer
 from app.routers import governance
 from app.routers import network
+from app.routers import portable_identity
+from app.routers import trust_verification
+from app.routers import financing
+from app.routers import autonomous_network
 from app.routers.public_api_v1 import hackathons as public_hackathons
 from app.routers.public_api_v1 import data_exchange
 app.include_router(api_keys.router, prefix=f"{settings.API_V1_STR}", tags=["api_keys"])
@@ -399,11 +403,16 @@ app.include_router(federation.router, prefix="/api/v1")
 app.include_router(developer.router, prefix="/api/v1")
 app.include_router(governance.router, prefix="/api/v1")
 app.include_router(network.router, prefix="/api/v1")
+app.include_router(portable_identity.router, prefix="/api/v1")
+app.include_router(trust_verification.router, prefix="/api/v1")
+app.include_router(financing.router, prefix="/api/v1")
+app.include_router(autonomous_network.router, prefix="/api/v1")
 
-from app.routers import ontology, agents, approvals
+from app.routers import ontology, agents, approvals, memory
 app.include_router(ontology.router, prefix="/api/v1")
 app.include_router(agents.router, prefix="/api/v1")
 app.include_router(approvals.router, prefix="/api/v1")
+app.include_router(memory.router, prefix="/api/v1")
 
 # Include the Public API router
 app.include_router(public_hackathons.router, prefix="/api", tags=["public_api"])

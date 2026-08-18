@@ -166,3 +166,44 @@ async def delete_hackathon(
     Permanently delete a hackathon. Requires owner or admin role.
     """
     await HackathonService.delete_hackathon(db, workspace_id, hackathon_id)
+
+from app.schemas.organizer_copilot import OrganizerCopilotStatus, OrganizerCopilotActionRequest
+from app.services.organizer_copilot_service import OrganizerCopilotService
+
+@router.get("/{hackathon_id}/copilot", response_model=OrganizerCopilotStatus)
+async def get_organizer_copilot_status(
+    workspace_id: UUID,
+    hackathon_id: UUID,
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+    membership: WorkspaceMembership = Depends(require_workspace_admin)
+):
+    service = OrganizerCopilotService(db, current_user.id, workspace_id)
+    return await service.get_hackathon_status(hackathon_id)
+
+@router.post("/{hackathon_id}/copilot/action")
+async def execute_organizer_copilot_action(
+    workspace_id: UUID,
+    hackathon_id: UUID,
+    action_req: OrganizerCopilotActionRequest,
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+    membership: WorkspaceMembership = Depends(require_workspace_admin)
+):
+    service = OrganizerCopilotService(db, current_user.id, workspace_id)
+    return await service.execute_action(hackathon_id, action_req.action)
+
+from app.schemas.allocation import AllocationRequest, AllocationResponse
+from app.services.allocation_service import AllocationService
+
+@router.post("/{hackathon_id}/allocate-judges", response_model=AllocationResponse)
+async def allocate_judges(
+    workspace_id: UUID,
+    hackathon_id: UUID,
+    request: AllocationRequest,
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+    membership: WorkspaceMembership = Depends(require_workspace_admin)
+):
+    service = AllocationService()
+    return service.allocate(request)

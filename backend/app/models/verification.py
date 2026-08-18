@@ -4,8 +4,8 @@ from sqlalchemy import ForeignKey, String, DateTime
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.models.base import BaseEntity
 
-class TrustVerification(BaseEntity):
-    __tablename__ = "trust_verifications"
+class WorkspaceVerification(BaseEntity):
+    __tablename__ = "workspace_verifications"
     
     workspace_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("workspaces.id", ondelete="CASCADE"), index=True)
     entity_type: Mapped[str] = mapped_column(String, index=True) # e.g. "user", "project"

@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Trophy, Plus, Calendar, Clock, ArrowRight, Activity } from 'lucide-react';
 import { format, isPast, isFuture } from 'date-fns';
 import { ProgramCreationWizard } from '@/components/hackathons/ProgramCreationWizard';
+import { ProgramSimulationEngine } from '@/components/hackathons/ProgramSimulationEngine';
 
 export default function Hackathons() {
   const navigate = useNavigate();
@@ -38,7 +39,7 @@ export default function Hackathons() {
   }, [activeWorkspaceId]);
 
   const getStatusDisplay = (hackathon: Hackathon) => {
-    if (hackathon.status === 'draft') return { label: 'Draft', color: 'bg-secondary text-secondary-foreground' };
+    if ((hackathon as any).status === 'draft') return { label: 'Draft', color: 'bg-secondary text-secondary-foreground' };
     
     const startDate = new Date(hackathon.start_date);
     const endDate = new Date(hackathon.end_date);
@@ -145,6 +146,10 @@ export default function Hackathons() {
           })}
         </div>
       )}
+
+      <div className="mt-12">
+        <ProgramSimulationEngine />
+      </div>
 
       <ProgramCreationWizard 
         open={isWizardOpen} 

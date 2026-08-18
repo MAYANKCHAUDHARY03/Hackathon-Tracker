@@ -12,5 +12,8 @@ export interface ObservatoryStats {
 export const observatoryApi = {
   getWorkspaceStats: async (workspaceId: string): Promise<ObservatoryStats> => {
     return await apiClient.get<ObservatoryStats>(`/workspaces/${workspaceId}/observatory/stats`)
+  },
+  getDrilldown: async (workspaceId: string, level: string) => {
+    return apiClient.get<any>(`/workspaces/${workspaceId}/observatory/drilldown/${level}`)
   }
 }

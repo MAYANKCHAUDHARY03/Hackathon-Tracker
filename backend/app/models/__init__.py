@@ -41,8 +41,15 @@ from app.models.api_auth import APIKey, OAuthApp
 from app.models.event import PlatformEvent
 from app.models.forecast import Forecast
 from app.models.impact import CustomMetric, ProjectImpact
-from app.models.federation import WorkspaceFederation, FederationStatus
+
+
 from app.models.approval import AgentApprovalRequest
+from app.models.memory import AgentMemory
+from app.models.federation import WorkspaceFederation, FederationStatus
+from app.models.repository_audit import RepositoryAudit
+from app.models.portable_identity import PortableIdentity, VerifiedSkill
+from app.models.trust_verification import TrustVerification, VerificationLevel
+from app.models.financing import FundingOpportunity
 
 __all__ = [
     "Base", 
@@ -113,5 +120,13 @@ __all__ = [
     "PlatformEvent",
     "Forecast",
     "CustomMetric",
-    "ProjectImpact"
+    "ProjectImpact",
+    "AgentMemory",
+    "WorkspaceFederation",
+    "FederationStatus",
+    "RepositoryAudit",
+    "PortableIdentity",
+    "VerifiedSkill",
+    "TrustVerification",
+    "FundingOpportunity"
 ]
