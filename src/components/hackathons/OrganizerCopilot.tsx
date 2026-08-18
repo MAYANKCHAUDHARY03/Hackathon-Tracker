@@ -3,7 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Bot, AlertTriangle, Activity, CheckCircle, Play } from 'lucide-react';
-import { useAuth } from '@/contexts/AuthContext';
+import { useAuthStore } from '@/store/authStore';
 import { useToast } from '@/hooks/use-toast';
 import { API_BASE_URL } from '@/config';
 
@@ -35,7 +35,7 @@ interface OrganizerCopilotProps {
 export function OrganizerCopilot({ hackathonId, workspaceId }: OrganizerCopilotProps) {
   const [status, setStatus] = useState<OrganizerCopilotStatus | null>(null);
   const [loading, setLoading] = useState(true);
-  const { token } = useAuth();
+  const { token } = useAuthStore();
   const { toast } = useToast();
 
   const fetchStatus = async () => {

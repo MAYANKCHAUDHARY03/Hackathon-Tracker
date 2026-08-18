@@ -100,7 +100,7 @@ export default function Hackathons() {
             return (
               <GlassPanel 
                 key={hackathon.id} 
-                className="p-6 flex flex-col hover:border-primary/50 transition-all cursor-pointer group hover:shadow-md"
+                className="p-6 flex flex-col hover:border-primary/50 transition-all duration-300 cursor-pointer group hover:-translate-y-1 hover:shadow-xl hover:shadow-primary/10"
                 onClick={() => navigate(`/hackathons/${hackathon.id}`)}
               >
                 <div className="flex justify-between items-start mb-4">

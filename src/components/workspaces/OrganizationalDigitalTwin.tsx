@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Activity, Play, AlertTriangle } from 'lucide-react';
-import { useAuth } from '@/contexts/AuthContext';
+import { useAuthStore } from '@/store/authStore';
 import { useToast } from '@/hooks/use-toast';
 import { API_BASE_URL } from '@/config';
 
@@ -17,7 +17,7 @@ export function OrganizationalDigitalTwin({ workspaceId }: OrganizationalDigital
   const [targetTeams, setTargetTeams] = useState<number | ''>('');
   const [complexity, setComplexity] = useState<number>(1.0);
   const [simulationResult, setSimulationResult] = useState<any>(null);
-  const { token } = useAuth();
+  const { token } = useAuthStore();
   const { toast } = useToast();
 
   const runSimulation = async () => {
@@ -54,7 +54,7 @@ export function OrganizationalDigitalTwin({ workspaceId }: OrganizationalDigital
       <CardHeader className="pb-4 border-b border-slate-800">
         <div className="flex items-center space-x-2">
           <Activity className="h-5 w-5 text-indigo-400" />
-          <CardTitle>Organizational Digital Twin (Phase 55)</CardTitle>
+          <CardTitle>Organizational Digital Twin</CardTitle>
         </div>
         <CardDescription className="text-slate-400 mt-2">
           Run "what-if" simulations on your innovation ecosystem to project resource needs and identify risks before committing to program changes.

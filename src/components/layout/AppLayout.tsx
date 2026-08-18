@@ -25,7 +25,7 @@ export function AppLayout() {
   }, [theme])
 
   return (
-    <div className="min-h-screen bg-background text-foreground flex overflow-hidden">
+    <div className="min-h-screen bg-background bg-gradient-to-br from-background via-background to-secondary/30 text-foreground flex overflow-hidden">
       <Sidebar />
       <div 
         className={cn(

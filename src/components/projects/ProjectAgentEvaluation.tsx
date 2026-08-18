@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Bot, Play, CheckCircle } from 'lucide-react';
-import { useAuth } from '@/contexts/AuthContext';
+import { useAuthStore } from '@/store/authStore';
 import { useToast } from '@/hooks/use-toast';
 import { API_BASE_URL } from '@/config';
 
@@ -15,7 +15,7 @@ interface ProjectAgentEvaluationProps {
 export function ProjectAgentEvaluation({ projectId, workspaceId }: ProjectAgentEvaluationProps) {
   const [loading, setLoading] = useState(false);
   const [evaluations, setEvaluations] = useState<any[]>([]);
-  const { token } = useAuth();
+  const { token } = useAuthStore();
   const { toast } = useToast();
   
   // Need hackathon_id to fetch templates. We can fetch project details first.

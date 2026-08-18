@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Bot, AlertTriangle, CheckCircle, Activity, Play } from 'lucide-react';
-import { useAuth } from '@/contexts/AuthContext';
+import { useAuthStore } from '@/store/authStore';
 import { useToast } from '@/hooks/use-toast';
 import { API_BASE_URL } from '@/config';
 
@@ -33,7 +33,7 @@ interface ProjectCopilotProps {
 export function ProjectCopilot({ projectId, workspaceId }: ProjectCopilotProps) {
   const [status, setStatus] = useState<ProjectCopilotStatus | null>(null);
   const [loading, setLoading] = useState(true);
-  const { token } = useAuth();
+  const { token } = useAuthStore();
   const { toast } = useToast();
 
   const fetchStatus = async () => {

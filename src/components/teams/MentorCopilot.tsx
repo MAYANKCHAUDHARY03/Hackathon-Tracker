@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Bot, Lightbulb, AlertTriangle, List, BookOpen } from 'lucide-react';
-import { useAuth } from '@/contexts/AuthContext';
+import { useAuthStore } from '@/store/authStore';
 import { useToast } from '@/hooks/use-toast';
 import { API_BASE_URL } from '@/config';
 
@@ -31,7 +31,7 @@ interface MentorCopilotProps {
 export function MentorCopilot({ projectId, workspaceId }: MentorCopilotProps) {
   const [brief, setBrief] = useState<MentorCopilotBrief | null>(null);
   const [loading, setLoading] = useState(true);
-  const { token } = useAuth();
+  const { token } = useAuthStore();
   const { toast } = useToast();
 
   const fetchBrief = async () => {
