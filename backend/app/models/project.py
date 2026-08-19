@@ -10,6 +10,7 @@ class Project(BaseEntity):
     workspace_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("workspaces.id", ondelete="CASCADE"), index=True)
     hackathon_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("hackathons.id", ondelete="CASCADE"), index=True)
     team_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("teams.id", ondelete="CASCADE"), unique=True, index=True)
+    portable_project_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("portable_project_identities.id", ondelete="SET NULL"), nullable=True, index=True)
     
     title: Mapped[str] = mapped_column(String, index=True)
     slug: Mapped[str] = mapped_column(String, index=True)
@@ -38,6 +39,7 @@ class Project(BaseEntity):
     hackathon = relationship("Hackathon")
     team = relationship("Team")
     creator = relationship("User")
+    portable_project = relationship("PortableProjectIdentity")
     technologies = relationship("ProjectTechnology", back_populates="project", cascade="all, delete-orphan")
 
 

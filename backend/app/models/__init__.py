@@ -51,6 +51,7 @@ from app.models.portable_identity import PortableIdentity, VerifiedSkill
 from app.models.trust_verification import TrustVerification, VerificationLevel
 from app.models.financing import FundingOpportunity
 from app.models.organization_trust import OrganizationTrust, TrustStatus
+from app.models.portable_project import PortableProjectIdentity, ProjectStageTransition, ProjectStage
 
 __all__ = [
     "Base", 
@@ -131,5 +132,8 @@ __all__ = [
     "TrustVerification",
     "FundingOpportunity",
     "OrganizationTrust",
-    "TrustStatus"
+    "TrustStatus",
+    "PortableProjectIdentity",
+    "ProjectStageTransition",
+    "ProjectStage"
 ]

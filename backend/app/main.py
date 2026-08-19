@@ -417,5 +417,8 @@ app.include_router(agents.router, prefix="/api/v1")
 app.include_router(approvals.router, prefix="/api/v1")
 app.include_router(memory.router, prefix="/api/v1")
 
+from app.routers import portable_projects
+app.include_router(portable_projects.router, prefix="/api/v1")
+
 # Include the Public API router
 app.include_router(public_hackathons.router, prefix="/api", tags=["public_api"])
