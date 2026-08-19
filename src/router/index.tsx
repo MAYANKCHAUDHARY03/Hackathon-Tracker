@@ -38,6 +38,7 @@ const Vault = lazy(() => import('@/pages/Vault'))
 const Governance = lazy(() => import('@/pages/Governance'))
 const InnovationGraph = lazy(() => import('@/pages/InnovationGraph'))
 const Automation = lazy(() => import('@/pages/Automation'))
+const OrganizationFederation = lazy(() => import('@/pages/OrganizationFederation'))
 const Incubation = lazy(() => import('@/pages/Incubation'))
 const DeveloperPortal = lazy(() => import('@/pages/DeveloperPortal'))
 const HubIntegration = lazy(() => import('@/pages/HubIntegration'))
@@ -282,6 +283,14 @@ const router = createBrowserRouter([
         element: (
           <Suspense fallback={<PageLoader />}>
             <Federation />
+          </Suspense>
+        ),
+      },
+      {
+        path: 'org-federation',
+        element: (
+          <Suspense fallback={<PageLoader />}>
+            <OrganizationFederation />
           </Suspense>
         ),
       },

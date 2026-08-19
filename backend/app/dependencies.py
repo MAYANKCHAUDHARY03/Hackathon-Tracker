@@ -111,3 +111,57 @@ async def require_team_lead(
             detail="Insufficient team permissions. Must be lead."
         )
     return membership
+
+
+async def verify_organization_access(
+    organization_id: UUID = Path(...),
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db)
+):
+    from app.models.organization import OrganizationMembership
+    from app.models.organization_trust import OrganizationTrust, TrustStatus
+    
+    # 1. Direct Membership Check
+    stmt = select(OrganizationMembership).where(
+        OrganizationMembership.organization_id == organization_id,
+        OrganizationMembership.user_id == current_user.id,
+        OrganizationMembership.status == "active"
+    )
+    result = await db.execute(stmt)
+    membership = result.scalar_one_or_none()
+    
+    if membership:
+        return {"type": "direct", "membership": membership}
+
+    # 2. Cross-Org / Federated Trust Check
+    # Find if the current user belongs to ANY organization that the target organization_id trusts
+    # trustor = target org, trustee = org the user belongs to
+    
+    user_orgs_stmt = select(OrganizationMembership.organization_id).where(
+        OrganizationMembership.user_id == current_user.id,
+        OrganizationMembership.status == "active"
+    )
+    user_orgs_result = await db.execute(user_orgs_stmt)
+    user_org_ids = [row[0] for row in user_orgs_result.all()]
+    
+    if not user_org_ids:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Organization not found or access denied"
+        )
+        
+    trust_stmt = select(OrganizationTrust).where(
+        OrganizationTrust.trustor_org_id == organization_id,
+        OrganizationTrust.trustee_org_id.in_(user_org_ids),
+        OrganizationTrust.status == TrustStatus.ACTIVE
+    )
+    trust_result = await db.execute(trust_stmt)
+    trust = trust_result.scalars().first()
+    
+    if trust:
+        return {"type": "federated", "trust": trust}
+
+    raise HTTPException(
+        status_code=status.HTTP_404_NOT_FOUND,
+        detail="Organization not found or access denied"
+    )
