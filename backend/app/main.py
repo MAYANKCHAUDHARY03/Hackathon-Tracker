@@ -399,9 +399,10 @@ app.include_router(copilot.router, prefix="/api/v1")
 app.include_router(forecasting.router, prefix="/api/v1")
 app.include_router(impact.router, prefix="/api/v1")
 app.include_router(observatory.router, prefix="/api/v1")
-from app.routers import organization_federation
+from app.routers import organization_federation, innovation_protocol
 app.include_router(federation.router, prefix="/api/v1")
 app.include_router(organization_federation.router, prefix=f"{settings.API_V1_STR}")
+app.include_router(innovation_protocol.router)
 app.include_router(developer.router, prefix="/api/v1")
 app.include_router(governance.router, prefix="/api/v1")
 app.include_router(network.router, prefix="/api/v1")
