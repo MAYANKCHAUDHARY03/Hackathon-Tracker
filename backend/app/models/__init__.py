@@ -52,6 +52,7 @@ from app.models.trust_verification import TrustVerification, VerificationLevel
 from app.models.financing import FundingOpportunity
 from app.models.organization_trust import OrganizationTrust, TrustStatus
 from app.models.portable_project import PortableProjectIdentity, ProjectStageTransition, ProjectStage
+from app.models.federated_identity import FederatedIdentity
 
 __all__ = [
     "Base", 

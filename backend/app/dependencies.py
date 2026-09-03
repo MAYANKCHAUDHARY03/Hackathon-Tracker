@@ -120,6 +120,7 @@ async def verify_organization_access(
 ):
     from app.models.organization import OrganizationMembership
     from app.models.organization_trust import OrganizationTrust, TrustStatus
+    from app.models.federated_identity import FederatedIdentity, FederationStatus
     
     # 1. Direct Membership Check
     stmt = select(OrganizationMembership).where(
@@ -133,10 +134,19 @@ async def verify_organization_access(
     if membership:
         return {"type": "direct", "membership": membership}
 
-    # 2. Cross-Org / Federated Trust Check
-    # Find if the current user belongs to ANY organization that the target organization_id trusts
-    # trustor = target org, trustee = org the user belongs to
+    # 2. Check existing active Federated Identity
+    fed_stmt = select(FederatedIdentity).where(
+        FederatedIdentity.user_id == current_user.id,
+        FederatedIdentity.target_org_id == organization_id,
+        FederatedIdentity.status == FederationStatus.ACTIVE
+    )
+    fed_result = await db.execute(fed_stmt)
+    fed_identity = fed_result.scalar_one_or_none()
     
+    if fed_identity:
+        return {"type": "federated", "identity": fed_identity}
+
+    # 3. Cross-Org / Federated Trust Check (Attempt to establish)
     user_orgs_stmt = select(OrganizationMembership.organization_id).where(
         OrganizationMembership.user_id == current_user.id,
         OrganizationMembership.status == "active"
@@ -159,7 +169,15 @@ async def verify_organization_access(
     trust = trust_result.scalars().first()
     
     if trust:
-        return {"type": "federated", "trust": trust}
+        # Implicitly establish the identity for this session
+        from app.services.organization_federation_service import OrganizationFederationService
+        new_fed_identity = await OrganizationFederationService.establish_federated_identity(
+            db=db,
+            user_id=current_user.id,
+            home_org_id=trust.trustee_org_id,
+            target_org_id=organization_id
+        )
+        return {"type": "federated", "identity": new_fed_identity}
 
     raise HTTPException(
         status_code=status.HTTP_404_NOT_FOUND,
