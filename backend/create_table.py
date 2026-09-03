@@ -1,7 +1,6 @@
 import asyncio
 from app.database import engine
-from app.models.base import Base
-from app.models.forecast import Forecast
+from app.models import Base
 
 async def main():
     async with engine.begin() as conn:
