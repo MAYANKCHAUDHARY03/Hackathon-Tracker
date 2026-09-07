@@ -4,7 +4,8 @@ from datetime import datetime
 
 class TeamBase(BaseModel):
     name: str
-    hackathon_id: uuid.UUID
+    hackathon_id: uuid.UUID | None = None
+    description: str | None = None
     skills_needed: list[str] | None = None
 
 class TeamCreate(TeamBase):

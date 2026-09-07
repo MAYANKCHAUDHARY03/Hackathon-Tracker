@@ -13,15 +13,28 @@ async def get_teams(db: AsyncSession, workspace_id: uuid.UUID):
     result = await db.execute(stmt)
     return result.scalars().all()
 
-async def create_team(db: AsyncSession, workspace_id: uuid.UUID, hackathon_id: uuid.UUID, team_in: TeamCreate, user: User):
+async def create_team(db: AsyncSession, workspace_id: uuid.UUID, hackathon_id: uuid.UUID | None, team_in: TeamCreate, user: User):
     import re
+    from app.models.hackathon import Hackathon
+    
+    if not hackathon_id:
+        stmt = select(Hackathon).where(Hackathon.workspace_id == workspace_id).order_by(Hackathon.created_at.desc())
+        result = await db.execute(stmt)
+        hackathon = result.scalars().first()
+        if not hackathon:
+            raise HTTPException(status_code=400, detail="No active hackathon found in this workspace")
+        hackathon_id = hackathon.id
+
     slug = re.sub(r'[^a-z0-9]+', '-', team_in.name.lower()).strip('-')
     team = Team(
         workspace_id=workspace_id,
         hackathon_id=hackathon_id,
         name=team_in.name,
         slug=slug,
-        status='active'
+        description=team_in.description,
+        skills_needed=team_in.skills_needed,
+        status='active',
+        created_by=user.id
     )
     db.add(team)
     await db.commit()

@@ -4,6 +4,7 @@ import { teamApi } from '@/api/teamApi';
 import type { Team } from '@/api/teamApi';
 import { GlassPanel } from '@/components/ui/glass-panel';
 import { Button } from '@/components/ui/button';
+import { toast } from 'sonner';
 import { Users, Plus, Code, Calendar } from 'lucide-react';
 import { format } from 'date-fns';
 import {
@@ -49,13 +50,13 @@ export default function Teams() {
         name: newTeam.name,
         description: newTeam.description,
         skills_needed: newTeam.skills_needed.split(',').map(s => s.trim()).filter(Boolean),
-        hackathon_id: 'default',
       });
       setTeams(prev => [...prev, created]);
       setIsDialogOpen(false);
       setNewTeam({ name: '', description: '', skills_needed: '' });
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
+      toast.error(err.message || 'Failed to create team');
     }
   };
 

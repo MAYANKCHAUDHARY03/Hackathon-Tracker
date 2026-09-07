@@ -1,5 +1,5 @@
 import { forwardRef, type ButtonHTMLAttributes } from 'react'
-
+import { Slot } from '@radix-ui/react-slot'
 type ButtonVariant = 'default' | 'destructive' | 'outline' | 'secondary' | 'ghost' | 'link'
 type ButtonSize = 'default' | 'sm' | 'lg' | 'icon'
 
@@ -26,7 +26,7 @@ const sizeClasses: Record<ButtonSize, string> = {
 }
 
 const Button = forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className = '', variant = 'default', size = 'default', ...props }, ref) => {
+  ({ className = '', variant = 'default', size = 'default', asChild = false, ...props }, ref) => {
     const classes = [
       'inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors',
       'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
@@ -36,7 +36,8 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       className,
     ].join(' ')
 
-    return <button className={classes} ref={ref} {...props} />
+    const Comp = asChild ? Slot : "button"
+    return <Comp className={classes} ref={ref} {...props} />
   }
 )
 

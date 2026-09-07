@@ -8,7 +8,17 @@ export class APIError extends Error {
   data: any;
 
   constructor(status: number, data: any) {
-    super(`API Error: ${status}`);
+    let message = `API Error: ${status}`;
+    
+    if (status === 422 && Array.isArray(data?.detail)) {
+      const firstError = data.detail[0];
+      const fieldPath = firstError.loc?.filter((p: string | number) => p !== 'body').join('.') || 'Field';
+      message = `Validation Error: ${fieldPath} - ${firstError.msg}`;
+    } else if (data?.detail && typeof data.detail === 'string') {
+      message = data.detail;
+    }
+
+    super(message);
     this.name = 'APIError';
     this.status = status;
     this.data = data;
