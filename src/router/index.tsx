@@ -44,6 +44,7 @@ const DeveloperPortal = lazy(() => import('@/pages/DeveloperPortal'))
 const HubIntegration = lazy(() => import('@/pages/HubIntegration'))
 const Teams = lazy(() => import('@/pages/Teams'))
 const Projects = lazy(() => import('@/pages/Projects'))
+const ModeSelection = lazy(() => import('@/pages/ModeSelection'))
 
 // Loading fallback
 const PageLoader = () => (
@@ -83,6 +84,16 @@ const router = createBrowserRouter([
       <Suspense fallback={<PageLoader />}>
         <ApplyPage />
       </Suspense>
+    ),
+  },
+  {
+    path: '/mode-selection',
+    element: (
+      <ProtectedRoute>
+        <Suspense fallback={<PageLoader />}>
+          <ModeSelection />
+        </Suspense>
+      </ProtectedRoute>
     ),
   },
   {

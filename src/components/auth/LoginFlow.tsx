@@ -10,8 +10,6 @@ export const LoginFlow: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const [step, setStep] = useState<'login' | 'context'>('login');
-  const [targetOrgId, setTargetOrgId] = useState('');
   
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -31,58 +29,11 @@ export const LoginFlow: React.FC = () => {
       const user = await apiClient.get<any>('/users/me');
       setUser(user);
       
-      setStep('context');
+      navigate(redirect);
     } catch (err: any) {
       setError(err.data?.detail || 'Failed to login');
     }
   };
-
-  const handleContinue = () => {
-    // If targetOrgId is provided, we might navigate them to the specific org context
-    // or just store it. For MVP, we pass it via query param or store if needed, 
-    // but the backend evaluates access dynamically based on path parameter anyway.
-    if (targetOrgId) {
-      // In a fully integrated UI, they'd be taken to the org's dashboard
-      navigate(`/organizations/${targetOrgId}`);
-    } else {
-      navigate(redirect);
-    }
-  };
-
-  if (step === 'context') {
-    return (
-      <div className="flex h-screen w-full items-center justify-center bg-gray-50">
-        <Card className="w-full max-w-md shadow-lg">
-          <CardHeader>
-            <CardTitle className="text-center text-3xl font-extrabold text-gray-900">
-              Select Context
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <p className="text-center text-sm text-gray-500">
-              You are logged in. Do you want to access a federated organization or continue to your home workspace?
-            </p>
-            <div className="space-y-2">
-              <Label htmlFor="targetOrg">Federated Target Organization ID (Optional)</Label>
-              <input
-                id="targetOrg"
-                type="text"
-                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                placeholder="Leave blank for home workspace"
-                value={targetOrgId}
-                onChange={(e) => setTargetOrgId(e.target.value)}
-              />
-            </div>
-          </CardContent>
-          <CardFooter>
-            <Button className="w-full" onClick={handleContinue}>
-              Continue
-            </Button>
-          </CardFooter>
-        </Card>
-      </div>
-    );
-  }
 
   return (
     <div className="flex h-screen w-full items-center justify-center bg-gray-50">

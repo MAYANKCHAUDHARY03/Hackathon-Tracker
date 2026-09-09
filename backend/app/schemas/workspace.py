@@ -13,6 +13,7 @@ class WorkspaceCreate(WorkspaceBase):
 
 class WorkspaceResponse(WorkspaceBase):
     id: UUID
+    organization_id: Optional[UUID] = None
     created_at: datetime
     updated_at: datetime
 

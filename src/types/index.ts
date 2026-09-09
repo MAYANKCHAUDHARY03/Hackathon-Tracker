@@ -14,6 +14,7 @@ export interface SoftDeletable {
 export interface Workspace extends BaseEntity {
   name: string;
   slug: string;
+  organization_id?: ID;
   settings: Record<string, any>;
 }
 
