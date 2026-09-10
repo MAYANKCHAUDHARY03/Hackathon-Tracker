@@ -4,7 +4,7 @@ import uuid
 
 from app.database import get_db
 from app.models.user import User, WorkspaceMembership
-from app.dependencies import get_current_user, verify_workspace_access
+from app.dependencies import get_current_user, verify_workspace_access, require_team_lead_or_colead
 from app.schemas.team import TeamResponse, TeamCreate, TeamUpdate
 from app.services import team_service
 from app.services.match_service import MatchService
@@ -34,7 +34,8 @@ async def update_team(
     team_id: uuid.UUID,
     team_in: TeamUpdate,
     db: AsyncSession = Depends(get_db),
-    membership: WorkspaceMembership = Depends(verify_workspace_access)
+    membership: WorkspaceMembership = Depends(verify_workspace_access),
+    team_membership = Depends(require_team_lead_or_colead)
 ):
     return await team_service.update_team(db, workspace_id, team_id, team_in, membership.user)
 
@@ -62,6 +63,7 @@ async def invite_to_team(
     team_id: uuid.UUID,
     person_id: uuid.UUID,
     db: AsyncSession = Depends(get_db),
-    membership: WorkspaceMembership = Depends(verify_workspace_access)
+    membership: WorkspaceMembership = Depends(verify_workspace_access),
+    team_membership = Depends(require_team_lead_or_colead)
 ):
     return await MatchService.invite_to_team(db, workspace_id, team_id, person_id, membership.user)

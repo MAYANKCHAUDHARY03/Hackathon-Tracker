@@ -37,6 +37,16 @@ async def create_team(db: AsyncSession, workspace_id: uuid.UUID, hackathon_id: u
         created_by=user.id
     )
     db.add(team)
+    await db.flush() # flush to get team.id
+
+    from app.models.team import TeamMember
+    team_member = TeamMember(
+        team_id=team.id,
+        user_id=user.id,
+        authorization_role="lead"
+    )
+    db.add(team_member)
+
     await db.commit()
     await db.refresh(team)
     return team

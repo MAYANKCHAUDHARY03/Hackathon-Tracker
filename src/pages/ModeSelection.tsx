@@ -35,15 +35,10 @@ export default function ModeSelection() {
   const handleModeSelection = (mode: AppMode) => {
     if (!user) return;
     
-    let validWorkspaces: Workspace[] = [];
-    if (mode === 'student') {
-      validWorkspaces = workspaces.filter(w => !w.organization_id);
-    } else {
-      validWorkspaces = workspaces.filter(w => w.organization_id);
-    }
+    const validWorkspaces = workspaces;
 
     if (validWorkspaces.length === 0) {
-      setError(`You do not have access to any ${mode} workspaces.`);
+      setError(`You do not have access to any workspaces.`);
       return;
     }
 

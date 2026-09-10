@@ -33,10 +33,16 @@ def override_deps():
         return mock_user
     def _override_access():
         return MockMembership(mock_user)
+    def _override_team_lead():
+        class MockTeamMembership:
+            authorization_role = "lead"
+        return MockTeamMembership()
     
     app.dependency_overrides[get_current_user] = _override_user
     app.dependency_overrides[verify_workspace_access] = _override_access
     app.dependency_overrides[require_workspace_admin] = _override_access
+    from app.dependencies import require_team_lead_or_colead
+    app.dependency_overrides[require_team_lead_or_colead] = _override_team_lead
     
     yield
     
