@@ -63,6 +63,12 @@ class MatchService:
 
     @staticmethod
     async def apply_to_team(db: AsyncSession, workspace_id: uuid.UUID, team_id: uuid.UUID, user: User):
+        # Verify team belongs to workspace
+        team_stmt = select(Team).where(Team.workspace_id == workspace_id, Team.id == team_id)
+        team_res = await db.execute(team_stmt)
+        if not team_res.scalars().first():
+            raise HTTPException(status_code=404, detail="Team not found")
+            
         # Find person associated with the user
         person_stmt = select(Person).where(Person.workspace_id == workspace_id, Person.email == user.email, Person.archived_at.is_(None))
         person_res = await db.execute(person_stmt)
@@ -86,6 +92,12 @@ class MatchService:
 
     @staticmethod
     async def invite_to_team(db: AsyncSession, workspace_id: uuid.UUID, team_id: uuid.UUID, person_id: uuid.UUID, user: User):
+        # Verify team belongs to workspace
+        team_stmt = select(Team).where(Team.workspace_id == workspace_id, Team.id == team_id)
+        team_res = await db.execute(team_stmt)
+        if not team_res.scalars().first():
+            raise HTTPException(status_code=404, detail="Team not found")
+            
         # Create GraphEdge using KnowledgeGraphService
         graph_service = KnowledgeGraphService(db)
         await graph_service.create_edge(

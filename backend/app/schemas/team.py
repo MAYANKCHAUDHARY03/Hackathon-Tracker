@@ -20,6 +20,8 @@ class TeamUpdate(BaseModel):
 class TeamResponse(TeamBase):
     id: uuid.UUID
     workspace_id: uuid.UUID
+    status: str
+    slug: str
     created_at: datetime
     updated_at: datetime
     

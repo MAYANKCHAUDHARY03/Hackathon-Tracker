@@ -45,6 +45,13 @@ export default function Teams() {
   const handleCreateTeam = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!activeWorkspaceId) return;
+
+    // Validate that the workspace ID is a valid UUID to prevent HTTP 422 errors
+    const uuidRegex = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$/i;
+    if (!uuidRegex.test(activeWorkspaceId)) {
+      toast.error("Invalid workspace context. Please re-select your workspace.");
+      return;
+    }
     try {
       const created = await teamApi.createTeam(activeWorkspaceId, {
         name: newTeam.name,
@@ -72,6 +79,11 @@ export default function Teams() {
 
   if (!activeWorkspaceId) {
     return <div className="p-8">Please select a workspace first.</div>;
+  }
+  
+  const uuidRegex = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$/i;
+  if (!uuidRegex.test(activeWorkspaceId)) {
+    return <div className="p-8 text-destructive">Invalid workspace context. Please re-select your workspace.</div>;
   }
 
   return (

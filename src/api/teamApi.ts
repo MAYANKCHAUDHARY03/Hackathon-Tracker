@@ -3,6 +3,7 @@ import { apiClient as api } from '@/lib/api-client';
 export interface Team {
   id: string;
   name: string;
+  slug: string;
   hackathon_id: string;
   description?: string;
   skills_needed?: string[];

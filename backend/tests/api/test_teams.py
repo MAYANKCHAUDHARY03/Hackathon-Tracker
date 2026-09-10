@@ -22,12 +22,17 @@ class MockUser:
         self.full_name = "Test User"
         self.is_active = True
 
+class MockMembership:
+    def __init__(self, user):
+        self.user = user
+
 @pytest.fixture
 def override_deps():
+    mock_user = MockUser(id=mock_user_id, email="test@test.com")
     def _override_user():
-        return MockUser(id=mock_user_id, email="test@test.com")
+        return mock_user
     def _override_access():
-        return True
+        return MockMembership(mock_user)
     
     app.dependency_overrides[get_current_user] = _override_user
     app.dependency_overrides[verify_workspace_access] = _override_access
