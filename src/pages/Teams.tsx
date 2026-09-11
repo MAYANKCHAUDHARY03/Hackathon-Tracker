@@ -2,6 +2,9 @@ import { useState, useEffect } from 'react';
 import { useWorkspaceStore } from '@/store/workspaceStore';
 import { teamApi } from '@/api/teamApi';
 import type { Team } from '@/api/teamApi';
+import { hackathonApi } from '@/api/hackathonApi';
+import type { Hackathon } from '@/types';
+import { useSearchParams } from 'react-router-dom';
 import { GlassPanel } from '@/components/ui/glass-panel';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
@@ -21,8 +24,12 @@ export default function Teams() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
   
+  const [searchParams] = useSearchParams();
+  const preselectedHackathonId = searchParams.get('hackathon_id');
+
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [newTeam, setNewTeam] = useState({ name: '', description: '', skills_needed: '' });
+  const [newTeam, setNewTeam] = useState({ name: '', description: '', skills_needed: '', hackathon_id: preselectedHackathonId || '' });
+  const [hackathons, setHackathons] = useState<Hackathon[]>([]);
 
   useEffect(() => {
     async function fetchTeams() {
@@ -30,9 +37,19 @@ export default function Teams() {
       setIsLoading(true);
       setError(null);
       try {
-        const raw: any = await teamApi.getTeams(activeWorkspaceId);
-        const list = Array.isArray(raw) ? raw : Array.isArray(raw?.items) ? raw.items : Array.isArray(raw?.data) ? raw.data : [];
+        const [teamsData, hackathonsData] = await Promise.all([
+          teamApi.getTeams(activeWorkspaceId),
+          hackathonApi.getHackathons(activeWorkspaceId)
+        ]);
+        const list = Array.isArray(teamsData) ? teamsData : Array.isArray((teamsData as any)?.items) ? (teamsData as any).items : Array.isArray((teamsData as any)?.data) ? (teamsData as any).data : [];
         setTeams(list);
+        
+        const hList = Array.isArray(hackathonsData) ? hackathonsData : Array.isArray((hackathonsData as any)?.items) ? (hackathonsData as any).items : Array.isArray((hackathonsData as any)?.data) ? (hackathonsData as any).data : [];
+        setHackathons(hList);
+        
+        if (!newTeam.hackathon_id && hList.length > 0) {
+          setNewTeam(prev => ({ ...prev, hackathon_id: preselectedHackathonId || hList[0].id }));
+        }
       } catch (err: any) {
         setError(err instanceof Error ? err : new Error('Failed to load teams'));
       } finally {
@@ -53,14 +70,19 @@ export default function Teams() {
       return;
     }
     try {
+      if (!newTeam.hackathon_id) {
+        toast.error("Please select a hackathon");
+        return;
+      }
       const created = await teamApi.createTeam(activeWorkspaceId, {
         name: newTeam.name,
+        hackathon_id: newTeam.hackathon_id,
         description: newTeam.description,
         skills_needed: newTeam.skills_needed.split(',').map(s => s.trim()).filter(Boolean),
       });
       setTeams(prev => [...prev, created]);
       setIsDialogOpen(false);
-      setNewTeam({ name: '', description: '', skills_needed: '' });
+      setNewTeam({ name: '', description: '', skills_needed: '', hackathon_id: preselectedHackathonId || (hackathons[0]?.id || '') });
     } catch (err: any) {
       console.error(err);
       toast.error(err.message || 'Failed to create team');
@@ -123,6 +145,21 @@ export default function Teams() {
                   value={newTeam.description}
                   onChange={e => setNewTeam({...newTeam, description: e.target.value})}
                 />
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Hackathon</label>
+                <select
+                  required
+                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                  value={newTeam.hackathon_id}
+                  onChange={e => setNewTeam({...newTeam, hackathon_id: e.target.value})}
+                  disabled={!!preselectedHackathonId}
+                >
+                  <option value="" disabled>Select a Hackathon</option>
+                  {hackathons.map(h => (
+                    <option key={h.id} value={h.id}>{h.name}</option>
+                  ))}
+                </select>
               </div>
               <div className="space-y-2">
                 <label className="text-sm font-medium">Skills Needed (comma separated)</label>

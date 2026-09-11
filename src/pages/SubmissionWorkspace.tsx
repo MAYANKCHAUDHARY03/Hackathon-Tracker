@@ -4,21 +4,43 @@ import type { SubmissionRequirement, RoundSubmission } from '@/api/submissionApi
 import { useWorkspaceStore } from '@/store/workspaceStore';
 import { GlassPanel } from '@/components/ui/glass-panel';
 import { Button } from '@/components/ui/button';
+import { hackathonApi } from '@/api/hackathonApi';
 import { submissionApi } from '@/api/submissionApi';
 
 export default function SubmissionWorkspace() {
-  const { id, roundId, teamId } = useParams<{ id: string; roundId: string; teamId: string }>();
+  const { id, teamId } = useParams<{ id: string; teamId: string }>();
   const currentWorkspaceId = useWorkspaceStore((s) => s.activeWorkspaceId);
 
+  const [roundId, setRoundId] = useState<string | null>(null);
   const [requirements, setRequirements] = useState<SubmissionRequirement[]>([]);
   const [submission, setSubmission] = useState<RoundSubmission | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    if (currentWorkspaceId && id && roundId && teamId) {
-      submissionApi.getRequirements(id, roundId).then(setRequirements).catch(console.error);
-      submissionApi.getSubmission(id, roundId, teamId).then(setSubmission).catch(console.error);
+    async function init() {
+      if (!currentWorkspaceId || !id || !teamId) return;
+      setIsLoading(true);
+      try {
+        const roundsRes: any = await hackathonApi.getRounds(id);
+        const rounds = Array.isArray(roundsRes) ? roundsRes : Array.isArray(roundsRes?.items) ? roundsRes.items : Array.isArray(roundsRes?.data) ? roundsRes.data : [];
+        if (rounds.length > 0) {
+          const activeRound = rounds[0].id;
+          setRoundId(activeRound);
+          const [reqs, sub] = await Promise.all([
+            submissionApi.getRequirements(id, activeRound).catch(() => []),
+            submissionApi.getSubmission(id, activeRound, teamId).catch(() => null)
+          ]);
+          setRequirements(reqs || []);
+          setSubmission(sub);
+        }
+      } catch (err) {
+        console.error('Failed to initialize submission workspace:', err);
+      } finally {
+        setIsLoading(false);
+      }
     }
-  }, [currentWorkspaceId, id, roundId, teamId]);
+    init();
+  }, [currentWorkspaceId, id, teamId]);
 
   const handleUpdateItem = async (reqId: string, content: string) => {
     if (!id || !roundId || !teamId) return;

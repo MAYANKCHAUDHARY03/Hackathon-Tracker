@@ -1,4 +1,5 @@
 import uuid
+import re
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from fastapi import HTTPException, status
@@ -14,16 +15,8 @@ async def get_teams(db: AsyncSession, workspace_id: uuid.UUID):
     return result.scalars().all()
 
 async def create_team(db: AsyncSession, workspace_id: uuid.UUID, hackathon_id: uuid.UUID | None, team_in: TeamCreate, user: User):
-    import re
-    from app.models.hackathon import Hackathon
-    
     if not hackathon_id:
-        stmt = select(Hackathon).where(Hackathon.workspace_id == workspace_id).order_by(Hackathon.created_at.desc())
-        result = await db.execute(stmt)
-        hackathon = result.scalars().first()
-        if not hackathon:
-            raise HTTPException(status_code=400, detail="No active hackathon found in this workspace")
-        hackathon_id = hackathon.id
+        raise HTTPException(status_code=400, detail="hackathon_id is required to create a team")
 
     slug = re.sub(r'[^a-z0-9]+', '-', team_in.name.lower()).strip('-')
     team = Team(

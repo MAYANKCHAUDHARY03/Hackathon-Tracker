@@ -67,12 +67,13 @@ async def test_workspace_and_hackathon(db_session: AsyncSession):
     return ws_id, hackathon_id
 
 async def test_create_team_valid(async_client: AsyncClient, test_workspace_and_hackathon, override_deps):
-    ws_id, _ = test_workspace_and_hackathon
+    ws_id, hackathon_id = test_workspace_and_hackathon
     
     payload = {
         "name": "Super Team",
         "description": "We are awesome",
-        "skills_needed": ["Python", "React"]
+        "skills_needed": ["Python", "React"],
+        "hackathon_id": str(hackathon_id)
     }
     
     response = await async_client.post(f"/api/v1/workspaces/{ws_id}/teams", json=payload)

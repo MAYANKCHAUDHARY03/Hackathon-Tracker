@@ -11,6 +11,9 @@ export const hackathonApi = {
   getHackathon: (id: string) =>
     api.get<Hackathon>(`/hackathons/${id}`),
 
+  getRounds: (hackathonId: string) =>
+    api.get<any[]>(`/hackathons/${hackathonId}/rounds`),
+
   updateHackathon: (id: string, data: Partial<Hackathon>) =>
     api.patch<Hackathon>(`/hackathons/${id}`, data),
 };

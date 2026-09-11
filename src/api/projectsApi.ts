@@ -18,6 +18,9 @@ export const projectsApi = {
   getProjects: (workspaceId: string) =>
     api.get<Project[]>(`/workspaces/${workspaceId}/projects`),
 
+  createProject: (workspaceId: string, teamId: string, data: Partial<Project>) =>
+    api.post<Project>(`/workspaces/${workspaceId}/teams/${teamId}/projects`, data),
+
   transitionState: (workspaceId: string, projectId: string, transition: ProjectTransitionCreate) =>
     api.post<any>(`/workspaces/${workspaceId}/projects/${projectId}/transitions`, transition),
     

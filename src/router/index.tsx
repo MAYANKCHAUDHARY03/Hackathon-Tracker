@@ -146,7 +146,7 @@ const router = createBrowserRouter([
         ),
       },
       {
-        path: 'hackathons/:id/rounds/:roundId/teams/:teamId/submission',
+        path: 'hackathons/:id/teams/:teamId/submission',
         element: (
           <Suspense fallback={<PageLoader />}>
             <SubmissionWorkspace />

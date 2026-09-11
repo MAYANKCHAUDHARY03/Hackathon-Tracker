@@ -3,9 +3,22 @@ import { useNavigate } from 'react-router-dom';
 import { useWorkspaceStore } from '@/store/workspaceStore';
 import { projectsApi } from '@/api/projectsApi';
 import type { Project } from '@/types';
+import { hackathonApi } from '@/api/hackathonApi';
+import { teamApi } from '@/api/teamApi';
+import type { Hackathon } from '@/types';
+import type { Team } from '@/api/teamApi';
 import { GlassPanel } from '@/components/ui/glass-panel';
-import { FolderGit2, Calendar, GitBranch, ArrowRight } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { toast } from 'sonner';
+import { FolderGit2, Calendar, GitBranch, ArrowRight, Plus } from 'lucide-react';
 import { format } from 'date-fns';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 export default function Projects() {
   const navigate = useNavigate();
@@ -14,15 +27,30 @@ export default function Projects() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [newProject, setNewProject] = useState({ name: '', description: '', hackathon_id: '', team_id: '' });
+  const [hackathons, setHackathons] = useState<Hackathon[]>([]);
+  const [teams, setTeams] = useState<Team[]>([]);
+
   useEffect(() => {
     async function fetchProjects() {
       if (!activeWorkspaceId) return;
       setIsLoading(true);
       setError(null);
       try {
-        const raw: any = await projectsApi.getProjects(activeWorkspaceId);
-        const list = Array.isArray(raw) ? raw : Array.isArray(raw?.items) ? raw.items : Array.isArray(raw?.data) ? raw.data : [];
-        setProjects(list);
+        const [projData, hackData, teamData] = await Promise.all([
+          projectsApi.getProjects(activeWorkspaceId),
+          hackathonApi.getHackathons(activeWorkspaceId),
+          teamApi.getTeams(activeWorkspaceId)
+        ]);
+        const pList = Array.isArray(projData) ? projData : Array.isArray((projData as any)?.items) ? (projData as any).items : Array.isArray((projData as any)?.data) ? (projData as any).data : [];
+        setProjects(pList);
+
+        const hList = Array.isArray(hackData) ? hackData : Array.isArray((hackData as any)?.items) ? (hackData as any).items : Array.isArray((hackData as any)?.data) ? (hackData as any).data : [];
+        setHackathons(hList);
+
+        const tList = Array.isArray(teamData) ? teamData : Array.isArray((teamData as any)?.items) ? (teamData as any).items : Array.isArray((teamData as any)?.data) ? (teamData as any).data : [];
+        setTeams(tList);
       } catch (err: any) {
         setError(err instanceof Error ? err : new Error('Failed to load projects'));
       } finally {
@@ -36,6 +64,30 @@ export default function Projects() {
     return <div className="p-8">Please select a workspace first.</div>;
   }
 
+  const handleCreateProject = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!activeWorkspaceId) return;
+    if (!newProject.hackathon_id || !newProject.team_id) {
+       toast.error("Hackathon and Team are required.");
+       return;
+    }
+    try {
+      const created = await projectsApi.createProject(activeWorkspaceId, newProject.team_id, {
+        name: newProject.name,
+        description: newProject.description,
+        hackathon_id: newProject.hackathon_id
+      } as any);
+      setProjects(prev => [...prev, created]);
+      setIsDialogOpen(false);
+      setNewProject({ name: '', description: '', hackathon_id: '', team_id: '' });
+      toast.success("Project created successfully");
+    } catch (err: any) {
+      toast.error(err.message || 'Failed to create project');
+    }
+  };
+
+  const filteredTeams = teams.filter(t => t.hackathon_id === newProject.hackathon_id);
+
   return (
     <div className="p-8 space-y-6">
       <div className="flex items-center justify-between">
@@ -43,6 +95,73 @@ export default function Projects() {
           <h1 className="text-3xl font-bold tracking-tight">Project Database</h1>
           <p className="text-muted-foreground mt-1">Explore projects submitted across the workspace.</p>
         </div>
+        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+          <DialogTrigger asChild>
+            <Button className="gap-2">
+              <Plus className="h-4 w-4" />
+              Create Project
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-[425px]">
+            <DialogHeader>
+              <DialogTitle>Create a New Project</DialogTitle>
+            </DialogHeader>
+            <form onSubmit={handleCreateProject} className="space-y-4 pt-4">
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Project Name</label>
+                <input
+                  required
+                  type="text"
+                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                  value={newProject.name}
+                  onChange={e => setNewProject({...newProject, name: e.target.value})}
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Hackathon</label>
+                <select
+                  required
+                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                  value={newProject.hackathon_id}
+                  onChange={e => setNewProject({...newProject, hackathon_id: e.target.value, team_id: ''})}
+                >
+                  <option value="" disabled>Select a Hackathon</option>
+                  {hackathons.map(h => (
+                    <option key={h.id} value={h.id}>{h.name}</option>
+                  ))}
+                </select>
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Team</label>
+                <select
+                  required
+                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                  value={newProject.team_id}
+                  onChange={e => setNewProject({...newProject, team_id: e.target.value})}
+                  disabled={!newProject.hackathon_id}
+                >
+                  <option value="" disabled>Select a Team</option>
+                  {filteredTeams.map(t => (
+                    <option key={t.id} value={t.id}>{t.name}</option>
+                  ))}
+                </select>
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Description</label>
+                <textarea
+                  required
+                  className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                  value={newProject.description}
+                  onChange={e => setNewProject({...newProject, description: e.target.value})}
+                />
+              </div>
+              <div className="flex justify-end gap-3 mt-6">
+                <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)}>Cancel</Button>
+                <Button type="submit">Create Project</Button>
+              </div>
+            </form>
+          </DialogContent>
+        </Dialog>
       </div>
 
       {isLoading ? (
