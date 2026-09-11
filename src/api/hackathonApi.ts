@@ -2,8 +2,12 @@ import { apiClient as api } from "@/lib/api-client";
 import type { Hackathon } from "@/types";
 
 export const hackathonApi = {
-  getHackathons: (workspaceId: string) =>
-    api.get<Hackathon[]>(`/workspaces/${workspaceId}/hackathons`),
+  getHackathons: (workspaceId: string) => {
+    if (!workspaceId || workspaceId === 'undefined' || workspaceId === 'null') {
+      return Promise.resolve([]);
+    }
+    return api.get<Hackathon[]>(`/workspaces/${workspaceId}/hackathons`);
+  },
 
   createHackathon: (workspaceId: string, data: Partial<Hackathon>) =>
     api.post<Hackathon>(`/workspaces/${workspaceId}/hackathons`, data),

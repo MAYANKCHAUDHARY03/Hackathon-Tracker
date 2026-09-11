@@ -15,8 +15,12 @@ export interface ProjectTransitionCreate {
 }
 
 export const projectsApi = {
-  getProjects: (workspaceId: string) =>
-    api.get<Project[]>(`/workspaces/${workspaceId}/projects`),
+  getProjects: (workspaceId: string) => {
+    if (!workspaceId || workspaceId === 'undefined' || workspaceId === 'null') {
+      return Promise.resolve([]);
+    }
+    return api.get<Project[]>(`/workspaces/${workspaceId}/projects`);
+  },
 
   createProject: (workspaceId: string, teamId: string, data: Partial<Project>) =>
     api.post<Project>(`/workspaces/${workspaceId}/teams/${teamId}/projects`, data),

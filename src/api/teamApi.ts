@@ -22,8 +22,12 @@ export interface TalentMatch {
 }
 
 export const teamApi = {
-  getTeams: (workspaceId: string) =>
-    api.get<Team[]>(`/workspaces/${workspaceId}/teams`),
+  getTeams: (workspaceId: string) => {
+    if (!workspaceId || workspaceId === 'undefined' || workspaceId === 'null') {
+      return Promise.resolve([]);
+    }
+    return api.get<Team[]>(`/workspaces/${workspaceId}/teams`);
+  },
 
   createTeam: (workspaceId: string, data: Partial<Team>) =>
     api.post<Team>(`/workspaces/${workspaceId}/teams`, data),

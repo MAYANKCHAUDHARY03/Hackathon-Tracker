@@ -24,10 +24,13 @@ export const useWorkspaceStore = create<WorkspaceState>()(
       userWorkspaces: {},
       userModes: {},
       
-      setActiveWorkspace: (id, userId) => set((state) => ({
-        activeWorkspaceId: id,
-        userWorkspaces: userId ? { ...state.userWorkspaces, [userId]: id } : state.userWorkspaces
-      })),
+      setActiveWorkspace: (id, userId) => {
+        if (!id || id === 'undefined' || id === 'null') return;
+        set((state) => ({
+          activeWorkspaceId: id,
+          userWorkspaces: userId ? { ...state.userWorkspaces, [userId]: id } : state.userWorkspaces
+        }))
+      },
       
       setApplicationMode: (mode, userId) => set((state) => ({
         applicationMode: mode,
