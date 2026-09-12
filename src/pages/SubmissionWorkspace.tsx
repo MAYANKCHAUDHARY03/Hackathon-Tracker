@@ -21,7 +21,7 @@ export default function SubmissionWorkspace() {
       if (!currentWorkspaceId || !id || !teamId) return;
       setIsLoading(true);
       try {
-        const roundsRes: any = await hackathonApi.getRounds(id);
+        const roundsRes: any = await hackathonApi.getRounds(currentWorkspaceId, id);
         const rounds = Array.isArray(roundsRes) ? roundsRes : Array.isArray(roundsRes?.items) ? roundsRes.items : Array.isArray(roundsRes?.data) ? roundsRes.data : [];
         if (rounds.length > 0) {
           const activeRound = rounds[0].id;

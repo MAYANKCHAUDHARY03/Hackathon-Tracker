@@ -33,9 +33,14 @@ export default function ModeSelection() {
   }, []);
 
   const handleModeSelection = (mode: AppMode) => {
-    if (!user) return;
+    console.log("handleModeSelection called with workspaces:", workspaces);
+    if (!user) {
+      console.log("No user in handleModeSelection");
+      return;
+    }
     
     const validWorkspaces = workspaces;
+    console.log("validWorkspaces:", validWorkspaces, "length:", validWorkspaces.length);
 
     if (validWorkspaces.length === 0) {
       setError(`You do not have access to any workspaces.`);

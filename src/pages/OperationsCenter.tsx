@@ -3,7 +3,7 @@ import { GlassPanel } from '@/components/ui/glass-panel';
 import { Button } from '@/components/ui/button';
 import { apiClient } from '@/lib/api-client';
 import { useWorkspaceStore } from '@/store/workspaceStore';
-import { Activity, AlertTriangle, CheckCircle2, ShieldAlert, Zap, Clock } from 'lucide-react';
+import { Activity, AlertTriangle, CheckCircle2, ShieldAlert, Zap, Clock, Users } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 
 interface Alert {

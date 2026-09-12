@@ -19,7 +19,7 @@ import {
 } from "@/components/ui/dialog";
 
 export default function Teams() {
-  const { activeWorkspaceId } = useWorkspaceStore();
+  const { activeWorkspaceId, applicationMode } = useWorkspaceStore();
   const [teams, setTeams] = useState<Team[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
@@ -28,6 +28,7 @@ export default function Teams() {
   const preselectedHackathonId = searchParams.get('hackathon_id');
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [newTeam, setNewTeam] = useState({ name: '', description: '', skills_needed: '', hackathon_id: preselectedHackathonId || '' });
   const [hackathons, setHackathons] = useState<Hackathon[]>([]);
 
@@ -70,6 +71,7 @@ export default function Teams() {
       return;
     }
     try {
+      setIsSubmitting(true);
       if (!newTeam.hackathon_id) {
         toast.error("Please select a hackathon");
         return;
@@ -86,6 +88,8 @@ export default function Teams() {
     } catch (err: any) {
       console.error(err);
       toast.error(err.message || 'Failed to create team');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -115,69 +119,77 @@ export default function Teams() {
           <h1 className="text-3xl font-bold tracking-tight">Team Database</h1>
           <p className="text-muted-foreground mt-1">Discover and join teams across the workspace.</p>
         </div>
-        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-          <DialogTrigger asChild>
-            <Button className="gap-2">
-              <Plus className="h-4 w-4" />
-              Create Team
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="sm:max-w-[425px]">
-            <DialogHeader>
-              <DialogTitle>Create a New Team</DialogTitle>
-            </DialogHeader>
-            <form onSubmit={handleCreateTeam} className="space-y-4 pt-4">
-              <div className="space-y-2">
-                <label className="text-sm font-medium">Team Name</label>
-                <input
-                  required
-                  type="text"
-                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-                  value={newTeam.name}
-                  onChange={e => setNewTeam({...newTeam, name: e.target.value})}
-                />
-              </div>
-              <div className="space-y-2">
-                <label className="text-sm font-medium">Description</label>
-                <textarea
-                  required
-                  className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-                  value={newTeam.description}
-                  onChange={e => setNewTeam({...newTeam, description: e.target.value})}
-                />
-              </div>
-              <div className="space-y-2">
-                <label className="text-sm font-medium">Hackathon</label>
-                <select
-                  required
-                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-                  value={newTeam.hackathon_id}
-                  onChange={e => setNewTeam({...newTeam, hackathon_id: e.target.value})}
-                  disabled={!!preselectedHackathonId}
-                >
-                  <option value="" disabled>Select a Hackathon</option>
-                  {hackathons.map(h => (
-                    <option key={h.id} value={h.id}>{h.name}</option>
-                  ))}
-                </select>
-              </div>
-              <div className="space-y-2">
-                <label className="text-sm font-medium">Skills Needed (comma separated)</label>
-                <input
-                  type="text"
-                  placeholder="e.g. React, Python, Design"
-                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-                  value={newTeam.skills_needed}
-                  onChange={e => setNewTeam({...newTeam, skills_needed: e.target.value})}
-                />
-              </div>
-              <div className="flex justify-end gap-3 mt-6">
-                <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)}>Cancel</Button>
-                <Button type="submit">Create Team</Button>
-              </div>
-            </form>
-          </DialogContent>
-        </Dialog>
+        {applicationMode === 'student' && (
+          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+            <DialogTrigger asChild>
+              <Button className="gap-2">
+                <Plus className="h-4 w-4" />
+                Create Team
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[425px]">
+              <DialogHeader>
+                <DialogTitle>Create a New Team</DialogTitle>
+              </DialogHeader>
+              <form onSubmit={handleCreateTeam} className="space-y-4 pt-4">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Team Name</label>
+                  <input
+                    name="name"
+                    required
+                    type="text"
+                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                    value={newTeam.name}
+                    onChange={e => setNewTeam({...newTeam, name: e.target.value})}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Description</label>
+                  <textarea
+                    name="description"
+                    required
+                    className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                    value={newTeam.description}
+                    onChange={e => setNewTeam({...newTeam, description: e.target.value})}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Hackathon</label>
+                  <select
+                    name="hackathon_id"
+                    required
+                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                    value={newTeam.hackathon_id}
+                    onChange={e => setNewTeam({...newTeam, hackathon_id: e.target.value})}
+                    disabled={!!preselectedHackathonId}
+                  >
+                    <option value="" disabled>Select a Hackathon</option>
+                    {hackathons.map(h => (
+                      <option key={h.id} value={h.id}>{h.name}</option>
+                    ))}
+                  </select>
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Skills Needed (comma separated)</label>
+                  <input
+                    name="skills_needed"
+                    type="text"
+                    placeholder="e.g. React, Python, Design"
+                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                    value={newTeam.skills_needed}
+                    onChange={e => setNewTeam({...newTeam, skills_needed: e.target.value})}
+                  />
+                </div>
+                <div className="flex justify-end gap-3 mt-6">
+                  <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)} disabled={isSubmitting}>Cancel</Button>
+                  <Button type="submit" disabled={isSubmitting}>
+                    {isSubmitting ? 'Creating...' : 'Create Team'}
+                  </Button>
+                </div>
+              </form>
+            </DialogContent>
+          </Dialog>
+        )}
       </div>
 
       {isLoading ? (
@@ -197,9 +209,11 @@ export default function Teams() {
           </div>
           <h2 className="text-xl font-semibold mb-2">No teams found</h2>
           <p className="text-muted-foreground max-w-md mx-auto mb-6">
-            There are no teams in this workspace yet. Be the first to create one!
+            There are no teams in this workspace yet.
           </p>
-          <Button onClick={() => setIsDialogOpen(true)}>Create Team</Button>
+          {applicationMode === 'student' && (
+            <Button onClick={() => setIsDialogOpen(true)}>Create Team</Button>
+          )}
         </div>
       ) : (
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -236,14 +250,16 @@ export default function Teams() {
                 </div>
               </div>
               
-              <div className="mt-auto pt-4 border-t border-border/50 flex gap-2">
-                <Button 
-                  className="flex-1" 
-                  onClick={() => handleApply(team.id)}
-                >
-                  Apply
-                </Button>
-              </div>
+              {applicationMode === 'student' && (
+                <div className="mt-auto pt-4 border-t border-border/50 flex gap-2">
+                  <Button 
+                    className="flex-1" 
+                    onClick={() => handleApply(team.id)}
+                  >
+                    Apply
+                  </Button>
+                </div>
+              )}
             </GlassPanel>
           ))}
         </div>

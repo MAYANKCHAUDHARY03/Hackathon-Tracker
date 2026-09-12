@@ -28,7 +28,9 @@ async def get_workspaces(
         .where(WorkspaceMembership.user_id == current_user.id)
     )
     result = await db.execute(stmt)
-    return result.scalars().all()
+    res = result.scalars().all()
+    print("WORKSPACES RET:", res)
+    return res
 
 @router.post("/workspaces/{workspace_id}/digital-twin/simulate", response_model=DigitalTwinSimulationResponse)
 async def simulate_digital_twin(

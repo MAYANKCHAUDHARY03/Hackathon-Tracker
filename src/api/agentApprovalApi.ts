@@ -20,10 +20,10 @@ export const agentApprovalApi = {
   },
 
   approveRequest: async (approvalId: string): Promise<any> => {
-    return await apiClient.post(`/approvals/${approvalId}/approve`);
+    return await apiClient.post(`/approvals/${approvalId}/approve`, {});
   },
 
   rejectRequest: async (approvalId: string): Promise<any> => {
-    return await apiClient.post(`/approvals/${approvalId}/reject`);
+    return await apiClient.post(`/approvals/${approvalId}/reject`, {});
   },
 };

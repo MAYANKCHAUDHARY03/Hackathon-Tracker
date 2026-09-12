@@ -16,6 +16,7 @@ import { useWorkspaceStore } from '@/store/workspaceStore';
 import { toast } from 'sonner';
 import { Trophy, Lightbulb, Rocket, Building2, ChevronRight, ChevronLeft } from 'lucide-react';
 import type { Hackathon } from '@/types';
+import { useHackathonStore } from '@/store/hackathonStore';
 
 interface ProgramCreationWizardProps {
   open: boolean;
@@ -60,10 +61,17 @@ export function ProgramCreationWizard({ open, onOpenChange, onSuccess }: Program
       // If we have templates in the backend, we would call /from-template/{templateId}
       // For now, we will create a standard program using the chosen program_type
       const res = await apiClient.post<Hackathon>(`/workspaces/${activeWorkspaceId}/hackathons`, {
-        ...formData,
+        name: formData.name,
+        description: formData.description,
+        program_type: formData.program_type,
+        mode: formData.is_online ? 'online' : 'offline',
+        location: formData.location || undefined,
         start_date: new Date(formData.start_date).toISOString(),
         end_date: new Date(formData.end_date).toISOString(),
+        registration_deadline: new Date(formData.start_date).toISOString(), // fallback to start date
       });
+      
+      useHackathonStore.getState().addHackathon(res);
       
       toast.success('Program created successfully!');
       onOpenChange(false);

@@ -38,9 +38,15 @@ async function request<T>(endpoint: string, options: RequestInit = {}): Promise<
     headers.set('Authorization', `Bearer ${token}`);
   }
 
+  const { activeWorkspaceId } = useWorkspaceStore.getState();
+  if (activeWorkspaceId) {
+    headers.set('x-workspace-id', activeWorkspaceId);
+  }
+
   const response = await fetch(url, {
     ...options,
     headers,
+    cache: 'no-store',
   });
 
   if (!response.ok) {

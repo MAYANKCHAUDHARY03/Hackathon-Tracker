@@ -14,6 +14,7 @@ import { useWorkspaceStore } from '@/store/workspaceStore';
 import { roundApi } from '@/api/roundApi';
 import { OrganizerCopilot } from '@/components/hackathons/OrganizerCopilot';
 import type { HackathonRound, Deadline } from '@/api/roundApi';
+import { hackathonApi } from '@/api/hackathonApi';
 
 export default function HackathonDetails() {
   const { id } = useParams<{ id: string }>();
@@ -25,16 +26,30 @@ export default function HackathonDetails() {
   const [activeTab, setActiveTab] = useState<'overview' | 'personnel' | 'evaluations' | 'outcomes' | 'forms' | 'analytics' | 'talent' | 'copilot'>('overview');
   
   const hackathon = hackathons.byId[id || ''];
+  const [isLoadingHackathon, setIsLoadingHackathon] = useState(!hackathon);
 
   useEffect(() => {
     if (id && currentWorkspaceId) {
+      if (!hackathon) {
+        setIsLoadingHackathon(true);
+        hackathonApi.getHackathon(currentWorkspaceId, id)
+          .then((data) => {
+            useHackathonStore.getState().addHackathon(data);
+          })
+          .catch(console.error)
+          .finally(() => setIsLoadingHackathon(false));
+      }
       roundApi.getRounds(id).then(setRounds).catch(console.error);
       roundApi.getDeadlines(id).then(setDeadlines).catch(console.error);
     }
-  }, [id, currentWorkspaceId]);
+  }, [id, currentWorkspaceId, hackathon]);
 
-  if (!hackathon) {
-    return <div className="p-8">Hackathon not found or loading...</div>;
+  if (isLoadingHackathon) {
+    return <div className="p-8">Loading hackathon details...</div>;
+  }
+
+  if (!hackathon && !isLoadingHackathon) {
+    return <div className="p-8">Hackathon not found.</div>;
   }
 
   return (

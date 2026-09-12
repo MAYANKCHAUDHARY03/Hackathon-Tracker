@@ -12,12 +12,12 @@ export const hackathonApi = {
   createHackathon: (workspaceId: string, data: Partial<Hackathon>) =>
     api.post<Hackathon>(`/workspaces/${workspaceId}/hackathons`, data),
 
-  getHackathon: (id: string) =>
-    api.get<Hackathon>(`/hackathons/${id}`),
+  getHackathon: (workspaceId: string, id: string) =>
+    api.get<Hackathon>(`/workspaces/${workspaceId}/hackathons/${id}`),
 
-  getRounds: (hackathonId: string) =>
-    api.get<any[]>(`/hackathons/${hackathonId}/rounds`),
+  getRounds: (workspaceId: string, hackathonId: string) =>
+    api.get<any[]>(`/workspaces/${workspaceId}/hackathons/${hackathonId}/rounds`),
 
-  updateHackathon: (id: string, data: Partial<Hackathon>) =>
-    api.patch<Hackathon>(`/hackathons/${id}`, data),
+  updateHackathon: (workspaceId: string, id: string, data: Partial<Hackathon>) =>
+    api.put<Hackathon>(`/workspaces/${workspaceId}/hackathons/${id}`, data),
 };

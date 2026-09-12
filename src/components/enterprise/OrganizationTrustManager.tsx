@@ -4,6 +4,14 @@ import { Button } from '@/components/ui/button'
 import { useState } from 'react'
 import { apiClient } from '@/lib/api-client'
 
+export interface TrustResponse {
+  id: string;
+  trustor_org_id: string;
+  trustee_org_id: string;
+  status: string;
+  allowed_scopes: string[];
+}
+
 export function OrganizationTrustManager({ orgId }: { orgId: string }) {
   const queryClient = useQueryClient()
   const [newTrusteeId, setNewTrusteeId] = useState('')
@@ -11,7 +19,7 @@ export function OrganizationTrustManager({ orgId }: { orgId: string }) {
 
   const { data: trusts, isLoading } = useQuery({
     queryKey: ['org-federation', orgId],
-    queryFn: () => apiClient.get(`/organizations/${orgId}/federation/trusts`),
+    queryFn: () => apiClient.get<TrustResponse[]>(`/organizations/${orgId}/federation/trusts`),
     enabled: !!orgId,
   })
 
@@ -83,7 +91,7 @@ export function OrganizationTrustManager({ orgId }: { orgId: string }) {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {trusts?.filter((t: any) => t.trustee_org_id === orgId).map((trust: any) => (
+              {trusts?.filter(t => t.trustee_org_id === orgId).map(trust => (
                 <div key={trust.id} className="flex justify-between items-center p-4 border rounded-lg">
                   <div>
                     <p className="font-medium">From Trustor: {trust.trustor_org_id}</p>
@@ -103,7 +111,7 @@ export function OrganizationTrustManager({ orgId }: { orgId: string }) {
                   )}
                 </div>
               ))}
-              {(!trusts || trusts.filter((t: any) => t.trustee_org_id === orgId).length === 0) && (
+              {(!trusts || trusts.filter(t => t.trustee_org_id === orgId).length === 0) && (
                 <p className="text-muted-foreground text-sm">No inbound requests.</p>
               )}
             </div>
@@ -116,7 +124,7 @@ export function OrganizationTrustManager({ orgId }: { orgId: string }) {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {trusts?.filter((t: any) => t.trustor_org_id === orgId).map((trust: any) => (
+              {trusts?.filter(t => t.trustor_org_id === orgId).map(trust => (
                 <div key={trust.id} className="flex justify-between items-center p-4 border rounded-lg">
                   <div>
                     <p className="font-medium">To Trustee: {trust.trustee_org_id}</p>
@@ -126,7 +134,7 @@ export function OrganizationTrustManager({ orgId }: { orgId: string }) {
                   <Button size="sm" variant="outline" onClick={() => revokeMutation.mutate(trust.id)}>Revoke</Button>
                 </div>
               ))}
-              {(!trusts || trusts.filter((t: any) => t.trustor_org_id === orgId).length === 0) && (
+              {(!trusts || trusts.filter(t => t.trustor_org_id === orgId).length === 0) && (
                 <p className="text-muted-foreground text-sm">No outbound trust relationships.</p>
               )}
             </div>

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useWorkspaceStore } from '@/store/workspaceStore';
+import { useHackathonStore } from '@/store/hackathonStore';
 import { hackathonApi } from '@/api/hackathonApi';
 import type { Hackathon } from '@/types';
 import { GlassPanel } from '@/components/ui/glass-panel';
@@ -12,7 +13,7 @@ import { ProgramSimulationEngine } from '@/components/hackathons/ProgramSimulati
 
 export default function Hackathons() {
   const navigate = useNavigate();
-  const { activeWorkspaceId } = useWorkspaceStore();
+  const { activeWorkspaceId, applicationMode } = useWorkspaceStore();
   const [hackathons, setHackathons] = useState<Hackathon[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
@@ -27,6 +28,9 @@ export default function Hackathons() {
       const raw: any = await hackathonApi.getHackathons(activeWorkspaceId);
       const list = Array.isArray(raw) ? raw : Array.isArray(raw?.items) ? raw.items : Array.isArray(raw?.data) ? raw.data : [];
       setHackathons(list);
+      // Populate store so details page doesn't have to refetch if navigated
+      const store = useHackathonStore.getState();
+      list.forEach((h: Hackathon) => store.addHackathon(h));
     } catch (err: any) {
       setError(err instanceof Error ? err : new Error('Failed to load programs'));
     } finally {
@@ -64,10 +68,12 @@ export default function Hackathons() {
           <h1 className="text-3xl font-bold tracking-tight">Programs</h1>
           <p className="text-muted-foreground mt-1">Manage hackathons, challenges, and incubations.</p>
         </div>
-        <Button className="gap-2" onClick={() => setIsWizardOpen(true)}>
-          <Plus className="h-4 w-4" />
-          Create Program
-        </Button>
+        {applicationMode === 'organization' && (
+          <Button className="gap-2" onClick={() => setIsWizardOpen(true)}>
+            <Plus className="h-4 w-4" />
+            Create Program
+          </Button>
+        )}
       </div>
 
       {isLoading ? (
@@ -88,9 +94,13 @@ export default function Hackathons() {
           </div>
           <h2 className="text-2xl font-semibold mb-3">No programs found</h2>
           <p className="text-muted-foreground max-w-md mx-auto mb-8">
-            Get started by creating your first hackathon, innovation challenge, or incubation program.
+            {applicationMode === 'organization' 
+              ? 'Get started by creating your first hackathon, innovation challenge, or incubation program.'
+              : 'There are no active programs in this workspace right now.'}
           </p>
-          <Button size="lg" onClick={() => setIsWizardOpen(true)}>Create Your First Program</Button>
+          {applicationMode === 'organization' && (
+            <Button size="lg" onClick={() => setIsWizardOpen(true)}>Create Your First Program</Button>
+          )}
         </div>
       ) : (
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -137,7 +147,7 @@ export default function Hackathons() {
                     <span className="uppercase tracking-wider">{hackathon.program_type || 'Hackathon'}</span>
                   </div>
                   <div className="flex items-center text-sm font-medium text-primary opacity-0 group-hover:opacity-100 transition-opacity transform group-hover:translate-x-0 -translate-x-2">
-                    <span>Manage</span>
+                    <span>{applicationMode === 'organization' ? 'Manage' : 'View Details'}</span>
                     <ArrowRight className="h-4 w-4 ml-1" />
                   </div>
                 </div>
@@ -147,15 +157,19 @@ export default function Hackathons() {
         </div>
       )}
 
-      <div className="mt-12">
-        <ProgramSimulationEngine />
-      </div>
+      {applicationMode === 'organization' && (
+        <div className="mt-12">
+          <ProgramSimulationEngine />
+        </div>
+      )}
 
-      <ProgramCreationWizard 
-        open={isWizardOpen} 
-        onOpenChange={setIsWizardOpen} 
-        onSuccess={fetchHackathons} 
-      />
+      {applicationMode === 'organization' && (
+        <ProgramCreationWizard 
+          open={isWizardOpen} 
+          onOpenChange={setIsWizardOpen} 
+          onSuccess={fetchHackathons} 
+        />
+      )}
     </div>
   );
 }

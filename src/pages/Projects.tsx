@@ -22,12 +22,13 @@ import {
 
 export default function Projects() {
   const navigate = useNavigate();
-  const { activeWorkspaceId } = useWorkspaceStore();
+  const { activeWorkspaceId, applicationMode } = useWorkspaceStore();
   const [projects, setProjects] = useState<Project[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [newProject, setNewProject] = useState({ name: '', description: '', hackathon_id: '', team_id: '' });
   const [hackathons, setHackathons] = useState<Hackathon[]>([]);
   const [teams, setTeams] = useState<Team[]>([]);
@@ -72,6 +73,7 @@ export default function Projects() {
        return;
     }
     try {
+      setIsSubmitting(true);
       const created = await projectsApi.createProject(activeWorkspaceId, newProject.team_id, {
         name: newProject.name,
         description: newProject.description,
@@ -83,6 +85,8 @@ export default function Projects() {
       toast.success("Project created successfully");
     } catch (err: any) {
       toast.error(err.message || 'Failed to create project');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -95,73 +99,81 @@ export default function Projects() {
           <h1 className="text-3xl font-bold tracking-tight">Project Database</h1>
           <p className="text-muted-foreground mt-1">Explore projects submitted across the workspace.</p>
         </div>
-        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-          <DialogTrigger asChild>
-            <Button className="gap-2">
-              <Plus className="h-4 w-4" />
-              Create Project
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="sm:max-w-[425px]">
-            <DialogHeader>
-              <DialogTitle>Create a New Project</DialogTitle>
-            </DialogHeader>
-            <form onSubmit={handleCreateProject} className="space-y-4 pt-4">
-              <div className="space-y-2">
-                <label className="text-sm font-medium">Project Name</label>
-                <input
-                  required
-                  type="text"
-                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-                  value={newProject.name}
-                  onChange={e => setNewProject({...newProject, name: e.target.value})}
-                />
-              </div>
-              <div className="space-y-2">
-                <label className="text-sm font-medium">Hackathon</label>
-                <select
-                  required
-                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-                  value={newProject.hackathon_id}
-                  onChange={e => setNewProject({...newProject, hackathon_id: e.target.value, team_id: ''})}
-                >
-                  <option value="" disabled>Select a Hackathon</option>
-                  {hackathons.map(h => (
-                    <option key={h.id} value={h.id}>{h.name}</option>
-                  ))}
-                </select>
-              </div>
-              <div className="space-y-2">
-                <label className="text-sm font-medium">Team</label>
-                <select
-                  required
-                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-                  value={newProject.team_id}
-                  onChange={e => setNewProject({...newProject, team_id: e.target.value})}
-                  disabled={!newProject.hackathon_id}
-                >
-                  <option value="" disabled>Select a Team</option>
-                  {filteredTeams.map(t => (
-                    <option key={t.id} value={t.id}>{t.name}</option>
-                  ))}
-                </select>
-              </div>
-              <div className="space-y-2">
-                <label className="text-sm font-medium">Description</label>
-                <textarea
-                  required
-                  className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-                  value={newProject.description}
-                  onChange={e => setNewProject({...newProject, description: e.target.value})}
-                />
-              </div>
-              <div className="flex justify-end gap-3 mt-6">
-                <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)}>Cancel</Button>
-                <Button type="submit">Create Project</Button>
-              </div>
-            </form>
-          </DialogContent>
-        </Dialog>
+        {applicationMode === 'student' && (
+          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+            <DialogTrigger asChild>
+              <Button className="gap-2">
+                <Plus className="h-4 w-4" />
+                Create Project
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[425px]">
+              <DialogHeader>
+                <DialogTitle>Create a New Project</DialogTitle>
+              </DialogHeader>
+              <form onSubmit={handleCreateProject} className="space-y-4 pt-4">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Project Name</label>
+                  <input
+                    name="name"
+                    required
+                    type="text"
+                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                    value={newProject.name}
+                    onChange={e => setNewProject({...newProject, name: e.target.value})}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Hackathon</label>
+                  <select
+                    name="hackathon_id"
+                    required
+                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                    value={newProject.hackathon_id}
+                    onChange={e => setNewProject({...newProject, hackathon_id: e.target.value, team_id: ''})}
+                  >
+                    <option value="" disabled>Select a Hackathon</option>
+                    {hackathons.map(h => (
+                      <option key={h.id} value={h.id}>{h.name}</option>
+                    ))}
+                  </select>
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Team</label>
+                  <select
+                    name="team_id"
+                    required
+                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                    value={newProject.team_id}
+                    onChange={e => setNewProject({...newProject, team_id: e.target.value})}
+                    disabled={!newProject.hackathon_id}
+                  >
+                    <option value="" disabled>Select a Team</option>
+                    {filteredTeams.map(t => (
+                      <option key={t.id} value={t.id}>{t.name}</option>
+                    ))}
+                  </select>
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Description</label>
+                  <textarea
+                    name="description"
+                    required
+                    className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                    value={newProject.description}
+                    onChange={e => setNewProject({...newProject, description: e.target.value})}
+                  />
+                </div>
+                <div className="flex justify-end gap-3 mt-6">
+                  <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)} disabled={isSubmitting}>Cancel</Button>
+                  <Button type="submit" disabled={isSubmitting}>
+                    {isSubmitting ? 'Creating...' : 'Create Project'}
+                  </Button>
+                </div>
+              </form>
+            </DialogContent>
+          </Dialog>
+        )}
       </div>
 
       {isLoading ? (
