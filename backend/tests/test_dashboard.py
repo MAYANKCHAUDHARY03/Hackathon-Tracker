@@ -41,7 +41,7 @@ async def test_get_dashboard_summary_populated(async_client: AsyncClient):
     now = datetime.now(timezone.utc)
     
     # 1. Active Hackathon
-    await async_client.post(
+    res1 = await async_client.post(
         f"/api/v1/workspaces/{workspace_id}/hackathons",
         json={
             "name": "Active Hackathon",
@@ -52,9 +52,10 @@ async def test_get_dashboard_summary_populated(async_client: AsyncClient):
         },
         headers=headers
     )
+    print(f"Res1: {res1.status_code} {res1.text}")
 
     # 2. Upcoming Hackathon
-    await async_client.post(
+    res2 = await async_client.post(
         f"/api/v1/workspaces/{workspace_id}/hackathons",
         json={
             "name": "Upcoming Hackathon",
@@ -65,6 +66,7 @@ async def test_get_dashboard_summary_populated(async_client: AsyncClient):
         },
         headers=headers
     )
+    print(f"Res2: {res2.status_code} {res2.text}")
 
     # 3. Completed Hackathon
     await async_client.post(

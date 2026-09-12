@@ -4,15 +4,9 @@ from httpx import AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.main import app
 from app.dependencies import get_current_user, require_workspace_admin, verify_workspace_access
-from tests.conftest import TestingSessionLocal
 from app.models.workspace import Workspace
 from app.models.hackathon import Hackathon
 from datetime import datetime, timezone
-
-@pytest.fixture
-async def db_session():
-    async with TestingSessionLocal() as session:
-        yield session
 
 mock_user_id = uuid.uuid4()
 class MockUser:

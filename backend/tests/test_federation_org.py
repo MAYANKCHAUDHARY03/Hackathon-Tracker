@@ -10,11 +10,9 @@ from app.models.organization import Organization, OrganizationMembership
 from app.models.organization_trust import OrganizationTrust, TrustStatus
 import pytest_asyncio
 
-@pytest_asyncio.fixture
-async def db():
-    from tests.conftest import TestingSessionLocal
-    async with TestingSessionLocal() as session:
-        yield session
+@pytest.fixture
+async def db(db_session):
+    yield db_session
 
 @pytest.fixture
 async def test_org_a(db: AsyncSession):

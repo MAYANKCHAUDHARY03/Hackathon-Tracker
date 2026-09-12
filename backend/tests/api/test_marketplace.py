@@ -8,12 +8,6 @@ from app.models.sponsor import Sponsor
 from app.models.graph import GraphEdge
 from app.main import app
 from app.dependencies import get_current_user
-from tests.conftest import TestingSessionLocal
-
-@pytest.fixture
-async def db_session():
-    async with TestingSessionLocal() as session:
-        yield session
 
 class MockUser:
     def __init__(self, id, role, email):

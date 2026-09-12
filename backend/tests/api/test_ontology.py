@@ -6,12 +6,6 @@ from app.models.ontology import UniversalEntity, EntityType, VerificationLevel, 
 from app.models.problem import Problem
 from app.models.base import Base
 from sqlalchemy import select
-from tests.conftest import TestingSessionLocal
-
-@pytest.fixture
-async def db_session():
-    async with TestingSessionLocal() as session:
-        yield session
 
 @pytest.fixture
 def workspace_id():

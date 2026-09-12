@@ -13,12 +13,6 @@ async def async_client():
 # Let's test the OntologyService directly.
 from app.services.ontology_service import OntologyService
 from app.schemas.ontology import UniversalEntityCreate, UniversalEntityUpdate
-from tests.conftest import TestingSessionLocal
-
-@pytest.fixture
-async def db_session():
-    async with TestingSessionLocal() as session:
-        yield session
 
 @pytest.mark.asyncio
 async def test_ontology_service_crud(db_session):

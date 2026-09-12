@@ -30,7 +30,7 @@ async def create_edge(
         provenance=edge_data.provenance or "user-provided",
         confidence=edge_data.confidence or 1.0,
         created_by=membership.user_id,
-        edge_edge_metadata=edge_data.edge_metadata
+        edge_metadata=edge_data.edge_metadata
     )
     
     return edge

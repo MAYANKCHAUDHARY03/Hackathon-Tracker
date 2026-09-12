@@ -4,12 +4,6 @@ from httpx import AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.main import app
 from app.dependencies import get_current_user
-from tests.conftest import TestingSessionLocal
-
-@pytest.fixture
-async def db_session():
-    async with TestingSessionLocal() as session:
-        yield session
 
 class MockUser:
     def __init__(self, id, role, email):

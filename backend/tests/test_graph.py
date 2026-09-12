@@ -12,8 +12,12 @@ async def override_verify_workspace_access():
 async def override_get_current_user():
     return User(id=uuid.uuid4(), email="test@test.com")
 
-app.dependency_overrides[verify_workspace_access] = override_verify_workspace_access
-app.dependency_overrides[get_current_user] = override_get_current_user
+@pytest.fixture(autouse=True)
+def override_deps():
+    app.dependency_overrides[verify_workspace_access] = override_verify_workspace_access
+    app.dependency_overrides[get_current_user] = override_get_current_user
+    yield
+    app.dependency_overrides.clear()
 
 @pytest.mark.asyncio
 async def test_graph_edge_creation(async_client: AsyncClient):

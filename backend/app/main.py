@@ -184,11 +184,19 @@ from app.routers import forecasting
 from app.routers import impact
 from app.routers import observatory
 from app.routers import federation
+from app.routers import organization_federation
 from app.routers import developer
 from app.routers import governance
 from app.routers import network
 from app.routers.public_api_v1 import hackathons as public_hackathons
 from app.routers.public_api_v1 import data_exchange
+from app.routers import agents
+from app.routers import approvals
+from app.routers import memory
+from app.routers import innovation_protocol
+from app.routers import trust_verification
+from app.routers import portable_projects
+
 app.include_router(api_keys.router, prefix=f"{settings.API_V1_STR}", tags=["api_keys"])
 app.include_router(data_exchange.router, prefix="/api/v1")
 app.include_router(verification.router, prefix="/api/v1")
@@ -198,3 +206,15 @@ app.include_router(copilot.router, prefix="/api/v1")
 app.include_router(forecasting.router, prefix="/api/v1")
 app.include_router(impact.router, prefix="/api/v1")
 app.include_router(observatory.router, prefix="/api/v1")
+app.include_router(federation.router, prefix="/api/v1")
+app.include_router(organization_federation.router, prefix="/api/v1")
+app.include_router(developer.router, prefix="/api/v1")
+app.include_router(governance.router, prefix="/api/v1")
+app.include_router(network.router, prefix="/api/v1")
+app.include_router(public_hackathons.router, prefix="/api")
+app.include_router(agents.router, prefix="/api/v1")
+app.include_router(approvals.router, prefix="/api/v1")
+app.include_router(memory.router, prefix="/api/v1")
+app.include_router(innovation_protocol.router, prefix="") # router has /api/v1/protocol prefix
+app.include_router(trust_verification.router, prefix="/api/v1")
+app.include_router(portable_projects.router, prefix="/api/v1")

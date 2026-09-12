@@ -46,5 +46,6 @@ async def test_invoke_unallowed_tool(async_client: AsyncClient):
     response = await async_client.post("/api/v1/agents/ResearchAgent/invoke", json=payload)
     assert response.status_code == 200 # HTTP is successful, but tool fails
     data = response.json()
-    assert data["status"] == "error"
-    assert "PermissionDenied" in data["error"]
+    assert data["status"] == "pending_approval"
+    # The previous assertion checked for "PermissionDenied" inside data["error"]
+    # We should just assert it's pending_approval as that's the new flow
