@@ -3,8 +3,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 import uuid
 
 from app.database import get_db
-from app.models.user import User
-from app.dependencies import get_current_user
+from app.models.user import User, WorkspaceMembership
+from app.dependencies import get_current_user, verify_workspace_access
 from app.schemas.project import ProjectResponse, ProjectCreate, ProjectTransitionCreate, ProjectTransition
 from app.services import project_service
 
@@ -14,7 +14,7 @@ router = APIRouter()
 async def get_projects(
     workspace_id: uuid.UUID,
     db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    membership: WorkspaceMembership = Depends(verify_workspace_access)
 ):
     return await project_service.get_projects(db, workspace_id)
 
@@ -24,9 +24,9 @@ async def create_project(
     team_id: uuid.UUID,
     project_in: ProjectCreate,
     db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    membership: WorkspaceMembership = Depends(verify_workspace_access)
 ):
-    return await project_service.create_project(db, workspace_id, team_id, project_in, current_user)
+    return await project_service.create_project(db, workspace_id, team_id, project_in, membership.user)
 
 @router.post("/workspaces/{workspace_id}/projects/{project_id}/transitions", response_model=ProjectResponse)
 async def transition_project_state(
@@ -34,10 +34,10 @@ async def transition_project_state(
     project_id: uuid.UUID,
     transition_in: ProjectTransitionCreate,
     db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    membership: WorkspaceMembership = Depends(verify_workspace_access)
 ):
     return await project_service.transition_project_state(
-        db, workspace_id, project_id, transition_in.state, current_user, transition_in.notes or ""
+        db, workspace_id, project_id, transition_in.state, membership.user, transition_in.notes or ""
     )
 
 @router.get("/workspaces/{workspace_id}/projects/{project_id}/transitions", response_model=list[ProjectTransition])
@@ -45,7 +45,7 @@ async def get_project_transitions(
     workspace_id: uuid.UUID,
     project_id: uuid.UUID,
     db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    membership: WorkspaceMembership = Depends(verify_workspace_access)
 ):
     return await project_service.get_project_transitions(db, workspace_id, project_id)
 
@@ -57,9 +57,9 @@ async def get_project_copilot_status(
     workspace_id: uuid.UUID,
     project_id: uuid.UUID,
     db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    membership: WorkspaceMembership = Depends(verify_workspace_access)
 ):
-    service = ProjectCopilotService(db, current_user.id, workspace_id)
+    service = ProjectCopilotService(db, membership.user.id, workspace_id)
     return await service.get_project_status(project_id)
 
 @router.post("/workspaces/{workspace_id}/projects/{project_id}/copilot/action")
@@ -68,9 +68,9 @@ async def execute_project_copilot_action(
     project_id: uuid.UUID,
     action_req: CopilotActionRequest,
     db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    membership: WorkspaceMembership = Depends(verify_workspace_access)
 ):
-    service = ProjectCopilotService(db, current_user.id, workspace_id)
+    service = ProjectCopilotService(db, membership.user.id, workspace_id)
     return await service.execute_action(project_id, action_req.action)
 
 from app.schemas.mentor_copilot import MentorCopilotBrief
@@ -81,9 +81,9 @@ async def get_mentor_copilot_brief(
     workspace_id: uuid.UUID,
     project_id: uuid.UUID,
     db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    membership: WorkspaceMembership = Depends(verify_workspace_access)
 ):
-    service = MentorCopilotService(db, current_user.id, workspace_id)
+    service = MentorCopilotService(db, membership.user.id, workspace_id)
     return await service.generate_brief(project_id)
 
 from app.schemas.repository_audit import RepositoryAuditResponse
@@ -94,9 +94,9 @@ async def generate_repository_audit(
     workspace_id: uuid.UUID,
     project_id: uuid.UUID,
     db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    membership: WorkspaceMembership = Depends(verify_workspace_access)
 ):
-    service = RepositoryAuditService(db, current_user.id, workspace_id)
+    service = RepositoryAuditService(db, membership.user.id, workspace_id)
     return await service.generate_audit(project_id)
 
 @router.get("/workspaces/{workspace_id}/projects/{project_id}/audits", response_model=list[RepositoryAuditResponse])
@@ -104,7 +104,7 @@ async def get_repository_audits(
     workspace_id: uuid.UUID,
     project_id: uuid.UUID,
     db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    membership: WorkspaceMembership = Depends(verify_workspace_access)
 ):
-    service = RepositoryAuditService(db, current_user.id, workspace_id)
+    service = RepositoryAuditService(db, membership.user.id, workspace_id)
     return await service.get_audits_for_project(project_id)

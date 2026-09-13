@@ -2,8 +2,8 @@ import uuid
 from typing import List
 from fastapi import APIRouter, Depends, Header, BackgroundTasks
 from sqlalchemy.ext.asyncio import AsyncSession
-from app.dependencies import get_db, get_current_user
-from app.models.user import User
+from app.dependencies import get_db, verify_workspace_access_header
+from app.models.user import User, WorkspaceMembership
 from app.schemas.submission import (
     SubmissionRequirementCreate, 
     SubmissionRequirementResponse, 
@@ -26,33 +26,30 @@ router = APIRouter(prefix="/hackathons/{hackathon_id}/rounds/{round_id}", tags=[
 async def read_requirements(
     hackathon_id: uuid.UUID,
     round_id: uuid.UUID,
-    x_workspace_id: uuid.UUID = Header(...),
     db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    membership: WorkspaceMembership = Depends(verify_workspace_access_header)
 ):
-    return await get_requirements_for_round(db, x_workspace_id, round_id)
+    return await get_requirements_for_round(db, membership.workspace_id, round_id)
 
 @router.post("/requirements", response_model=SubmissionRequirementResponse)
 async def add_requirement(
     hackathon_id: uuid.UUID,
     round_id: uuid.UUID,
     req_in: SubmissionRequirementCreate,
-    x_workspace_id: uuid.UUID = Header(...),
     db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    membership: WorkspaceMembership = Depends(verify_workspace_access_header)
 ):
-    return await create_requirement(db, x_workspace_id, hackathon_id, round_id, req_in, current_user)
+    return await create_requirement(db, membership.workspace_id, hackathon_id, round_id, req_in, membership.user)
 
 @router.get("/teams/{team_id}/submission", response_model=RoundSubmissionResponse)
 async def get_or_create_submission(
     hackathon_id: uuid.UUID,
     round_id: uuid.UUID,
     team_id: uuid.UUID,
-    x_workspace_id: uuid.UUID = Header(...),
     db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    membership: WorkspaceMembership = Depends(verify_workspace_access_header)
 ):
-    submission = await initialize_team_submission(db, x_workspace_id, hackathon_id, round_id, team_id)
+    submission = await initialize_team_submission(db, membership.workspace_id, hackathon_id, round_id, team_id)
     # the relationship 'items' is used in the response model, ensure it's loaded if we need to.
     # The default lazy load on async might fail without proper selectinload.
     # To keep it simple, we can fetch items and populate them manually or update the service query.
@@ -64,15 +61,14 @@ async def update_item(
     round_id: uuid.UUID,
     team_id: uuid.UUID,
     item_in: SubmissionItemCreate,
-    x_workspace_id: uuid.UUID = Header(...),
     db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    membership: WorkspaceMembership = Depends(verify_workspace_access_header)
 ):
-    submission = await get_team_submission(db, x_workspace_id, round_id, team_id)
+    submission = await get_team_submission(db, membership.workspace_id, round_id, team_id)
     if not submission:
-        submission = await initialize_team_submission(db, x_workspace_id, hackathon_id, round_id, team_id)
+        submission = await initialize_team_submission(db, membership.workspace_id, hackathon_id, round_id, team_id)
         
-    return await update_submission_item(db, x_workspace_id, submission.id, item_in, current_user)
+    return await update_submission_item(db, membership.workspace_id, submission.id, item_in, membership.user)
 
 async def run_automation_in_background(workspace_id: uuid.UUID, trigger_type: str, event_data: dict):
     from app.database import AsyncSessionLocal
@@ -86,15 +82,14 @@ async def lock_team_submission(
     round_id: uuid.UUID,
     team_id: uuid.UUID,
     background_tasks: BackgroundTasks,
-    x_workspace_id: uuid.UUID = Header(...),
     db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    membership: WorkspaceMembership = Depends(verify_workspace_access_header)
 ):
-    submission = await get_team_submission(db, x_workspace_id, round_id, team_id)
+    submission = await get_team_submission(db, membership.workspace_id, round_id, team_id)
     if not submission:
-        submission = await initialize_team_submission(db, x_workspace_id, hackathon_id, round_id, team_id)
+        submission = await initialize_team_submission(db, membership.workspace_id, hackathon_id, round_id, team_id)
         
-    result = await lock_submission(db, x_workspace_id, submission.id, current_user)
+    result = await lock_submission(db, membership.workspace_id, submission.id, membership.user)
     
     # Trigger automation
     event_data = {
@@ -104,6 +99,6 @@ async def lock_team_submission(
         "round_id": str(round_id),
         "hackathon_id": str(hackathon_id)
     }
-    background_tasks.add_task(run_automation_in_background, x_workspace_id, "submission_created", event_data)
+    background_tasks.add_task(run_automation_in_background, membership.workspace_id, "submission_created", event_data)
     
     return result

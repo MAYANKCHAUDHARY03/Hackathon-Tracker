@@ -16,6 +16,15 @@ async def get_projects(db: AsyncSession, workspace_id: uuid.UUID):
     return result.scalars().all()
 
 async def create_project(db: AsyncSession, workspace_id: uuid.UUID, team_id: uuid.UUID, project_in: ProjectCreate, user: User):
+    from app.models.team import Team
+    stmt = select(Team).where(Team.id == team_id, Team.workspace_id == workspace_id)
+    team = (await db.execute(stmt)).scalars().first()
+    if not team:
+        raise HTTPException(status_code=404, detail="Team not found in this workspace")
+
+    if project_in.hackathon_id and project_in.hackathon_id != team.hackathon_id:
+        raise HTTPException(status_code=400, detail="Project hackathon_id must match Team hackathon_id")
+        
     import re
     slug = re.sub(r'[^a-z0-9]+', '-', project_in.name.lower()).strip('-')
     project = Project(

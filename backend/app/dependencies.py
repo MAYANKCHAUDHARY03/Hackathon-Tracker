@@ -61,6 +61,27 @@ async def verify_workspace_access(
         )
     return membership
 
+from fastapi import Header
+
+async def verify_workspace_access_header(
+    x_workspace_id: UUID = Header(..., alias="x-workspace-id"),
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db)
+) -> WorkspaceMembership:
+    stmt = select(WorkspaceMembership).where(
+        WorkspaceMembership.workspace_id == x_workspace_id,
+        WorkspaceMembership.user_id == current_user.id
+    )
+    result = await db.execute(stmt)
+    membership = result.scalar_one_or_none()
+    
+    if not membership:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Workspace not found or access denied"
+        )
+    return membership
+
 async def require_workspace_admin(
     membership: WorkspaceMembership = Depends(verify_workspace_access)
 ) -> WorkspaceMembership:

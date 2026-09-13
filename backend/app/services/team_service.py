@@ -18,6 +18,12 @@ async def create_team(db: AsyncSession, workspace_id: uuid.UUID, hackathon_id: u
     if not hackathon_id:
         raise HTTPException(status_code=400, detail="hackathon_id is required to create a team")
 
+    from app.models.hackathon import Hackathon
+    stmt = select(Hackathon).where(Hackathon.id == hackathon_id, Hackathon.workspace_id == workspace_id)
+    hackathon = (await db.execute(stmt)).scalars().first()
+    if not hackathon:
+        raise HTTPException(status_code=404, detail="Hackathon not found in this workspace")
+
     slug = re.sub(r'[^a-z0-9]+', '-', team_in.name.lower()).strip('-')
     team = Team(
         workspace_id=workspace_id,

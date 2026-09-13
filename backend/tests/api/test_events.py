@@ -21,8 +21,13 @@ class MockUser:
 def override_deps():
     def _override_user():
         return MockUser(id=mock_user_id, email="test@test.com")
+    class MockMembership:
+        def __init__(self, user, workspace_id, role="admin"):
+            self.user = user
+            self.workspace_id = workspace_id
+            self.role = role
     def _override_access():
-        return True
+        return MockMembership(MockUser(id=mock_user_id, email="test@test.com"), uuid.uuid4())
         
     # Save original overrides
     original_overrides = dict(app.dependency_overrides)
