@@ -44,7 +44,7 @@ async def main():
 
         try:
             print("Registering user...")
-            await page.goto("http://localhost:5174/register")
+            await page.goto("http://localhost:5173/register")
             await page.wait_for_selector("text=Create a new account")
             
             await page.fill("input[name='full_name']", "E2E User")
@@ -83,7 +83,7 @@ async def main():
             
             # --- 2. SWITCH TO STUDENT MODE ---
             # We must be in Student mode to see the "Create Team" button.
-            await page.goto("http://localhost:5174/mode-selection")
+            await page.goto("http://localhost:5173/mode-selection")
             await page.wait_for_selector("text='Student / Participant'", timeout=5000)
             await page.click("button:has-text('Student / Participant')")
             await page.wait_for_selector("h1:has-text('Dashboard')", timeout=5000)
