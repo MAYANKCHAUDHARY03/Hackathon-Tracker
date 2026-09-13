@@ -44,13 +44,13 @@ export default function Projects() {
           hackathonApi.getHackathons(activeWorkspaceId),
           teamApi.getTeams(activeWorkspaceId)
         ]);
-        const pList = Array.isArray(projData) ? projData : Array.isArray((projData as any)?.items) ? (projData as any).items : Array.isArray((projData as any)?.data) ? (projData as any).data : [];
+        const pList = projData;
         setProjects(pList);
 
-        const hList = Array.isArray(hackData) ? hackData : Array.isArray((hackData as any)?.items) ? (hackData as any).items : Array.isArray((hackData as any)?.data) ? (hackData as any).data : [];
+        const hList = hackData;
         setHackathons(hList);
 
-        const tList = Array.isArray(teamData) ? teamData : Array.isArray((teamData as any)?.items) ? (teamData as any).items : Array.isArray((teamData as any)?.data) ? (teamData as any).data : [];
+        const tList = teamData;
         setTeams(tList);
       } catch (err: any) {
         setError(err instanceof Error ? err : new Error('Failed to load projects'));
@@ -218,10 +218,10 @@ export default function Projects() {
               </p>
               
               <div className="space-y-2 mb-4">
-                {project.github_repo_url && (
+                {project.repository_url && (
                   <div className="flex items-center gap-2 text-sm text-muted-foreground">
                     <GitBranch className="h-4 w-4" />
-                    <span className="truncate">{(() => { try { return new URL(project.github_repo_url!).hostname; } catch { return project.github_repo_url; } })()}</span>
+                    <span className="truncate">{(() => { try { return new URL(project.repository_url!).hostname; } catch { return project.repository_url; } })()}</span>
                   </div>
                 )}
                 <div className="flex items-center gap-2 text-sm text-muted-foreground">

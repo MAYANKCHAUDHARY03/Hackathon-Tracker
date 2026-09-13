@@ -42,10 +42,10 @@ export default function Teams() {
           teamApi.getTeams(activeWorkspaceId),
           hackathonApi.getHackathons(activeWorkspaceId)
         ]);
-        const list = Array.isArray(teamsData) ? teamsData : Array.isArray((teamsData as any)?.items) ? (teamsData as any).items : Array.isArray((teamsData as any)?.data) ? (teamsData as any).data : [];
+        const list = teamsData;
         setTeams(list);
         
-        const hList = Array.isArray(hackathonsData) ? hackathonsData : Array.isArray((hackathonsData as any)?.items) ? (hackathonsData as any).items : Array.isArray((hackathonsData as any)?.data) ? (hackathonsData as any).data : [];
+        const hList = hackathonsData;
         setHackathons(hList);
         
         if (!newTeam.hackathon_id && hList.length > 0) {

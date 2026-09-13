@@ -30,15 +30,20 @@ export interface User extends BaseEntity {
 export interface Hackathon extends BaseEntity, SoftDeletable {
   workspace_id: ID;
   name: string;
-  website_url?: string;
   description?: string;
+  organiser?: string;
+  official_url?: string;
+  mode: string;
+  location?: string;
+  registration_deadline: ISO8601Date;
   start_date: ISO8601Date;
   end_date: ISO8601Date;
-  status_id: ID; // FK to Status
-  location?: string;
-  is_online: boolean;
-  program_type?: string;
-  is_template?: boolean;
+  max_team_size: number;
+  status: string;
+  program_type: string;
+  is_template: boolean;
+  created_by?: ID;
+  archived_at?: ISO8601Date | null;
 }
 
 export interface Team extends BaseEntity {
@@ -47,12 +52,14 @@ export interface Team extends BaseEntity {
   tagline?: string;
 }
 
-export interface Project extends BaseEntity, SoftDeletable {
+export interface Project extends BaseEntity {
   team_id: ID;
+  hackathon_id?: ID;
   name: string;
   description?: string;
-  github_repo_url?: string;
-  demo_url?: string;
+  repository_url?: string;
+  status?: string;
+  workspace_id: ID;
 }
 
 export interface Round extends BaseEntity {

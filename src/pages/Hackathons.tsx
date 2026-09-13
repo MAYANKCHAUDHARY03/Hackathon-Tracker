@@ -25,8 +25,7 @@ export default function Hackathons() {
     setIsLoading(true);
     setError(null);
     try {
-      const raw: any = await hackathonApi.getHackathons(activeWorkspaceId);
-      const list = Array.isArray(raw) ? raw : Array.isArray(raw?.items) ? raw.items : Array.isArray(raw?.data) ? raw.data : [];
+      const list = await hackathonApi.getHackathons(activeWorkspaceId);
       setHackathons(list);
       // Populate store so details page doesn't have to refetch if navigated
       const store = useHackathonStore.getState();
