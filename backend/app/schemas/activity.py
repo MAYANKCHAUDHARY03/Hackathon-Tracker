@@ -12,6 +12,6 @@ class ActivityEventResponse(ActivityEventBase):
     id: uuid.UUID
     workspace_id: uuid.UUID
     project_id: uuid.UUID | None = None
-    user_id: uuid.UUID
+    actor_id: uuid.UUID | None = None
     created_at: datetime
     model_config = ConfigDict(from_attributes=True)

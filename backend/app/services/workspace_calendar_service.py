@@ -30,6 +30,13 @@ class WorkspaceCalendarService:
     ) -> List[CalendarEvent]:
         events: List[CalendarEvent] = []
 
+        def _naive(dt: datetime) -> datetime:
+            """Strip tzinfo for safe comparison (SQLite stores naive datetimes)."""
+            return dt.replace(tzinfo=None) if dt.tzinfo is not None else dt
+
+        start_date = _naive(start_date)
+        end_date = _naive(end_date)
+
         # 1) Hackathon events
         hackathons_stmt = select(Hackathon).where(
             Hackathon.workspace_id == workspace_id,
@@ -39,7 +46,7 @@ class WorkspaceCalendarService:
         hackathons = result.scalars().all()
 
         for h in hackathons:
-            if start_date <= h.start_date <= end_date:
+            if start_date <= _naive(h.start_date) <= end_date:
                 events.append(CalendarEvent(
                     id=f"h-start-{h.id}",
                     title=f"{h.name} — Starts",
@@ -50,7 +57,7 @@ class WorkspaceCalendarService:
                     hackathon_name=h.name,
                     color=EVENT_COLORS["hackathon_start"],
                 ))
-            if start_date <= h.end_date <= end_date:
+            if start_date <= _naive(h.end_date) <= end_date:
                 events.append(CalendarEvent(
                     id=f"h-end-{h.id}",
                     title=f"{h.name} — Ends",
@@ -61,7 +68,7 @@ class WorkspaceCalendarService:
                     hackathon_name=h.name,
                     color=EVENT_COLORS["hackathon_end"],
                 ))
-            if start_date <= h.registration_deadline <= end_date:
+            if start_date <= _naive(h.registration_deadline) <= end_date:
                 events.append(CalendarEvent(
                     id=f"h-reg-{h.id}",
                     title=f"{h.name} — Registration Deadline",
@@ -87,7 +94,7 @@ class WorkspaceCalendarService:
 
         for r in rounds:
             h_name = hackathon_map.get(r.hackathon_id, "Unknown Program")
-            if r.starts_at and start_date <= r.starts_at <= end_date:
+            if r.starts_at and start_date <= _naive(r.starts_at) <= end_date:
                 events.append(CalendarEvent(
                     id=f"r-start-{r.id}",
                     title=f"{r.name} — Begins",
@@ -98,7 +105,7 @@ class WorkspaceCalendarService:
                     hackathon_name=h_name,
                     color=EVENT_COLORS["round_start"],
                 ))
-            if r.ends_at and start_date <= r.ends_at <= end_date:
+            if r.ends_at and start_date <= _naive(r.ends_at) <= end_date:
                 events.append(CalendarEvent(
                     id=f"r-end-{r.id}",
                     title=f"{r.name} — Ends",
@@ -109,7 +116,7 @@ class WorkspaceCalendarService:
                     hackathon_name=h_name,
                     color=EVENT_COLORS["round_end"],
                 ))
-            if r.result_at and start_date <= r.result_at <= end_date:
+            if r.result_at and start_date <= _naive(r.result_at) <= end_date:
                 events.append(CalendarEvent(
                     id=f"r-result-{r.id}",
                     title=f"{r.name} — Results",

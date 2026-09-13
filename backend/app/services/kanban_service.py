@@ -98,7 +98,7 @@ async def create_task(db: AsyncSession, workspace_id: uuid.UUID, column_id: uuid
     next_pos = (max_pos or 0) + 1000.0
 
     task = Task(
-        workspace_id=workspace_id,
+        board_id=board.id,
         column_id=column_id,
         title=task_in.title,
         description=task_in.description,

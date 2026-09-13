@@ -1,6 +1,7 @@
 import uuid
 from datetime import datetime, timezone
 from sqlalchemy import Column, String, DateTime, ForeignKey, Boolean, JSON, Enum
+from sqlalchemy.orm import relationship
 from sqlalchemy.dialects.postgresql import UUID
 from app.models.base import BaseEntity
 import enum
@@ -49,6 +50,8 @@ class MentorAssignment(BaseEntity):
     updated_by = Column(UUID(as_uuid=True), ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
     archived_at = Column(DateTime(timezone=True), nullable=True)
 
+    mentor = relationship("Person", foreign_keys=[mentor_id], lazy="select")
+
 class JudgeAssignment(BaseEntity):
     __tablename__ = "judge_assignments"
 
@@ -62,3 +65,5 @@ class JudgeAssignment(BaseEntity):
     created_by = Column(UUID(as_uuid=True), ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
     updated_by = Column(UUID(as_uuid=True), ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
     archived_at = Column(DateTime(timezone=True), nullable=True)
+
+    judge = relationship("Person", foreign_keys=[judge_id], lazy="select")

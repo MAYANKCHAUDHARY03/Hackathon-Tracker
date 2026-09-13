@@ -129,13 +129,19 @@ async def transition_project_state(db: AsyncSession, workspace_id: uuid.UUID, pr
     return project
 
 async def get_project_transitions(db: AsyncSession, workspace_id: uuid.UUID, project_id: uuid.UUID):
-    graph_service = KnowledgeGraphService(db)
-    edges = await graph_service.get_edges(node_id=project_id, workspace_id=workspace_id, direction="out")
+    from sqlalchemy import select
+    from app.models.graph import GraphEdge
+    stmt = select(GraphEdge).where(
+        GraphEdge.source_id == project_id,
+        GraphEdge.workspace_id == workspace_id,
+        GraphEdge.relation_type == "REACHED_STATE",
+        GraphEdge.target_type == "LifecycleState"
+    )
+    edges = (await db.execute(stmt)).scalars().all()
     
     transitions = []
     for edge in edges:
-        if edge.relation_type == "REACHED_STATE" and edge.target_type == "LifecycleState":
-            transitions.append(edge.properties)
+        transitions.append(edge.properties)
             
     # Sort transitions by chronological order
     transitions.sort(key=lambda x: x.get("transitioned_at", ""))

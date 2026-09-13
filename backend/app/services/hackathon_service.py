@@ -14,8 +14,10 @@ class HackathonService:
         user_id: UUID,
         hackathon_data: HackathonCreate
     ) -> Hackathon:
+        data = hackathon_data.model_dump(exclude_unset=True)
+        data.pop("status", None)
         hackathon = Hackathon(
-            **hackathon_data.model_dump(exclude_unset=True),
+            **data,
             workspace_id=workspace_id,
             created_by=user_id,
             status=hackathon_data.status or "draft"
@@ -180,8 +182,11 @@ class HackathonService:
         if not template.is_template:
             raise HTTPException(status_code=400, detail="Requested program is not a template")
             
+        data = hackathon_data.model_dump(exclude_unset=True)
+        for key in ("status", "program_type", "is_template"):
+            data.pop(key, None)
         hackathon = Hackathon(
-            **hackathon_data.model_dump(exclude_unset=True),
+            **data,
             workspace_id=workspace_id,
             created_by=user_id,
             status=hackathon_data.status or "draft",
