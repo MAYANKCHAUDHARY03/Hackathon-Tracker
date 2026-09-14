@@ -2,7 +2,9 @@
 
 Hackathon Tracker is a full-stack web application for tracking, organizing, and managing hackathons. Built with a React/Vite frontend and a FastAPI backend, it provides a centralized dashboard for managing events, registrations, and workspaces.
 
-## Features (Phase 2)
+## Status: v1.0.0 Production
+
+## Features
 - **Workspaces & Authentication**: Multi-tenant workspace isolation with secure user authentication.
 - **Hackathon Management**: Full CRUD capabilities for hackathons, including registration deadlines and statuses.
 - **Dashboard Summary**: Real-time aggregated statistics for upcoming, active, and completed hackathons.
