@@ -1,7 +1,7 @@
 from pydantic import BaseModel, Field
 from typing import List, Optional
 from uuid import UUID
-from datetime import datetime
+from datetime import datetime, timezone
 from app.models.federation import FederationStatus
 
 class WorkspaceFederationBase(BaseModel):

@@ -1,5 +1,5 @@
 from pydantic import BaseModel, ConfigDict
-from datetime import datetime
+from datetime import datetime, timezone
 from uuid import UUID
 from typing import Optional
 

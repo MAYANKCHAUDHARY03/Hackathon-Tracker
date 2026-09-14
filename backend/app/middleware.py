@@ -28,9 +28,6 @@ class GlobalScaleMiddleware(BaseHTTPMiddleware):
         
         response.headers["X-Edge-Location"] = "simulated-edge-node"
         
-        # Only cache safe GET requests for global scale
-        if request.method == "GET" and not response.headers.get("Cache-Control"):
-            # A fallback safe cache hint (e.g. 10 seconds for edge consistency)
-            response.headers["Cache-Control"] = "public, max-age=10, s-maxage=10"
-            
+        # Do not blindly cache all GET requests, as this leaks authenticated data.
+        
         return response

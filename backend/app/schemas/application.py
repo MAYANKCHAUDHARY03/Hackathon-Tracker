@@ -1,6 +1,6 @@
 from pydantic import BaseModel, ConfigDict
 from typing import Optional, Any, Dict
-from datetime import datetime
+from datetime import datetime, timezone
 
 class ApplicationFormBase(BaseModel):
     title: str

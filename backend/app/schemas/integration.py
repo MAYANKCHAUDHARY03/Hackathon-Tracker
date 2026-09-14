@@ -1,7 +1,7 @@
 from pydantic import BaseModel, ConfigDict, Field
 from typing import Dict, Any, Optional, List
 from uuid import UUID
-from datetime import datetime
+from datetime import datetime, timezone
 
 class ExternalSubmissionConnectionBase(BaseModel):
     provider_name: str

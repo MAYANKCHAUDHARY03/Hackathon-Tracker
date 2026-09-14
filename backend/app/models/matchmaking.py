@@ -1,3 +1,4 @@
+from datetime import timezone
 from sqlalchemy import Column, String, ForeignKey, DateTime, Integer, JSON, Enum
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
@@ -27,7 +28,7 @@ class MatchOpportunity(Base):
     
     tags = Column(JSON, default=list) # e.g. ["fintech", "seed", "AI"]
     
-    created_at = Column(DateTime, default=datetime.datetime.utcnow)
+    created_at = Column(DateTime, default=lambda: datetime.datetime.now(datetime.timezone.utc))
     expires_at = Column(DateTime, nullable=True)
 
 class MatchProfile(Base):
@@ -42,8 +43,8 @@ class MatchProfile(Base):
     tags = Column(JSON, default=list) # e.g. ["fintech", "seed", "AI"]
     needs = Column(JSON, default=list) # e.g. ["funding", "mentorship"]
     
-    created_at = Column(DateTime, default=datetime.datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow)
+    created_at = Column(DateTime, default=lambda: datetime.datetime.now(datetime.timezone.utc))
+    updated_at = Column(DateTime, default=lambda: datetime.datetime.now(datetime.timezone.utc), onupdate=lambda: datetime.datetime.now(datetime.timezone.utc))
 
 class MatchRecommendation(Base):
     __tablename__ = "match_recommendations"
@@ -57,7 +58,7 @@ class MatchRecommendation(Base):
     score = Column(Integer, nullable=False, default=0) # Match score 0-100
     status = Column(String, nullable=False, default="suggested") # "suggested", "accepted", "rejected"
     
-    created_at = Column(DateTime, default=datetime.datetime.utcnow)
+    created_at = Column(DateTime, default=lambda: datetime.datetime.now(datetime.timezone.utc))
 
     profile = relationship("MatchProfile")
     opportunity = relationship("MatchOpportunity")

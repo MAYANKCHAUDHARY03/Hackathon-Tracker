@@ -2,7 +2,7 @@ import uuid
 import enum
 from sqlalchemy import Column, String, JSON, ForeignKey, Enum as SQLEnum, DateTime
 from sqlalchemy.dialects.postgresql import UUID
-from datetime import datetime
+from datetime import datetime, timezone
 from app.models.base import BaseEntity
 
 class MemoryType(str, enum.Enum):
@@ -28,4 +28,4 @@ class AgentMemory(BaseEntity):
         if self.expires_at is None:
             return False
         # using naive UTC here for simplicity, assuming app uses timezone-aware or utcnow everywhere
-        return datetime.utcnow() > self.expires_at.replace(tzinfo=None)
+        return datetime.now(timezone.utc) > self.expires_at.replace(tzinfo=None)

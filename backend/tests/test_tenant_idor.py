@@ -1,3 +1,4 @@
+from datetime import timezone
 import pytest
 import uuid
 from httpx import AsyncClient
@@ -12,7 +13,7 @@ import datetime
 
 def create_access_token(user_id: uuid.UUID):
     to_encode = {"sub": str(user_id)}
-    expire = datetime.datetime.utcnow() + datetime.timedelta(minutes=15)
+    expire = datetime.datetime.now(timezone.utc) + datetime.timedelta(minutes=15)
     to_encode.update({"exp": expire})
     return jwt.encode(to_encode, settings.SECRET_KEY, algorithm="HS256")
 
@@ -41,7 +42,7 @@ async def test_cross_tenant_team_creation(
     await db_session.flush()
     
     # Create Hackathon in Workspace B
-    hack_b = Hackathon(workspace_id=ws_b.id, name="Hackathon B", mode="online", status="active", registration_deadline=datetime.datetime.utcnow(), start_date=datetime.datetime.utcnow(), end_date=datetime.datetime.utcnow())
+    hack_b = Hackathon(workspace_id=ws_b.id, name="Hackathon B", mode="online", status="active", registration_deadline=datetime.datetime.now(timezone.utc), start_date=datetime.datetime.now(timezone.utc), end_date=datetime.datetime.now(timezone.utc))
     db_session.add(hack_b)
     await db_session.commit()
     
@@ -84,7 +85,7 @@ async def test_cross_tenant_project_creation(
     await db_session.flush()
     
     # Hackathon and Team in Workspace B
-    hack_b = Hackathon(workspace_id=ws_b.id, name="Hackathon B2", mode="online", status="active", registration_deadline=datetime.datetime.utcnow(), start_date=datetime.datetime.utcnow(), end_date=datetime.datetime.utcnow())
+    hack_b = Hackathon(workspace_id=ws_b.id, name="Hackathon B2", mode="online", status="active", registration_deadline=datetime.datetime.now(timezone.utc), start_date=datetime.datetime.now(timezone.utc), end_date=datetime.datetime.now(timezone.utc))
     db_session.add(hack_b)
     await db_session.flush()
     team_b = Team(workspace_id=ws_b.id, hackathon_id=hack_b.id, name="Team B2", slug="team-b2", status="active")

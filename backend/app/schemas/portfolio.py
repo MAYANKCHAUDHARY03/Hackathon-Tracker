@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 from typing import List, Optional, Dict, Any
-from datetime import datetime
+from datetime import datetime, timezone
 
 class PortfolioItem(BaseModel):
     id: str

@@ -50,6 +50,7 @@ async def main():
             await page.fill("input[name='full_name']", "E2E User")
             await page.fill("input[type='email']", user_email)
             await page.fill("input[type='password']", "password123")
+            await page.wait_for_timeout(1000)
             await page.click("button[type='submit']")
             
             await page.wait_for_selector("text='Organization'", timeout=5000)

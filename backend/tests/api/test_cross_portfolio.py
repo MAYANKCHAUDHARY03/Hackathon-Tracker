@@ -38,7 +38,7 @@ async def test_cross_portfolio_flow(
     
     from app.models.hackathon import Hackathon
     from app.models.team import Team
-    from datetime import datetime, UTC
+    from datetime import datetime, UTC, timezone
     
     h = Hackathon(
         workspace_id=workspace.id, 

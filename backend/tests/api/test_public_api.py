@@ -6,7 +6,7 @@ from app.main import app
 from app.dependencies import get_current_user, require_workspace_admin, verify_workspace_access
 from app.models.workspace import Workspace
 from app.models.hackathon import Hackathon
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 mock_user_id = uuid.uuid4()
 class MockUser:
@@ -47,9 +47,9 @@ async def test_public_api_hackathons(
         workspace_id=workspace.id,
         name="Test Hackathon",
         description="Test",
-        start_date=datetime.utcnow() + timedelta(days=5),
-        end_date=datetime.utcnow() + timedelta(days=12),
-        registration_deadline=datetime.utcnow() + timedelta(days=2),
+        start_date=datetime.now(timezone.utc) + timedelta(days=5),
+        end_date=datetime.now(timezone.utc) + timedelta(days=12),
+        registration_deadline=datetime.now(timezone.utc) + timedelta(days=2),
         status="draft"
     )
     db_session.add(hackathon)

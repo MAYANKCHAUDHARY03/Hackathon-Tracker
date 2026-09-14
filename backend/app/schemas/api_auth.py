@@ -1,5 +1,5 @@
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 from pydantic import BaseModel, ConfigDict, Field
 
 class APIKeyCreate(BaseModel):

@@ -1,3 +1,4 @@
+from datetime import timezone
 import uuid
 from typing import List
 from fastapi import APIRouter, Depends, HTTPException
@@ -65,7 +66,7 @@ async def approve_request(approval_id: uuid.UUID, db: AsyncSession = Depends(get
     approval_request.resolved_by_id = DUMMY_USER_ID
     
     import datetime
-    approval_request.resolved_at = datetime.datetime.utcnow()
+    approval_request.resolved_at = datetime.datetime.now(datetime.timezone.utc)
     
     # Execute the tool
     handler = tool_registry.get_handler(approval_request.tool_name)
@@ -132,7 +133,7 @@ async def reject_request(approval_id: uuid.UUID, db: AsyncSession = Depends(get_
     approval_request.resolved_by_id = DUMMY_USER_ID
     
     import datetime
-    approval_request.resolved_at = datetime.datetime.utcnow()
+    approval_request.resolved_at = datetime.datetime.now(datetime.timezone.utc)
     
     await db.commit()
     return {"status": "rejected"}

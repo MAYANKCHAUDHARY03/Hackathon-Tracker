@@ -48,7 +48,7 @@ class ObservatoryService:
     async def get_drilldown(workspace_id: UUID, level: str, db: AsyncSession):
         from app.schemas.observatory import DrillDownResponse, TrendNode, TimeSeriesPoint
         import random
-        from datetime import datetime, timedelta
+        from datetime import datetime, timedelta, timezone
         
         # Mocking for Phase 64
         nodes = []
@@ -61,7 +61,7 @@ class ObservatoryService:
         else:
             items = ["Item A", "Item B", "Item C", "Item D", "Item E"]
             
-        today = datetime.utcnow()
+        today = datetime.now(timezone.utc)
         for item in items:
             timeseries = []
             for i in range(12):

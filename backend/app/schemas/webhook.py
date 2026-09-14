@@ -1,6 +1,6 @@
 from pydantic import BaseModel, ConfigDict
 from uuid import UUID
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Optional, List, Any
 
 class WebhookSubscriptionBase(BaseModel):

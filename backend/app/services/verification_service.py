@@ -1,7 +1,7 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from fastapi import HTTPException
-from datetime import datetime
+from datetime import datetime, timezone
 import uuid
 
 from app.models.verification import WorkspaceVerification
@@ -59,7 +59,7 @@ class VerificationService:
             
         verification.status = "verified"
         verification.verifier_id = verifier_id
-        verification.verified_at = datetime.utcnow()
+        verification.verified_at = datetime.now(timezone.utc)
         
         await db.commit()
         await db.refresh(verification)

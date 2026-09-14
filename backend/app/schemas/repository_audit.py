@@ -1,7 +1,7 @@
 from pydantic import BaseModel, ConfigDict
 from typing import List, Optional, Any
 from uuid import UUID
-from datetime import datetime
+from datetime import datetime, timezone
 
 class RepositoryAuditCreate(BaseModel):
     project_id: UUID

@@ -1,7 +1,7 @@
 import uuid
 from typing import Optional, Dict, Any, List
 from pydantic import BaseModel, ConfigDict, Field
-from datetime import datetime
+from datetime import datetime, timezone
 
 class GraphEdgeBase(BaseModel):
     source_type: str

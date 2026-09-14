@@ -8,7 +8,7 @@ from app.models.workspace import Workspace
 from app.models.project import Project
 from app.models.hackathon import Hackathon
 from app.models.impact import ProjectImpact
-from datetime import datetime, UTC
+from datetime import datetime, UTC, timezone
 
 mock_user_id = uuid.uuid4()
 class MockUser:

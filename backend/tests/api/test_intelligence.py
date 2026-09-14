@@ -2,7 +2,7 @@ import pytest
 from httpx import AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi import status
-from datetime import datetime, UTC
+from datetime import datetime, UTC, timezone
 import uuid
 
 from app.models.project import Project, Technology, ProjectTechnology

@@ -1,6 +1,6 @@
 from pydantic import BaseModel, HttpUrl, Field
 from typing import List, Optional
-from datetime import datetime
+from datetime import datetime, timezone
 import uuid
 
 class ResearchLinkBase(BaseModel):

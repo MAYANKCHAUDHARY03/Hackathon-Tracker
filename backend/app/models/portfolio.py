@@ -1,3 +1,4 @@
+from datetime import timezone
 from sqlalchemy import Column, String, ForeignKey, DateTime, Boolean, Table
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
@@ -10,7 +11,7 @@ class PortfolioProject(Base):
     
     portfolio_id = Column(UUID(as_uuid=True), ForeignKey("portfolios.id", ondelete="CASCADE"), primary_key=True)
     project_id = Column(UUID(as_uuid=True), ForeignKey("projects.id", ondelete="CASCADE"), primary_key=True)
-    added_at = Column(DateTime, default=datetime.datetime.utcnow)
+    added_at = Column(DateTime, default=lambda: datetime.datetime.now(datetime.timezone.utc))
 
 class Portfolio(Base):
     __tablename__ = "portfolios"
@@ -25,8 +26,8 @@ class Portfolio(Base):
     description = Column(String, nullable=True)
     is_public = Column(Boolean, default=False)
     
-    created_at = Column(DateTime, default=datetime.datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow)
+    created_at = Column(DateTime, default=lambda: datetime.datetime.now(datetime.timezone.utc))
+    updated_at = Column(DateTime, default=lambda: datetime.datetime.now(datetime.timezone.utc), onupdate=lambda: datetime.datetime.now(datetime.timezone.utc))
 
     # Relationships
     projects = relationship("Project", secondary="portfolio_projects", backref="portfolios")

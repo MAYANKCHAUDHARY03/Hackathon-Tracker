@@ -1,5 +1,5 @@
 import uuid
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, func
 
@@ -41,21 +41,21 @@ class OperationsCenterService:
                 severity="CRITICAL",
                 message="Evaluation backlog increasing by 40% in 'Global Innovation Challenge'",
                 source="Organizer Copilot",
-                timestamp=datetime.utcnow() - timedelta(minutes=5)
+                timestamp=datetime.now(timezone.utc) - timedelta(minutes=5)
             ),
             Alert(
                 id=uuid.uuid4(),
                 severity="WARNING",
                 message="3 projects approaching submission deadline with no README.",
                 source="Project Copilot",
-                timestamp=datetime.utcnow() - timedelta(minutes=15)
+                timestamp=datetime.now(timezone.utc) - timedelta(minutes=15)
             ),
             Alert(
                 id=uuid.uuid4(),
                 severity="INFO",
                 message="Mentor 'Dr. Sarah Chen' resolved 2 blockers.",
                 source="Mentor Copilot",
-                timestamp=datetime.utcnow() - timedelta(minutes=30)
+                timestamp=datetime.now(timezone.utc) - timedelta(minutes=30)
             )
         ]
 

@@ -1,6 +1,6 @@
 import enum
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 
 from sqlalchemy import String, ForeignKey, Enum, Text, DateTime
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -42,7 +42,7 @@ class ProjectStageTransition(BaseEntity):
     from_stage: Mapped[ProjectStage | None] = mapped_column(Enum(ProjectStage), nullable=True)
     to_stage: Mapped[ProjectStage] = mapped_column(Enum(ProjectStage))
     
-    transition_date: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow)
+    transition_date: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
     
     # Traceability Context
     organization_id: Mapped[uuid.UUID | None] = mapped_column(UUID(as_uuid=True), ForeignKey("organizations.id", ondelete="SET NULL"), nullable=True)

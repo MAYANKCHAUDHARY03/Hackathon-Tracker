@@ -2,7 +2,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from typing import List, Dict, Any, Union
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 
 from app.schemas.innovation_protocol import (
     InnovationObject,
@@ -32,7 +32,7 @@ class InnovationProtocolService:
             "source": self.source_system,
             "owner": owner,
             "version": "1.0",
-            "timestamp": getattr(obj, "updated_at", getattr(obj, "created_at", datetime.utcnow())),
+            "timestamp": getattr(obj, "updated_at", getattr(obj, "created_at", datetime.now(timezone.utc))),
             "verification": {},
             "visibility": "public",
             "relationships": {}

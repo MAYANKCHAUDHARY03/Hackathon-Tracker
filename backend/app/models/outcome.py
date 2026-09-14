@@ -88,7 +88,7 @@ class Achievement(BaseEntity):
     achievement_type = Column(Enum(AchievementType, name="achievement_type_enum"), default=AchievementType.badge, nullable=False)
     title = Column(String, nullable=False)
     description = Column(String, nullable=True)
-    achieved_at = Column(DateTime(timezone=True), default=datetime.utcnow, nullable=False)
+    achieved_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), nullable=False)
     visibility = Column(String, default="public")
     source = Column(String, nullable=True)
     created_by = Column(UUID(as_uuid=True), ForeignKey("users.id", ondelete="SET NULL"), nullable=True)

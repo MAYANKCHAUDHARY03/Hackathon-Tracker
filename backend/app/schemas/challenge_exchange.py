@@ -1,7 +1,7 @@
 import uuid
 from typing import List, Optional
 from pydantic import BaseModel, Field
-from datetime import datetime
+from datetime import datetime, timezone
 
 class ProblemSchema(BaseModel):
     id: uuid.UUID

@@ -31,7 +31,7 @@ class AgentDefinition(BaseModel):
     description: str
     allowed_tools: List[str]
 
-from datetime import datetime
+from datetime import datetime, timezone
 
 class AgentApprovalRequestResponse(BaseModel):
     id: str

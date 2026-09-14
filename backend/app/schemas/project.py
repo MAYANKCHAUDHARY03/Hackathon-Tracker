@@ -1,6 +1,6 @@
 from pydantic import BaseModel, ConfigDict
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 
 class ProjectBase(BaseModel):
     name: str

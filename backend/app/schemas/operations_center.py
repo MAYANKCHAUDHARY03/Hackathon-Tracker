@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 from typing import List, Dict, Any
-from datetime import datetime
+from datetime import datetime, timezone
 import uuid
 
 class Alert(BaseModel):

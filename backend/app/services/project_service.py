@@ -8,8 +8,7 @@ from app.schemas.project import ProjectCreate
 from app.models.user import User
 from app.models.kanban import KanbanBoard, KanbanColumn
 from app.services.graph_service import KnowledgeGraphService
-from datetime import datetime
-
+from datetime import datetime, timezone
 async def get_projects(db: AsyncSession, workspace_id: uuid.UUID):
     stmt = select(Project).where(Project.workspace_id == workspace_id)
     result = await db.execute(stmt)
@@ -115,7 +114,7 @@ async def transition_project_state(db: AsyncSession, workspace_id: uuid.UUID, pr
         relation_type="REACHED_STATE",
         properties={
             "state": new_state,
-            "transitioned_at": datetime.utcnow().isoformat(),
+            "transitioned_at": datetime.now(timezone.utc).isoformat(),
             "actor_id": str(user.id),
             "actor_name": user.full_name,
             "notes": notes

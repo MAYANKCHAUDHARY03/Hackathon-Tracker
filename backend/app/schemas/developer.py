@@ -1,7 +1,7 @@
 from pydantic import BaseModel, HttpUrl
 from typing import List
 from uuid import UUID
-from datetime import datetime
+from datetime import datetime, timezone
 
 class DeveloperAppBase(BaseModel):
     name: str

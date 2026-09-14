@@ -1,3 +1,4 @@
+from datetime import timezone
 import uuid
 import datetime
 from typing import List, Optional
@@ -20,8 +21,8 @@ class MemoryService:
             content=data.content,
             source_id=data.source_id,
             expires_at=data.expires_at,
-            created_at=datetime.datetime.utcnow(),
-            updated_at=datetime.datetime.utcnow(),
+            created_at=datetime.datetime.now(timezone.utc),
+            updated_at=datetime.datetime.now(timezone.utc),
         )
         self.db.add(db_memory)
         await self.db.flush()

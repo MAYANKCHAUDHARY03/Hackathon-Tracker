@@ -1,6 +1,6 @@
 import asyncio
 import psutil
-from datetime import datetime
+from datetime import datetime, timezone
 from sqlalchemy import select, func
 from app.database import async_session_maker
 from app.models.user import User

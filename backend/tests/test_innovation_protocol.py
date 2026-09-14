@@ -1,6 +1,6 @@
 import pytest
 from pydantic import ValidationError
-from datetime import datetime
+from datetime import datetime, timezone
 
 from app.schemas.innovation_protocol import (
     InnovationEvent,
@@ -15,8 +15,8 @@ def test_innovation_event_validates():
         source="system_a",
         owner="org_1",
         name="Global Hackathon",
-        start_date=datetime.utcnow(),
-        end_date=datetime.utcnow(),
+        start_date=datetime.now(timezone.utc),
+        end_date=datetime.now(timezone.utc),
         status="active"
     )
     assert event.type == "InnovationEvent"
@@ -27,8 +27,8 @@ def test_innovation_event_requires_base_fields():
     with pytest.raises(ValidationError) as exc:
         InnovationEvent(
             name="Missing Base Fields",
-            start_date=datetime.utcnow(),
-            end_date=datetime.utcnow(),
+            start_date=datetime.now(timezone.utc),
+            end_date=datetime.now(timezone.utc),
             status="active"
         )
     assert "id" in str(exc.value)

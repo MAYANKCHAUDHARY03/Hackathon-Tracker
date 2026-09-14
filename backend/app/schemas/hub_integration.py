@@ -1,7 +1,7 @@
 from pydantic import BaseModel, ConfigDict
 from typing import Dict, Any, Optional
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 
 class WorkspaceIntegrationBase(BaseModel):
     connector_id: str

@@ -1,6 +1,6 @@
 from pydantic import BaseModel, Field
 from typing import List, Optional, Dict, Any
-from datetime import datetime
+from datetime import datetime, timezone
 import uuid
 
 class ExportHackathonV1(BaseModel):
@@ -35,7 +35,7 @@ class ExportOrganizationV1(BaseModel):
 
 class InnovationSchemaV1(BaseModel):
     version: str = "1.0"
-    exported_at: datetime = Field(default_factory=datetime.utcnow)
+    exported_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     hackathons: List[ExportHackathonV1] = []
     projects: List[ExportProjectV1] = []
     organizations: List[ExportOrganizationV1] = []

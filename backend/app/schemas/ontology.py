@@ -1,6 +1,6 @@
 from typing import Any, Dict, Optional
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 from pydantic import BaseModel, ConfigDict, Field
 from app.models.ontology import EntityType
 

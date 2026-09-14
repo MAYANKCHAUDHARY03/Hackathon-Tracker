@@ -10,7 +10,7 @@ from app.dependencies import get_current_user, require_workspace_admin, verify_w
 from app.models.workspace import Workspace
 from app.models.hackathon import Hackathon
 from app.models.project import Project
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 mock_user_id = uuid.uuid4()
 class MockUser:
@@ -51,9 +51,9 @@ async def test_data_exchange_export(
         workspace_id=workspace.id,
         name="Exchange Hackathon",
         description="Exchange Desc",
-        start_date=datetime.utcnow() + timedelta(days=5),
-        end_date=datetime.utcnow() + timedelta(days=12),
-        registration_deadline=datetime.utcnow() + timedelta(days=2),
+        start_date=datetime.now(timezone.utc) + timedelta(days=5),
+        end_date=datetime.now(timezone.utc) + timedelta(days=12),
+        registration_deadline=datetime.now(timezone.utc) + timedelta(days=2),
         status="draft"
     )
     db_session.add(hackathon)

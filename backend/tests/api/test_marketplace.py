@@ -53,7 +53,7 @@ async def test_get_projects_seeking_partners(
     
     from app.models.hackathon import Hackathon
     hackathon_id = uuid.uuid4()
-    from datetime import datetime, timedelta, UTC
+    from datetime import datetime, timedelta, UTC, timezone
     now = datetime.now(UTC)
     hackathon = Hackathon(
         id=hackathon_id,

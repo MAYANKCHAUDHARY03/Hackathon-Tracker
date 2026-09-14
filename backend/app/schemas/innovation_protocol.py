@@ -1,6 +1,6 @@
 from pydantic import BaseModel, Field, ConfigDict
 from typing import List, Optional, Dict, Any, Literal, Union
-from datetime import datetime
+from datetime import datetime, timezone
 import uuid
 
 class InnovationObjectBase(BaseModel):
@@ -11,7 +11,7 @@ class InnovationObjectBase(BaseModel):
     source: str = Field(description="The origin system/institution of this object")
     owner: str = Field(description="The owner identifier of this object")
     version: str = Field(default="1.0", description="Schema version of this object")
-    timestamp: datetime = Field(default_factory=datetime.utcnow, description="Last modification timestamp")
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc), description="Last modification timestamp")
     verification: Dict[str, Any] = Field(default_factory=dict, description="Cryptographic or systemic verification signatures/claims")
     visibility: str = Field(default="public", description="public, private, or protected")
     relationships: Dict[str, List[str]] = Field(default_factory=dict, description="References to other innovation objects")
@@ -74,6 +74,6 @@ class InnovationProtocolExport(BaseModel):
     model_config = ConfigDict(from_attributes=True)
     
     version: str = "1.0"
-    exported_at: datetime = Field(default_factory=datetime.utcnow)
+    exported_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     source_system: str
     objects: List[InnovationObject]

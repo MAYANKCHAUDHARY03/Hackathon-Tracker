@@ -2,7 +2,7 @@ import uuid
 from typing import List, Dict, Any, Optional
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, desc
-from datetime import datetime
+from datetime import datetime, timezone
 
 from app.models.incubation import ProjectUpdate, ProjectDocument, ProjectFunding, ProjectUpdateType, ProjectDocumentType
 from app.models.graph import GraphEdge

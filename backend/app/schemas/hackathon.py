@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from pydantic import BaseModel, Field, HttpUrl, validator, model_validator
 from typing import Optional, List
 from uuid import UUID

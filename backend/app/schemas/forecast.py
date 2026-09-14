@@ -1,7 +1,7 @@
 from pydantic import BaseModel, Field
 from typing import List, Dict, Any
 from uuid import UUID
-from datetime import datetime
+from datetime import datetime, timezone
 
 class ForecastBase(BaseModel):
     target_type: str = Field(..., description="Type of entity being forecasted")

@@ -1,6 +1,6 @@
 import uuid
 from typing import List, Optional
-from datetime import datetime
+from datetime import datetime, timezone
 from pydantic import BaseModel, ConfigDict
 
 class MarketplaceProjectItem(BaseModel):

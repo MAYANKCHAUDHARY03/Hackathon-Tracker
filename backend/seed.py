@@ -31,8 +31,8 @@ async def seed():
 
         print(f"Seeding for user {user.email} in workspace {workspace.name}")
 
-        from datetime import datetime, timedelta
-        now = datetime.utcnow()
+        from datetime import datetime, timedelta, timezone
+        now = datetime.now(timezone.utc)
         hackathon = Hackathon(workspace_id=workspace.id, name="Test Hackathon", registration_deadline=now, start_date=now, end_date=now + timedelta(days=2))
         db.add(hackathon)
         await db.flush()
