@@ -152,4 +152,67 @@ async def dismiss(
         await db.commit()
         await db.refresh(notification)
         
+        
     return notification
+
+async def get_preferences(
+    db: AsyncSession,
+    workspace_id: uuid.UUID,
+    user_id: uuid.UUID
+) -> list[NotificationPreference]:
+    query = select(NotificationPreference).where(
+        NotificationPreference.workspace_id == workspace_id,
+        NotificationPreference.user_id == user_id
+    )
+    result = await db.execute(query)
+    existing_prefs = {pref.category.value: pref for pref in result.scalars().all()}
+    
+    prefs = []
+    for cat in NotificationCategory:
+        if cat.value in existing_prefs:
+            prefs.append(existing_prefs[cat.value])
+        else:
+            prefs.append(NotificationPreference(
+                id=uuid.uuid4(),
+                workspace_id=workspace_id,
+                user_id=user_id,
+                category=cat,
+                in_app_enabled=True,
+                quiet_hours_enabled=False,
+                timezone="UTC",
+                created_at=datetime.now(timezone.utc),
+                updated_at=datetime.now(timezone.utc)
+            ))
+    return prefs
+
+async def update_preference(
+    db: AsyncSession,
+    workspace_id: uuid.UUID,
+    user_id: uuid.UUID,
+    category_str: str,
+    update_data: dict
+) -> NotificationPreference:
+    category = NotificationCategory(category_str)
+    query = select(NotificationPreference).where(
+        NotificationPreference.workspace_id == workspace_id,
+        NotificationPreference.user_id == user_id,
+        NotificationPreference.category == category
+    )
+    result = await db.execute(query)
+    pref = result.scalars().first()
+    
+    if not pref:
+        pref = NotificationPreference(
+            workspace_id=workspace_id,
+            user_id=user_id,
+            category=category
+        )
+        db.add(pref)
+        
+    for key, value in update_data.items():
+        if value is not None:
+            setattr(pref, key, value)
+            
+    await db.commit()
+    await db.refresh(pref)
+    return pref

@@ -42,9 +42,9 @@ export const analyticsApi = {
   getWorkspaceAnalytics: (workspaceId: string) =>
     api.get<WorkspaceAnalyticsSummary>(`/workspaces/${workspaceId}/analytics`),
   getOverview: (workspaceId: string) =>
-    api.get<AnalyticsOverview>(`/analytics/workspaces/${workspaceId}/analytics/overview`),
+    api.get<AnalyticsOverview>(`/workspaces/${workspaceId}/analytics/overview`),
   getDemographics: (workspaceId: string) =>
-    api.get<AnalyticsDemographics>(`/analytics/workspaces/${workspaceId}/analytics/demographics`),
+    api.get<AnalyticsDemographics>(`/workspaces/${workspaceId}/analytics/demographics`),
   getEvaluations: (workspaceId: string) =>
-    api.get<AnalyticsEvaluations>(`/analytics/workspaces/${workspaceId}/analytics/evaluations`),
+    api.get<AnalyticsEvaluations>(`/workspaces/${workspaceId}/analytics/evaluations`),
 };

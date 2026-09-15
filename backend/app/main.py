@@ -114,6 +114,8 @@ app.include_router(activity.router, prefix=f"{settings.API_V1_STR}", tags=["acti
 app.include_router(rounds.router, prefix=f"{settings.API_V1_STR}", tags=["rounds"])
 app.include_router(submissions.router, prefix=f"{settings.API_V1_STR}", tags=["submissions"])
 app.include_router(notifications.router, prefix=f"{settings.API_V1_STR}", tags=["notifications"])
+from app.routers import notification_preferences
+app.include_router(notification_preferences.router, prefix=f"{settings.API_V1_STR}")
 app.include_router(hub_integrations.router, prefix=f"{settings.API_V1_STR}", tags=["hub_integrations"])
 app.include_router(mentors.router, prefix=f"{settings.API_V1_STR}", tags=["mentors"])
 app.include_router(judges.router, prefix=f"{settings.API_V1_STR}", tags=["judges"])
@@ -127,8 +129,9 @@ app.include_router(automation.router, prefix=f"{settings.API_V1_STR}", tags=["au
 app.include_router(integration.router, prefix=f"{settings.API_V1_STR}", tags=["integration"])
 app.include_router(ai.router, prefix=f"{settings.API_V1_STR}", tags=["ai_intelligence"])
 app.include_router(opportunities.router, prefix=f"{settings.API_V1_STR}", tags=["opportunities"])
-from app.routers import matching
+from app.routers import matching, financing
 app.include_router(matching.router, prefix=f"{settings.API_V1_STR}", tags=["matching"])
+app.include_router(financing.router, prefix=f"{settings.API_V1_STR}")
 app.include_router(audit.router, prefix=f"{settings.API_V1_STR}", tags=["audit"])
 app.include_router(webhook.router, prefix=f"{settings.API_V1_STR}", tags=["webhook"])
 

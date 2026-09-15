@@ -41,6 +41,9 @@ from app.models.api_auth import APIKey, OAuthApp
 from app.models.event import PlatformEvent
 from app.models.forecast import Forecast
 from app.models.impact import CustomMetric, ProjectImpact
+from app.models.developer import DeveloperApp, WebhookEndpoint
+from app.models.verification import WorkspaceVerification
+from app.models.governance import DataSubjectRequest, ConsentRecord, GovernanceAuditLog, SecurityIncident
 
 
 from app.models.approval import AgentApprovalRequest
@@ -136,5 +139,12 @@ __all__ = [
     "TrustStatus",
     "PortableProjectIdentity",
     "ProjectStageTransition",
-    "ProjectStage"
+    "ProjectStage",
+    "DeveloperApp",
+    "WebhookEndpoint",
+    "WorkspaceVerification",
+    "DataSubjectRequest",
+    "ConsentRecord",
+    "GovernanceAuditLog",
+    "SecurityIncident"
 ]

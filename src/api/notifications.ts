@@ -11,12 +11,11 @@ export interface Notification {
 }
 
 export interface NotificationPreference {
-  id?: string;
-  email_notifications: boolean;
-  in_app_notifications: boolean;
-  notify_on_mentions: boolean;
-  notify_on_assignments: boolean;
-  notify_on_deadlines: boolean;
+  category: string;
+  in_app_enabled: boolean;
+  email_enabled: boolean;
+  push_enabled: boolean;
+  webhook_enabled: boolean;
 }
 
 export const notificationsApi = {
@@ -33,8 +32,8 @@ export const notificationsApi = {
     api.post<{ message: string }>(`/workspaces/${workspaceId}/notifications/read-all`, {}),
 
   getPreferences: (workspaceId: string) =>
-    api.get<NotificationPreference>(`/workspaces/${workspaceId}/notification-preferences`),
+    api.get<NotificationPreference[]>(`/workspaces/${workspaceId}/notification-preferences`),
 
-  updatePreferences: (workspaceId: string, data: Partial<NotificationPreference>) =>
-    api.put<NotificationPreference>(`/workspaces/${workspaceId}/notification-preferences`, data),
+  updatePreference: (workspaceId: string, category: string, data: Partial<NotificationPreference>) =>
+    api.put<NotificationPreference>(`/workspaces/${workspaceId}/notification-preferences/${category}`, data),
 };

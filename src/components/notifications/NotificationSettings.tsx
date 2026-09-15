@@ -7,15 +7,13 @@ const Switch = ({ checked, onCheckedChange }: { checked: boolean, onCheckedChang
   <input type="checkbox" checked={checked} onChange={onCheckedChange} className="w-4 h-4 accent-primary" />
 );
 import { Button } from "@/components/ui/button";
-import { Mail, Smartphone, AtSign, CheckSquare, Clock } from "lucide-react";
 import { toast } from "sonner";
 
 export function NotificationSettings() {
   const activeWorkspaceId = useWorkspaceStore(s => s.activeWorkspaceId);
   const currentWorkspace = activeWorkspaceId ? { id: activeWorkspaceId as string } : null;
-  const [preferences, setPreferences] = useState<NotificationPreference | null>(null);
+  const [preferences, setPreferences] = useState<NotificationPreference[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
     if (currentWorkspace) {
@@ -36,22 +34,27 @@ export function NotificationSettings() {
     }
   };
 
-  const handleToggle = (key: keyof NotificationPreference) => {
-    if (!preferences) return;
-    setPreferences({ ...preferences, [key]: !preferences[key] });
-  };
+  const handleToggle = async (category: string, key: "in_app_enabled" | "email_enabled") => {
+    if (!currentWorkspace) return;
+    
+    // Optimistic update
+    const prev = [...preferences];
+    const categoryPref = preferences.find(p => p.category === category);
+    if (!categoryPref) return;
+    
+    const newValue = !categoryPref[key];
+    setPreferences(preferences.map(p => 
+      p.category === category ? { ...p, [key]: newValue } : p
+    ));
 
-  const handleSave = async () => {
-    if (!currentWorkspace || !preferences) return;
-    setIsSaving(true);
     try {
-      await notificationsApi.updatePreferences(currentWorkspace.id, preferences);
-      toast.success("Preferences updated successfully");
+      await notificationsApi.updatePreference(currentWorkspace.id, category, { [key]: newValue });
+      toast.success("Preference updated");
     } catch (error) {
-      console.error("Failed to update preferences", error);
-      toast.error("Failed to update preferences");
-    } finally {
-      setIsSaving(false);
+      console.error("Failed to update preference", error);
+      toast.error("Failed to update preference");
+      // Revert on failure
+      setPreferences(prev);
     }
   };
 
@@ -63,96 +66,39 @@ export function NotificationSettings() {
     </div>;
   }
 
-  if (!preferences) return null;
+  if (!preferences || preferences.length === 0) return null;
 
   return (
     <div className="space-y-6">
-      <div className="space-y-4">
-        <div className="flex items-center justify-between p-4 rounded-lg border bg-card">
-          <div className="flex items-center gap-4">
-            <div className="p-2 bg-primary/10 rounded-full text-primary">
-              <Mail className="h-5 w-5" />
-            </div>
-            <div>
-              <p className="font-medium">Email Notifications</p>
-              <p className="text-sm text-muted-foreground">Receive notifications via email</p>
-            </div>
-          </div>
-          <Switch 
-            checked={preferences.email_notifications} 
-            onCheckedChange={() => handleToggle('email_notifications')} 
-          />
-        </div>
-
-        <div className="flex items-center justify-between p-4 rounded-lg border bg-card">
-          <div className="flex items-center gap-4">
-            <div className="p-2 bg-primary/10 rounded-full text-primary">
-              <Smartphone className="h-5 w-5" />
-            </div>
-            <div>
-              <p className="font-medium">In-App Notifications</p>
-              <p className="text-sm text-muted-foreground">Show notifications in the app</p>
-            </div>
-          </div>
-          <Switch 
-            checked={preferences.in_app_notifications} 
-            onCheckedChange={() => handleToggle('in_app_notifications')} 
-          />
-        </div>
-
-        <div className="flex items-center justify-between p-4 rounded-lg border bg-card">
-          <div className="flex items-center gap-4">
-            <div className="p-2 bg-primary/10 rounded-full text-primary">
-              <AtSign className="h-5 w-5" />
-            </div>
-            <div>
-              <p className="font-medium">Mentions</p>
-              <p className="text-sm text-muted-foreground">Notify when someone mentions you</p>
-            </div>
-          </div>
-          <Switch 
-            checked={preferences.notify_on_mentions} 
-            onCheckedChange={() => handleToggle('notify_on_mentions')} 
-          />
-        </div>
-
-        <div className="flex items-center justify-between p-4 rounded-lg border bg-card">
-          <div className="flex items-center gap-4">
-            <div className="p-2 bg-primary/10 rounded-full text-primary">
-              <CheckSquare className="h-5 w-5" />
-            </div>
-            <div>
-              <p className="font-medium">Assignments</p>
-              <p className="text-sm text-muted-foreground">Notify when you are assigned a task</p>
-            </div>
-          </div>
-          <Switch 
-            checked={preferences.notify_on_assignments} 
-            onCheckedChange={() => handleToggle('notify_on_assignments')} 
-          />
-        </div>
-
-        <div className="flex items-center justify-between p-4 rounded-lg border bg-card">
-          <div className="flex items-center gap-4">
-            <div className="p-2 bg-primary/10 rounded-full text-primary">
-              <Clock className="h-5 w-5" />
-            </div>
-            <div>
-              <p className="font-medium">Deadlines</p>
-              <p className="text-sm text-muted-foreground">Notify about upcoming deadlines</p>
-            </div>
-          </div>
-          <Switch 
-            checked={preferences.notify_on_deadlines} 
-            onCheckedChange={() => handleToggle('notify_on_deadlines')} 
-          />
-        </div>
-      </div>
-
-      <div className="flex justify-end">
-        <Button onClick={handleSave} disabled={isSaving}>
-          {isSaving ? "Saving..." : "Save Preferences"}
-        </Button>
+      <div className="rounded-md border">
+        <table className="w-full text-sm text-left">
+          <thead className="bg-muted text-muted-foreground">
+            <tr>
+              <th className="p-4 font-medium">Category</th>
+              <th className="p-4 font-medium text-center">In-App</th>
+              <th className="p-4 font-medium text-center">Email</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y">
+            {preferences.map((pref) => (
+              <tr key={pref.category}>
+                <td className="p-4 capitalize font-medium">{pref.category}</td>
+                <td className="p-4 text-center">
+                  <Switch 
+                    checked={pref.in_app_enabled} 
+                    onCheckedChange={() => handleToggle(pref.category, 'in_app_enabled')} 
+                  />
+                </td>
+                <td className="p-4 text-center">
+                  <Switch 
+                    checked={pref.email_enabled} 
+                    onCheckedChange={() => handleToggle(pref.category, 'email_enabled')} 
+                  />
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
     </div>
   );
